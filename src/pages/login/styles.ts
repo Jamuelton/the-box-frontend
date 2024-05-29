@@ -18,12 +18,30 @@ export const Form = styled.section`
     var(--blue-500) 69%,
     var(--blue-300) 100%
   );
+  display: flex;
+  justify-content: space-between;
 `;
 
 export const About = styled.section`
   height: 50%;
 `;
 
-export const TextArea = styled.div``;
+export const TextArea = styled.div`
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 3rem;
+  h2 {
+    color: var(--blue-300);
+  }
+  p {
+    color: white;
+    width: 70%;
+  }
+`;
 
-export const LoginArea = styled.div``;
+export const LoginArea = styled.div`
+  width: 50%;
+`;
