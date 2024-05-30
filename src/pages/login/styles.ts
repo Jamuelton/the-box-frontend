@@ -18,7 +18,15 @@ export const Form = styled.section`
     var(--blue-300) 100%
   );
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    flex-direction: row;
+  }
+  @media (min-width: 1024px) {
+    flex-direction: row;
+  }
 `;
 
 export const About = styled.section`
@@ -26,7 +34,7 @@ export const About = styled.section`
 `;
 
 export const TextArea = styled.div`
-  width: 50%;
+  width: 100%;
   display: flex;
   justify-content: center;
   gap: 1rem;
@@ -36,9 +44,19 @@ export const TextArea = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     height: 100%;
-    width: 70%;
+    width: 100%;
     gap: 1rem;
+
+    @media (min-width: 426px) and (max-width: 1023px) {
+      width: 100%;
+      align-items: flex-start;
+    }
+    @media (min-width: 1024px) {
+      width: 70%;
+      align-items: flex-start;
+    }
   }
   h2 {
     color: var(--blue-300);
@@ -47,24 +65,45 @@ export const TextArea = styled.div`
     color: white;
     width: 70%;
   }
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    width: 40%;
+  }
+  @media (min-width: 1024px) {
+    width: 50%;
+  }
 `;
 
 export const LoginArea = styled.div`
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 100%;
   padding: 2rem 3rem;
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    width: 60%;
+  }
+  @media (min-width: 1024px) {
+    width: 50%;
+  }
 `;
 
 export const Login = styled.div`
   background: white;
   height: 100%;
-  width: 70%;
+  width: 100%;
   border-radius: 2rem;
   display: flex;
   flex-direction: column;
   padding: 1rem;
   gap: 1rem;
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    width: 100%;
+  }
+  @media (min-width: 1024px) {
+    width: 70%;
+  }
 
   h3 {
     align-self: center;
@@ -73,6 +112,7 @@ export const Login = styled.div`
 
 export const LoginFormPassword = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 1rem;
 
@@ -81,6 +121,13 @@ export const LoginFormPassword = styled.div`
     font-size: small;
     align-self: flex-end;
     cursor: pointer;
+  }
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    flex-direction: row;
+  }
+  @media (min-width: 1024px) {
+    flex-direction: row;
   }
 `;
 
