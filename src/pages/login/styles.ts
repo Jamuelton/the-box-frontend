@@ -29,10 +29,6 @@ export const Form = styled.section`
   }
 `;
 
-export const About = styled.section`
-  height: 40%;
-`;
-
 export const TextArea = styled.div`
   width: 100%;
   display: flex;
@@ -133,4 +129,16 @@ export const LoginFormPassword = styled.div`
 
 export const LoginFormButton = styled.div`
   align-self: flex-end;
+`;
+
+export const About = styled.section`
+  height: 40%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const CarouselArea = styled.div`
+  height: 100%;
 `;

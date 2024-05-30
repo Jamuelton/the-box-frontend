@@ -2,6 +2,7 @@ import { Eye } from "@phosphor-icons/react";
 import { Input } from "../../components/Input";
 import * as S from "./styles";
 import { Button } from "../../components/Button";
+import { Card } from "../../components/Card/Index";
 
 export function Login() {
   return (
@@ -36,7 +37,14 @@ export function Login() {
           </S.Login>
         </S.LoginArea>
       </S.Form>
-      <S.About>sobre</S.About>
+      <S.About>
+        <div>
+          <h2>Sobre</h2>
+        </div>
+        <S.CarouselArea>
+          <Card />
+        </S.CarouselArea>
+      </S.About>
     </S.Container>
   );
 }
