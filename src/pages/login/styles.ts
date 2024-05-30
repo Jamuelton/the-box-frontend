@@ -10,7 +10,6 @@ export const hearder = styled.div`
 `;
 
 export const Form = styled.section`
-  height: 50%;
   background: linear-gradient(
     to right,
     var(--blue-900) 16%,
@@ -66,6 +65,10 @@ export const Login = styled.div`
   flex-direction: column;
   padding: 1rem;
   gap: 1rem;
+
+  h3 {
+    align-self: center;
+  }
 `;
 
 export const LoginFormPassword = styled.div`
@@ -79,4 +82,8 @@ export const LoginFormPassword = styled.div`
     align-self: flex-end;
     cursor: pointer;
   }
+`;
+
+export const LoginFormButton = styled.div`
+  align-self: flex-end;
 `;
