@@ -65,4 +65,18 @@ export const Login = styled.div`
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  gap: 1rem;
+`;
+
+export const LoginFormPassword = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  span {
+    text-decoration: underline;
+    font-size: small;
+    align-self: flex-end;
+    cursor: pointer;
+  }
 `;

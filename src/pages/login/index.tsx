@@ -1,3 +1,4 @@
+import { Eye } from "@phosphor-icons/react";
 import { Input } from "../../components/Input";
 import * as S from "./styles";
 
@@ -21,9 +22,13 @@ export function Login() {
             <div>
               <Input label="Email:" />
             </div>
-            <div>
-              <Input label="Senha:" /> esqueceu a senha
-            </div>
+            <S.LoginFormPassword>
+              <Input
+                label="Senha:"
+                rightAdd={<Eye size={20} color="#7fc7d9" weight="duotone" />}
+              />{" "}
+              <span>Esqueci minha senha</span>
+            </S.LoginFormPassword>
             <div>login</div>
           </S.Login>
         </S.LoginArea>
