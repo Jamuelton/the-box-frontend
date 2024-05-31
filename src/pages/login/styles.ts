@@ -1,3 +1,4 @@
+import { Carousel } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -137,8 +138,17 @@ export const About = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  h2 {
+    padding: 0rem 8rem;
+  }
 `;
 
-export const CarouselArea = styled.div`
-  height: 100%;
+export const CarouselArea = styled(Carousel)`
+  section {
+    padding: 1rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
 `;

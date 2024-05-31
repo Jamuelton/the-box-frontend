@@ -1,13 +1,16 @@
+import { FC } from "react";
 import * as S from "./styles";
 
-export const Card = () => {
+interface CardProps {
+  title: string;
+  content: string;
+}
+
+export const Card: FC<CardProps> = ({ title, content }) => {
   return (
     <S.Container>
-      <S.Title>Lorem Ipsum</S.Title>
-      <S.Content>
-        Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum
-        Lorem Ipsum
-      </S.Content>
+      <S.Title>{title}</S.Title>
+      <S.Content>{content}</S.Content>
     </S.Container>
   );
 };
