@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import * as S from "./styles";
 import Logo from "../assets/Logo.svg";
 import {
@@ -10,6 +10,7 @@ import {
   FolderSimple,
   FileText,
   MapPinArea,
+  List,
 } from "@phosphor-icons/react";
 import { useLocation } from "react-router-dom";
 
@@ -19,6 +20,9 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
+  const path = useLocation().pathname;
+  const [hamburguer, setHamburguer] = useState<boolean>(false);
+
   const options = [
     {
       icon: <ChatsCircle size={24} color="#7fc7d9" />,
@@ -46,7 +50,6 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
     },
   ];
 
-  const path = useLocation().pathname;
   return (
     <S.Container>
       <S.headerArea>
@@ -62,6 +65,9 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
           <S.icons>
             <Bell size={22}></Bell>
             <SignOut size={22}></SignOut>
+            <S.hamburguerSection>
+              <List size={22} onClick={() => setHamburguer(!hamburguer)} />
+            </S.hamburguerSection>
           </S.icons>
         ) : (
           <S.info>
@@ -81,6 +87,16 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
         </S.optionsArea>
       ) : (
         <></>
+      )}
+      {hamburguer && (
+        <S.hamburguerOptions>
+          {options.map(({ icon, title }, index) => (
+            <S.hamburguerDiv key={index}>
+              {icon}
+              <S.optionTitle>{title}</S.optionTitle>
+            </S.hamburguerDiv>
+          ))}
+        </S.hamburguerOptions>
       )}
     </S.Container>
   );
