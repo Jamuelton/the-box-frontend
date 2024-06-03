@@ -9,4 +9,6 @@ export const hearder = styled.div`
   height: 10%;
 `;
 
-export const Content = styled.div``;
+export const Content = styled.div`
+  padding: 1rem;
+`;
