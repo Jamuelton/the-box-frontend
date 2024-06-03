@@ -1,10 +1,27 @@
-import { Eye } from "@phosphor-icons/react";
+import { Eye, EyeClosed } from "@phosphor-icons/react";
 import { Input } from "../../components/Input";
 import * as S from "./styles";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card/Index";
+import { useState } from "react";
 
 export function Login() {
+  const [email, setEmail] = useState<string>();
+  const [password, setPassword] = useState<string>();
+
+  const [isPassVisible, setIsPassVisible] = useState<boolean>(false);
+
+  const handleChangeEmail = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setEmail(value);
+  };
+
+  const handleChangePassword = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+
+    setPassword(value);
+  };
+
   const portalCards = [
     {
       title: "Bem-vindo ao Portal",
@@ -54,6 +71,11 @@ export function Login() {
       },
     ],
   };
+
+  const login = () => {
+    console.log(email);
+    console.log(password);
+  };
   return (
     <S.Container>
       <S.hearder>header</S.hearder>
@@ -71,17 +93,35 @@ export function Login() {
           <S.Login>
             <h3>Login</h3>
             <div>
-              <Input label="Email:" />
+              <Input label="Email:" inputFunction={handleChangeEmail} />
             </div>
             <S.LoginFormPassword>
               <Input
                 label="Senha:"
-                rightAdd={<Eye size={24} color="#7fc7d9" weight="duotone" />}
-              />{" "}
-              <span>Esqueci minha senha</span>
+                rightAdd={
+                  isPassVisible ? (
+                    <Eye
+                      size={24}
+                      color="#7fc7d9"
+                      weight="duotone"
+                      onClick={() => setIsPassVisible(!isPassVisible)}
+                    />
+                  ) : (
+                    <EyeClosed
+                      size={24}
+                      color="#7fc7d9"
+                      weight="duotone"
+                      onClick={() => setIsPassVisible(!isPassVisible)}
+                    />
+                  )
+                }
+                inputFunction={handleChangePassword}
+                type={isPassVisible ? "text" : "password"}
+              />
+              <S.ForgotPassText>Esqueci minha senha</S.ForgotPassText>
             </S.LoginFormPassword>
             <S.LoginFormButton>
-              <Button label="Entrar" size="large" />
+              <Button label="Entrar" size="large" buttonFunction={login} />
             </S.LoginFormButton>
           </S.Login>
         </S.LoginArea>
