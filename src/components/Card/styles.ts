@@ -4,8 +4,8 @@ export const Container = styled.div`
   background: var(--blue-500);
   display: flex;
   flex-direction: column;
-  width: 25dvw;
-  height: 100%;
+  width: 283px;
+  height: 358px;
   padding: 2rem;
   border-radius: 2rem;
   gap: 2rem;
