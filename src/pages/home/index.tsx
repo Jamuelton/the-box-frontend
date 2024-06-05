@@ -49,8 +49,10 @@ export function Home() {
           item={
             <Button
               label={"Ver Perfil"}
-              icon={<UserCircle size={32} weight="duotone" />}
+              icon={<UserCircle size={32} weight="fill" />}
               shape="round"
+              color="#365486"
+              secondColor=" #7fc7d9"
             />
           }
         />
