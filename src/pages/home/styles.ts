@@ -11,11 +11,37 @@ export const hearder = styled.div`
 
 export const Content = styled.div`
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 90%;
+
+  section {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @media (min-width: 426px) and (max-width: 1023px) {
+    }
+    @media (min-width: 1024px) {
+    }
+  }
 `;
 
 export const CardArea = styled.div`
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   gap: 2rem;
+  padding: 1rem;
+
+  @media (min-width: 426px) and (max-width: 1023px) {
+    justify-content: center;
+  }
+  @media (min-width: 1024px) {
+    width: 90%;
+    justify-content: center;
+  }
 `;

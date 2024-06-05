@@ -43,11 +43,13 @@ export function Home() {
       <S.hearder>header</S.hearder>
       <S.Content>
         <Title text={"Pagina Inicial"} />
-        <S.CardArea>
-          {infocardlist.map((item, index) => (
-            <InfoCard key={index} text={item.text} icon={item.icon} />
-          ))}
-        </S.CardArea>
+        <section>
+          <S.CardArea>
+            {infocardlist.map((item, index) => (
+              <InfoCard key={index} text={item.text} icon={item.icon} />
+            ))}
+          </S.CardArea>
+        </section>
       </S.Content>
     </S.Container>
   );
