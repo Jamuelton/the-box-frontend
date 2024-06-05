@@ -12,3 +12,10 @@ export const hearder = styled.div`
 export const Content = styled.div`
   padding: 1rem;
 `;
+
+export const CardArea = styled.div`
+  width: 80%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+`;
