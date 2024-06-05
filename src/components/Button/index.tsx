@@ -9,6 +9,8 @@ interface ButtonProps {
   shape?: "circle" | "default" | "round";
   buttonFunction?: () => void;
   size?: "large" | "middle" | "small";
+  color?: string;
+  secondColor?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -19,9 +21,13 @@ export const Button: React.FC<ButtonProps> = ({
   shape,
   size,
   buttonFunction,
+  color,
+  secondColor,
 }) => {
   return (
     <S.ButtonArea
+      $color={color}
+      $secondColor={secondColor}
       disabled={disabled}
       icon={icon}
       loading={loading}

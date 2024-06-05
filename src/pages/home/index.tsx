@@ -5,10 +5,12 @@ import {
   FileText,
   FolderSimple,
   MapPinArea,
+  UserCircle,
 } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { InfoCard } from "../../features/home/InfoCard";
 import * as S from "./styles";
+import { Button } from "../../components/Button";
 
 export function Home() {
   const infocardlist = [
@@ -42,7 +44,16 @@ export function Home() {
     <S.Container>
       <S.hearder>header</S.hearder>
       <S.Content>
-        <Title text={"Pagina Inicial"} />
+        <Title
+          text={"Pagina Inicial"}
+          item={
+            <Button
+              label={"Ver Perfil"}
+              icon={<UserCircle size={32} weight="duotone" />}
+              shape="round"
+            />
+          }
+        />
         <section>
           <S.CardArea>
             {infocardlist.map((item, index) => (
