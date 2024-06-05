@@ -2,12 +2,8 @@ import { Carousel } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100dvw;
-  height: 100dvh;
-`;
-
-export const hearder = styled.div`
-  height: 10%;
+  width: 100%;
+  height: 100%;
 `;
 
 export const Form = styled.section`

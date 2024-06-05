@@ -4,6 +4,7 @@ import * as S from "./styles";
 import { Button } from "../../components/Button";
 import { Card } from "../../components/Card/Index";
 import { useState } from "react";
+import { Title } from "../../components/Title";
 
 export function Login() {
   const [email, setEmail] = useState<string>();
@@ -78,7 +79,6 @@ export function Login() {
   };
   return (
     <S.Container>
-      <S.hearder>header</S.hearder>
       <S.Form>
         <S.TextArea>
           <div>
@@ -127,9 +127,7 @@ export function Login() {
         </S.LoginArea>
       </S.Form>
       <S.About>
-        <div>
-          <h2>Sobre</h2>
-        </div>
+        <Title text={"Sobre"} />
         <S.CarouselArea {...settings}>
           {portalCards.map((item, index) => (
             <section>
