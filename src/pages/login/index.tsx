@@ -130,8 +130,13 @@ export function Login() {
         <Title text={"Sobre"} />
         <S.CarouselArea {...settings}>
           {portalCards.map((item, index) => (
-            <section>
-              <Card key={index} title={item.title} content={item.content} />
+            <section key={index}>
+              <Card
+                key={index}
+                title={item.title}
+                content={item.content}
+                rateCard={false}
+              />
             </section>
           ))}
         </S.CarouselArea>

@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
         ) : (
           <S.info>
             <S.link href="#">Sobre</S.link>
-            <S.link href="#">Cadastre-se</S.link>
+            <S.link href="/register">Cadastre-se</S.link>
           </S.info>
         )}
       </S.headerArea>
