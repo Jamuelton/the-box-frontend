@@ -42,7 +42,6 @@ export function Home() {
 
   return (
     <S.Container>
-      <S.hearder>header</S.hearder>
       <S.Content>
         <Title
           text={"Pagina Inicial"}
