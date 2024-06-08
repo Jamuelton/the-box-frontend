@@ -1,12 +1,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100dvw;
-  height: 100dvh;
-`;
-
-export const hearder = styled.div`
-  height: 10%;
+  width: 100%;
 `;
 
 export const Content = styled.div`
@@ -14,7 +9,6 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  height: 90%;
 
   section {
     height: 100%;
