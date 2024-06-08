@@ -23,6 +23,10 @@ export const InputArea = styled(Input)`
   }
 
   background: var(--gray-100) !important;
+
+  svg {
+    cursor: pointer;
+  }
 `;
 
 export const Label = styled.label`

@@ -2,12 +2,8 @@ import { Carousel } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 100dvw;
-  height: 100dvh;
-`;
-
-export const hearder = styled.div`
-  height: 10%;
+  width: 100%;
+  height: 100%;
 `;
 
 export const Form = styled.section`
@@ -113,19 +109,19 @@ export const LoginFormPassword = styled.div`
   align-items: center;
   gap: 1rem;
 
-  span {
-    text-decoration: underline;
-    font-size: small;
-    align-self: flex-end;
-    cursor: pointer;
-  }
-
   @media (min-width: 426px) and (max-width: 1023px) {
     flex-direction: row;
   }
   @media (min-width: 1024px) {
     flex-direction: row;
   }
+`;
+
+export const ForgotPassText = styled.label`
+  text-decoration: underline;
+  font-size: small;
+  align-self: flex-end;
+  cursor: pointer;
 `;
 
 export const LoginFormButton = styled.div`
