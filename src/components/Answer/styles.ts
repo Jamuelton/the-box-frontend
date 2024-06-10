@@ -10,16 +10,12 @@ export const Container = styled.div<IAnswer>`
 
 export const AnswerBaloon = styled.div<IAnswer>`
     background: ${props => props.isAuthor? `#365486`:`#7FC7D9`};
-    width: 75%;
     padding: 2rem;
     border-radius: 1.5rem;
     margin-bottom: 2rem;
 `;
 
 export const Header = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 2rem;
 `;
 

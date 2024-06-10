@@ -75,6 +75,7 @@ function ForumAnswer() {
       });
       return;
     }
+    console.log(answer);
   };
 
   return (
