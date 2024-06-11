@@ -27,6 +27,7 @@ export const InputArea = styled.div`
   flex-direction: column;
   width: 70%;
   gap: 2rem;
+  font-weight: bolder;
 
   .ant-btn {
     padding-left: 1.8rem;
@@ -37,8 +38,9 @@ export const InputArea = styled.div`
   .ant-input {
     background-color: var(--blue-100) !important;
     padding: 0.9rem;
+    font-weight: bolder;
+    color: var(--blue-900);
   }
-
   @media (max-width: 460px) {
     width: 100%;
   }
