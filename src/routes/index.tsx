@@ -5,6 +5,7 @@ import { Home } from "../pages/home";
 import Registration from "../pages/registration";
 import styled from "styled-components";
 import { Header } from "../components/Header";
+import { Forum } from "../pages/forum";
 import ForumAnswer from "../pages/forumAnswer";
 import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
@@ -28,6 +29,9 @@ export const AppRoutes = () => {
             </Route>
             <Route element={<PrivateRoutes redirectPath="/login" />}>
               <Route path="/forum-answer" element={<ForumAnswer />} />
+            </Route>
+            <Route element={<PrivateRoutes redirectPath="/login" />}>
+              <Route path="/forum" element={<Forum />} />
             </Route>
           </Routes>
         </Container>

@@ -1,6 +1,8 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const Container = styled.div<{
+  $extend?: boolean;
+}>`
   background: var(--blue-500);
   display: flex;
   flex-direction: column;
@@ -11,11 +13,11 @@ export const Container = styled.div`
   border-radius: 2rem;
 
   @media (min-width: 426px) and (max-width: 1023px) {
-    width: 40dvw;
+    width: ${(props) => (props.$extend ? "100%" : "40dvw")};
     height: 48dvh;
   }
   @media (min-width: 1024px) {
-    width: 16dvw;
+    width: ${(props) => (props.$extend ? "100%" : "16dvw")};
     height: 44dvh;
   }
 `;
