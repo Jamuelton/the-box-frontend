@@ -12,16 +12,23 @@ import {
   MapPinArea,
   List,
 } from "@phosphor-icons/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../config/auth/UseAuth";
+import { Popover } from "antd";
+import { warningNotification } from "../Notification";
 
 interface HeaderProps {
   username?: string;
-  logged?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
+export const Header: React.FC<HeaderProps> = ({ username }) => {
+  const navigate = useNavigate();
+  const { isAuthenticated, logout, reloadPage } = useAuth();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+
+  console.log(path);
+  console.log(isAuthenticated);
 
   const options = [
     {
@@ -50,21 +57,32 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
     },
   ];
 
+  const logouting = () => {
+    logout();
+    reloadPage();
+    warningNotification("Usuário deslogado!");
+    navigate("/login");
+  };
+
   return (
     <S.Container>
       <S.headerArea>
         <S.logoArea>
           <S.logo src={Logo}></S.logo>
-          {logged ? (
+          {isAuthenticated ? (
             <S.title>Bem vindo, {username}!</S.title>
           ) : (
             <S.title>Portal do Aluno</S.title>
           )}
         </S.logoArea>
-        {logged ? (
+        {isAuthenticated ? (
           <S.icons>
             <Bell size={22}></Bell>
-            <SignOut size={22}></SignOut>
+            <Popover
+              content={<S.LogoutArea onClick={logouting}>Sair</S.LogoutArea>}
+            >
+              <SignOut size={22}></SignOut>
+            </Popover>
             <S.hamburguerSection>
               <List size={22} onClick={() => setHamburguer(!hamburguer)} />
             </S.hamburguerSection>
@@ -76,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
           </S.info>
         )}
       </S.headerArea>
-      {logged && path !== "/home" ? (
+      {isAuthenticated && path !== "/home" ? (
         <S.optionsArea>
           {options.map(({ icon, title }, index) => (
             <S.optionDiv key={index}>
