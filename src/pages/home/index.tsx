@@ -17,26 +17,32 @@ export function Home() {
     {
       text: "Fórum de Discussão",
       icon: <ChatsCircle size={32} color="#7fc7d9" />,
+      link: "/forum",
     },
     {
       text: "Horário dos laboratórios",
       icon: <Clock size={32} color="#7fc7d9" />,
+      link: "/home",
     },
     {
       text: "Materiais de Apoio",
       icon: <FolderSimple size={32} color="#7fc7d9" />,
+      link: "/home",
     },
     {
       text: "Documentações do curso",
       icon: <FileText size={32} color="#7fc7d9" />,
+      link: "/home",
     },
     {
       text: "Calendário Acadêmico",
       icon: <CalendarDots size={32} color="#7fc7d9" />,
+      link: "/home",
     },
     {
       text: "Comércio local",
       icon: <MapPinArea size={32} color="#7fc7d9" />,
+      link: "/home",
     },
   ];
 
@@ -58,7 +64,12 @@ export function Home() {
         <section>
           <S.CardArea>
             {infocardlist.map((item, index) => (
-              <InfoCard key={index} text={item.text} icon={item.icon} />
+              <InfoCard
+                key={index}
+                text={item.text}
+                icon={item.icon}
+                link={item.link}
+              />
             ))}
           </S.CardArea>
         </section>
