@@ -13,9 +13,14 @@ import {
   warningNotification,
 } from "../../components/Notification";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useAuth } from "../../config/auth/UseAuth";
 
 export function Login() {
   const navigate = useNavigate();
+
+  const { auth, reloadPage } = useAuth();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
@@ -90,6 +95,12 @@ export function Login() {
   const login = async () => {
     const response = await LoginUser(AuthData);
     if (response?.status == 200) {
+      const tokenDuration = new Date(Date.now() + 1000 * 60 * 60 * 40);
+      Cookies.set("token", response.data.token, {
+        expires: tokenDuration,
+      });
+      auth();
+      reloadPage();
       successNotification("Usuário logado com sucesso!");
       navigate("/home");
     }
@@ -100,6 +111,7 @@ export function Login() {
       errorNotification("Formato de email incorreto");
     }
   };
+
   return (
     <S.Container>
       <S.Form>
