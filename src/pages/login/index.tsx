@@ -5,10 +5,19 @@ import { Button } from "../../components/Button";
 import { Card } from "../../components/Card/Index";
 import { useState } from "react";
 import { Title } from "../../components/Title";
+import { AuthInterface } from "../../services/Types/authType";
+import { LoginUser } from "../../services/AuthServices";
+import {
+  errorNotification,
+  successNotification,
+  warningNotification,
+} from "../../components/Notification";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const [isPassVisible, setIsPassVisible] = useState<boolean>(false);
 
@@ -73,9 +82,23 @@ export function Login() {
     ],
   };
 
-  const login = () => {
-    console.log(email);
-    console.log(password);
+  const AuthData: AuthInterface = {
+    email: email,
+    password: password,
+  };
+
+  const login = async () => {
+    const response = await LoginUser(AuthData);
+    if (response?.status == 200) {
+      successNotification("Usuário logado com sucesso!");
+      navigate("/home");
+    }
+    if (response?.status === 401) {
+      warningNotification("Email e/ou senha incorretos");
+    }
+    if (response?.status === 422) {
+      errorNotification("Formato de email incorreto");
+    }
   };
   return (
     <S.Container>
