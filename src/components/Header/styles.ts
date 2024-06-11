@@ -129,3 +129,10 @@ export const link = styled.a`
     color: var(--blue-500);
   }
 `;
+
+export const LogoutArea = styled.label`
+  color: #ff0000;
+  text-decoration: underline;
+  font-weight: 700;
+  cursor: pointer;
+`;
