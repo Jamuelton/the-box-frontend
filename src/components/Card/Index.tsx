@@ -7,11 +7,12 @@ interface CardProps {
   title: string;
   content: string;
   rateCard: boolean;
+  extend?: boolean;
 }
 
-export const Card: FC<CardProps> = ({ title, content, rateCard }) => {
+export const Card: FC<CardProps> = ({ extend, title, content, rateCard }) => {
   return (
-    <S.Container>
+    <S.Container $extend={extend}>
       {rateCard && (
         <S.LikeArea>
           <Rate character={<Heart size={24} weight="fill" />} count={1} />
@@ -27,7 +28,6 @@ export const Card: FC<CardProps> = ({ title, content, rateCard }) => {
       {rateCard && (
         <S.ButtonArea>
           <label htmlFor="">Ver detalhes</label>
-
           <ArrowRight size={24} weight="bold" color="#7fc7d9" />
         </S.ButtonArea>
       )}
