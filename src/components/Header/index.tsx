@@ -27,9 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
 
-  console.log(path);
-  console.log(isAuthenticated);
-
   const options = [
     {
       icon: <ChatsCircle size={24} color="#7fc7d9" />,
