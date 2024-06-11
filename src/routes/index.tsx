@@ -5,6 +5,7 @@ import { Home } from "../pages/home";
 import Registration from "../pages/registration";
 import styled from "styled-components";
 import { Header } from "../components/Header";
+import ForumAnswer from "../pages/forumAnswer";
 
 const Container = styled.main`
   height: 100dvh;
@@ -20,6 +21,7 @@ export const AppRoutes = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/home" element={<Home />} />
           <Route path="/register" element={<Registration />} />
+          <Route path="/forum-answer" element={<ForumAnswer/>}/>
         </Routes>
       </Container>
     </BrowserRouter>
