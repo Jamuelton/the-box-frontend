@@ -50,7 +50,7 @@ function Registration() {
   }
 
   const navigateBack = () => {
-    navigate(-1);
+    navigate('/login');
   };
 
   const onFinish: FormProps<unknown>["onFinish"] = async (values) => {
