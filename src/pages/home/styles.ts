@@ -20,6 +20,8 @@ export const Content = styled.div`
     @media (min-width: 426px) and (max-width: 1023px) {
     }
     @media (min-width: 1024px) {
+      justify-content: flex-end;
+      height: 70dvh;
     }
   }
 `;
@@ -28,14 +30,13 @@ export const CardArea = styled.div`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  padding: 1rem;
+  gap: 5rem;
 
   @media (min-width: 426px) and (max-width: 1023px) {
     justify-content: center;
   }
   @media (min-width: 1024px) {
     width: 90%;
-    justify-content: center;
+    justify-content: flex-start;
   }
 `;
