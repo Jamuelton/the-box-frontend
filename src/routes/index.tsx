@@ -12,7 +12,7 @@ import { Profile } from "../pages/profile";
 
 import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
-
+import { DataProvider } from "../config/data/DataProvider";
 
 const Container = styled.main`
   height: 100dvh;
@@ -20,30 +20,31 @@ const Container = styled.main`
 
 export const AppRoutes = () => {
   return (
-
     <AuthProvider>
-      <BrowserRouter>
-        <Container>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Default />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Registration />} />
-          <Route path="/profile" element={<Profile />} />
-            
-            <Route element={<PrivateRoutes redirectPath="/login" />}>
-              <Route path="/home" element={<Home />} />
-            </Route>
-            <Route element={<PrivateRoutes redirectPath="/login" />}>
-              <Route path="/forum-answer" element={<ForumAnswer />} />
-            </Route>
-            <Route element={<PrivateRoutes redirectPath="/login" />}>
-              <Route path="/forum" element={<Forum />} />
-            </Route>
-          </Routes>
-        </Container>
-      </BrowserRouter>
+      <DataProvider>
+        <BrowserRouter>
+          <Container>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Default />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Registration />} />
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/home" element={<Home />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/forum-answer" element={<ForumAnswer />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/forum" element={<Forum />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/profile" element={<Profile />} />
+              </Route>
+            </Routes>
+          </Container>
+        </BrowserRouter>
+      </DataProvider>
     </AuthProvider>
-
   );
 };

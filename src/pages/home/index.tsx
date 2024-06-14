@@ -11,8 +11,11 @@ import { Title } from "../../components/Title";
 import { InfoCard } from "../../features/home/InfoCard";
 import * as S from "./styles";
 import { Button } from "../../components/Button";
+import { useNavigate } from "react-router-dom";
 
 export function Home() {
+  const navigate = useNavigate();
+
   const infocardlist = [
     {
       text: "Fórum de Discussão",
@@ -46,6 +49,9 @@ export function Home() {
     },
   ];
 
+  const sendToProfile = () => {
+    navigate("/profile");
+  };
   return (
     <S.Container>
       <S.Content>
@@ -58,6 +64,7 @@ export function Home() {
               shape="round"
               color="#365486"
               secondColor=" #7fc7d9"
+              buttonFunction={sendToProfile}
             />
           }
         />
