@@ -75,17 +75,13 @@ export const CustomForm = styled(Form)`
   width: 50em;
   padding: 2em;
   border-radius: 1em;
-  justify-content: center;
   background-color: #7fc7d9;
-  @media (max-width: 450px) {
-    padding: 1em;
-    margin: 1em;
+
+  @media (max-width: 768px) {
+    border-radius: 0px;
+    width: 100%;
   }
-  @media (max-width: 390px) {
-    padding: 1em;
-    margin: 1em;
-    margin-top: 9em;
-  }
+
 `;
 
 export const Grid = styled.div`
@@ -93,6 +89,9 @@ export const Grid = styled.div`
   grid-template-columns: 1fr 1fr;
   row-gap: 0.5em;
   column-gap: 1.5em;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const PassowrdCheck = styled(Space)`
