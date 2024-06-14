@@ -4,9 +4,9 @@ import { ArrowRight, Heart } from "@phosphor-icons/react";
 import { Rate } from "antd";
 
 interface CardProps {
-  title: string;
-  content: string;
-  rateCard: boolean;
+  title?: string;
+  content?: string;
+  rateCard?: boolean;
   extend?: boolean;
 }
 

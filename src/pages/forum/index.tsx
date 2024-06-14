@@ -6,14 +6,24 @@ import { SearchInput } from "../../components/Search";
 import { Title } from "../../components/Title/";
 import { List, Plus, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../../components/Input";
+import { createPost, getPosts } from "../../services/ForumServices";
+import { CategoryEnum, ForumInterface } from "../../services/Types/forumTypes";
+import {
+  errorNotification,
+  successNotification,
+} from "../../components/Notification";
 
 export function Forum() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
 
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [post, setPost] = useState<ForumInterface[]>([]);
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [category, setCategory] = useState<CategoryEnum>();
   const items: MenuProps["items"] = [
     {
       key: 1,
@@ -66,6 +76,44 @@ export function Forum() {
       label: "Quantidade de Curtidas",
     },
   ];
+
+  const handleSelectChange = (value: unknown) => {
+    if (Object.values(CategoryEnum).includes(value as CategoryEnum)) {
+      setCategory(value as CategoryEnum);
+    }
+  };
+
+  const getPost = async () => {
+    const response = await getPosts();
+    if (response?.status == 200) {
+      setPost(response.data);
+    } else {
+      errorNotification("Não foi possível carregar os posts");
+    }
+  };
+
+  const ForumData: ForumInterface = {
+    title: title,
+    content: content,
+    category: category,
+    user_id: 1,
+  };
+
+  const createPosts = async () => {
+    const response = await createPost(ForumData);
+    if (response?.status == 200) {
+      successNotification("Post publicado com sucesso");
+      setModalPost(false);
+      getPost();
+    }
+    if (response?.status == 400) {
+      errorNotification("Não foi possível criar post");
+    }
+  };
+
+  useEffect(() => {
+    getPost();
+  }, []);
   return (
     <S.Container>
       <S.Title>
@@ -90,9 +138,19 @@ export function Forum() {
         </span>
       </S.ButtonsArea>
       <S.CardArea>
-        <Card title="dfvdffdf" content="fgdfd" rateCard={true} extend={true} />
-        <Card title="dfvdffdf" content="fgdfd" rateCard={true} extend={true} />
-        <Card title="dfvdffdf" content="fgdfd" rateCard={true} extend={true} />
+        {post.length > 0 ? (
+          post.map(({ title, content }, index) => (
+            <Card
+              key={index}
+              title={title}
+              content={content}
+              rateCard={true}
+              extend={true}
+            />
+          ))
+        ) : (
+          <S.NoPost>Publique um post no fórum</S.NoPost>
+        )}
       </S.CardArea>
       <S.ModalArea
         open={modalFiltro}
@@ -118,8 +176,10 @@ export function Forum() {
         closeIcon={<XCircle size={22} weight="bold" color="#23335e" />}
         footer={
           <S.TextAreaFooter>
-            <S.TextAreaCancelBtn>Cancelar</S.TextAreaCancelBtn>
-            <S.TextAreaOkBtn>Publicar</S.TextAreaOkBtn>
+            <S.TextAreaCancelBtn onClick={() => setModalPost(false)}>
+              Cancelar
+            </S.TextAreaCancelBtn>
+            <S.TextAreaOkBtn onClick={createPosts}>Publicar</S.TextAreaOkBtn>
           </S.TextAreaFooter>
         }
       >
@@ -127,15 +187,19 @@ export function Forum() {
           <div>
             <h3>Título *</h3>
             <S.newPostDiv>
-              <Input placeHolder="Título"></Input>
+              <Input
+                placeHolder="Título"
+                inputFunction={(e) => setTitle(e.target.value)}
+              ></Input>
               <S.SelectArea
                 placeholder="Categoria"
                 style={{ width: 120 }}
-                // onChange={handleChange}
+                onChange={handleSelectChange}
                 options={[
-                  { value: "jack", label: "Estudo" },
-                  { value: "lucy", label: "Universidade" },
-                  { value: "Yiminghe", label: "Dúvida" },
+                  { value: "TECHNOLOGY", label: "Tecnologia" },
+                  { value: "UNIVERSITY", label: "Universidade" },
+                  { value: "LIFESTYLE", label: "Lifestyle" },
+                  { value: "RESEARCH", label: "Pesquisa" },
                 ]}
               />
             </S.newPostDiv>
@@ -145,6 +209,9 @@ export function Forum() {
             <S.TextAreaContainer
               placeholder="Sua publicação..."
               rows={8}
+              onChange={(e) => {
+                setContent(e.target.value);
+              }}
             ></S.TextAreaContainer>
           </div>
         </S.newPostContent>

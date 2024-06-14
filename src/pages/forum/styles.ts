@@ -211,3 +211,8 @@ export const hamburguerSection = styled(Dropdown)`
     display: flex;
   }
 `;
+
+export const NoPost = styled.h3`
+  color: var(--blue-700);
+  align-self: center;
+`;

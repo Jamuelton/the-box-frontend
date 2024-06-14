@@ -13,14 +13,12 @@ import { Profile } from "../pages/profile";
 import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
 
-
 const Container = styled.main`
   height: 100dvh;
 `;
 
 export const AppRoutes = () => {
   return (
-
     <AuthProvider>
       <BrowserRouter>
         <Container>
@@ -29,8 +27,8 @@ export const AppRoutes = () => {
             <Route path="/" element={<Default />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
-          <Route path="/profile" element={<Profile />} />
-            
+            <Route path="/profile" element={<Profile />} />
+
             <Route element={<PrivateRoutes redirectPath="/login" />}>
               <Route path="/home" element={<Home />} />
             </Route>
@@ -44,6 +42,5 @@ export const AppRoutes = () => {
         </Container>
       </BrowserRouter>
     </AuthProvider>
-
   );
 };
