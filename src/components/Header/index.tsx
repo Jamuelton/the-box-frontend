@@ -27,33 +27,36 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
 
-  console.log(path);
-  console.log(isAuthenticated);
-
   const options = [
     {
       icon: <ChatsCircle size={24} color="#7fc7d9" />,
       title: "Fórum",
+      link: "/forum",
     },
     {
       icon: <Calendar size={24} color="#7fc7d9" />,
       title: "Calendário Acadêmico",
+      link: "/home",
     },
     {
       icon: <Clock size={24} color="#7fc7d9" />,
       title: "Horários",
+      link: "/home",
     },
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
       title: "Materiais",
+      link: "/home",
     },
     {
       icon: <FileText size={24} color="#7fc7d9" />,
       title: "Documentações",
+      link: "/home",
     },
     {
       icon: <MapPinArea size={24} color="#7fc7d9" />,
       title: "Comércio Local",
+      link: "/home",
     },
   ];
 
