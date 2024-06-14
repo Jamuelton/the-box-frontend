@@ -6,6 +6,7 @@ import Registration from "../pages/registration";
 import styled from "styled-components";
 import { Header } from "../components/Header";
 import { Forum } from "../pages/forum";
+import ForumAnswer from "../pages/forumAnswer";
 
 const Container = styled.main`
   height: 100dvh;
@@ -22,6 +23,7 @@ export const AppRoutes = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/forum" element={<Forum />} />
+          <Route path="/forum-answer" element={<ForumAnswer />} />
         </Routes>
       </Container>
     </BrowserRouter>

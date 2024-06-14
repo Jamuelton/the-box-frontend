@@ -4,7 +4,7 @@ import styled from "styled-components";
 // To-do: Criar arquivo com variáveis com as cores do figma
 
 export const Container = styled.div`
-  height: 100vh;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,7 +73,7 @@ export const RegistrationTitle = styled.h1`
 
 export const CustomForm = styled(Form)`
   width: 50em;
-  padding: 4em;
+  padding: 2em;
   border-radius: 1em;
   justify-content: center;
   background-color: #7fc7d9;
@@ -84,6 +84,7 @@ export const CustomForm = styled(Form)`
   @media (max-width: 390px) {
     padding: 1em;
     margin: 1em;
+    margin-top: 9em;
   }
 `;
 
