@@ -2,9 +2,11 @@ import { createContext, ReactNode, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { GetUser } from "../../services/UserServices";
+import { UserInterface } from "../../services/Types/userType";
 
 interface DataContextType {
   reloadPage: () => void;
+  userInfo: UserInterface | undefined;
 }
 
 interface AuthProviderProps {
@@ -21,13 +23,13 @@ export function DataProvider({ children }: AuthProviderProps) {
   const userId = decoded.sub || "";
 
   const [reload, setReload] = useState<number>(0);
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState<UserInterface | undefined>();
 
   useEffect(() => {
     const getUser = async () => {
       const response = await GetUser(parseInt(userId), token);
       if (response?.status == 200) {
-        console.log(response.data);
+        setUserInfo(response.data);
       }
     };
 
@@ -41,7 +43,7 @@ export function DataProvider({ children }: AuthProviderProps) {
   reload;
 
   return (
-    <DataContext.Provider value={{ reloadPage }}>
+    <DataContext.Provider value={{ reloadPage, userInfo }}>
       {children}
     </DataContext.Provider>
   );

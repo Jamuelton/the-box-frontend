@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { DataContext } from "./DataProvider";
+import { UserInterface } from "../../services/Types/userType";
 
 interface DataContextType {
   reloadPage: () => void;
+  userInfo: UserInterface | undefined;
 }
 
 export function useData(): DataContextType {
