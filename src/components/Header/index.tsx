@@ -12,14 +12,18 @@ import {
   MapPinArea,
   List,
 } from "@phosphor-icons/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../config/auth/UseAuth";
+import { Popover } from "antd";
+import { warningNotification } from "../Notification";
 
 interface HeaderProps {
   username?: string;
-  logged?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
+export const Header: React.FC<HeaderProps> = ({ username }) => {
+  const navigate = useNavigate();
+  const { isAuthenticated, logout, reloadPage } = useAuth();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
 
@@ -27,44 +31,61 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
     {
       icon: <ChatsCircle size={24} color="#7fc7d9" />,
       title: "Fórum",
+      link: "/forum",
     },
     {
       icon: <Calendar size={24} color="#7fc7d9" />,
       title: "Calendário Acadêmico",
+      link: "/home",
     },
     {
       icon: <Clock size={24} color="#7fc7d9" />,
       title: "Horários",
+      link: "/home",
     },
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
       title: "Materiais",
+      link: "/home",
     },
     {
       icon: <FileText size={24} color="#7fc7d9" />,
       title: "Documentações",
+      link: "/home",
     },
     {
       icon: <MapPinArea size={24} color="#7fc7d9" />,
       title: "Comércio Local",
+      link: "/home",
     },
   ];
+
+  const logouting = () => {
+    logout();
+    reloadPage();
+    warningNotification("Usuário deslogado!");
+    navigate("/login");
+  };
 
   return (
     <S.Container>
       <S.headerArea>
         <S.logoArea>
           <S.logo src={Logo}></S.logo>
-          {logged ? (
+          {isAuthenticated ? (
             <S.title>Bem vindo, {username}!</S.title>
           ) : (
             <S.title>Portal do Aluno</S.title>
           )}
         </S.logoArea>
-        {logged ? (
+        {isAuthenticated ? (
           <S.icons>
             <Bell size={22}></Bell>
-            <SignOut size={22}></SignOut>
+            <Popover
+              content={<S.LogoutArea onClick={logouting}>Sair</S.LogoutArea>}
+            >
+              <SignOut size={22}></SignOut>
+            </Popover>
             <S.hamburguerSection>
               <List size={22} onClick={() => setHamburguer(!hamburguer)} />
             </S.hamburguerSection>
@@ -76,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ logged, username }) => {
           </S.info>
         )}
       </S.headerArea>
-      {logged && path !== "/home" ? (
+      {isAuthenticated && path !== "/home" ? (
         <S.optionsArea>
           {options.map(({ icon, title }, index) => (
             <S.optionDiv key={index}>
