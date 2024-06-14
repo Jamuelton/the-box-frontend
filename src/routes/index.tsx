@@ -7,8 +7,12 @@ import styled from "styled-components";
 import { Header } from "../components/Header";
 import { Forum } from "../pages/forum";
 import ForumAnswer from "../pages/forumAnswer";
+
+import { Profile } from "../pages/profile";
+
 import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
+
 
 const Container = styled.main`
   height: 100dvh;
@@ -16,6 +20,7 @@ const Container = styled.main`
 
 export const AppRoutes = () => {
   return (
+
     <AuthProvider>
       <BrowserRouter>
         <Container>
@@ -24,6 +29,8 @@ export const AppRoutes = () => {
             <Route path="/" element={<Default />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Registration />} />
+          <Route path="/profile" element={<Profile />} />
+            
             <Route element={<PrivateRoutes redirectPath="/login" />}>
               <Route path="/home" element={<Home />} />
             </Route>
@@ -37,5 +44,6 @@ export const AppRoutes = () => {
         </Container>
       </BrowserRouter>
     </AuthProvider>
+
   );
 };
