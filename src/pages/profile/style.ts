@@ -13,6 +13,10 @@ export const titlearea = styled.div`
   font-size: 1.4rem;
   gap: 1rem;
   color: var(--blue-900);
+
+  svg {
+    cursor: pointer;
+  }
 `;
 
 export const formArea = styled.div`

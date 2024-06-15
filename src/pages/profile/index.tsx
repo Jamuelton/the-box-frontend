@@ -3,17 +3,58 @@ import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
 import { Title } from "../../components/Title";
 import * as S from "./style";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useData } from "../../config/data/UseData";
+import { PutUser } from "../../services/UserServices";
+import { UserInterface } from "../../services/Types/userType";
+import { useNavigate } from "react-router-dom";
 
 export function Profile() {
-  const [name, setName] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const { userInfo, userId, token, reloadPage } = useData();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userInfo) {
+      setName(userInfo?.name);
+      setEmail(userInfo?.email);
+      setPhone(userInfo?.phone);
+    }
+  }, [userInfo]);
+
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+
+  const [isEdit, setIsEdit] = useState<boolean>();
+
+  const handleSetIsEdit = () => {
+    setIsEdit(!isEdit);
+  };
+
+  const userData: UserInterface = {
+    name: name,
+    email: email,
+    phone: phone,
+  };
+
+  const putUser = async () => {
+    const response = await PutUser(parseInt(userId), token, userData);
+    if (response?.status == 204) {
+      handleSetIsEdit();
+      reloadPage();
+    }
+  };
+
+  const backtoScreen = () => {
+    navigate(-1);
+  };
+
   return (
     <S.Container>
       <S.titlearea>
-        <ArrowCircleLeft size={30} weight="fill" />
-        <Title text="Editar Perfil"></Title>
+        <ArrowCircleLeft size={30} weight="fill" onClick={backtoScreen} />
+        <Title text={isEdit ? "Editar Perfil" : "Perfil do usuário"}></Title>
       </S.titlearea>
       <S.formArea>
         <S.InputArea>
@@ -24,6 +65,7 @@ export function Profile() {
             inputFunction={(e) => {
               setName(e.target.value);
             }}
+            disabled={!isEdit}
           ></Input>
           <Input
             value={email}
@@ -32,16 +74,21 @@ export function Profile() {
             inputFunction={(e) => {
               setEmail(e.target.value);
             }}
+            disabled={!isEdit}
           ></Input>
           <Input
-            value={password}
-            label="Senha"
-            placeHolder="**********"
+            value={phone}
+            label="Telefone"
+            placeHolder="(99) 9 9999-9999"
             inputFunction={(e) => {
-              setPassword(e.target.value);
+              setPhone(e.target.value);
             }}
+            disabled={!isEdit}
           ></Input>
-          <Button label="Salvar"></Button>
+          <Button
+            label={isEdit ? "Salvar" : "Editar"}
+            buttonFunction={isEdit ? putUser : handleSetIsEdit}
+          ></Button>
         </S.InputArea>
       </S.formArea>
     </S.Container>
