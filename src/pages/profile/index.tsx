@@ -7,9 +7,12 @@ import { useEffect, useState } from "react";
 import { useData } from "../../config/data/UseData";
 import { PutUser } from "../../services/UserServices";
 import { UserInterface } from "../../services/Types/userType";
+import { useNavigate } from "react-router-dom";
 
 export function Profile() {
   const { userInfo, userId, token, reloadPage } = useData();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (userInfo) {
@@ -43,10 +46,14 @@ export function Profile() {
     }
   };
 
+  const backtoScreen = () => {
+    navigate(-1);
+  };
+
   return (
     <S.Container>
       <S.titlearea>
-        <ArrowCircleLeft size={30} weight="fill" />
+        <ArrowCircleLeft size={30} weight="fill" onClick={backtoScreen} />
         <Title text={isEdit ? "Editar Perfil" : "Perfil do usuário"}></Title>
       </S.titlearea>
       <S.formArea>
