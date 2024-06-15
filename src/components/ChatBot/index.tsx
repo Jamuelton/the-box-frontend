@@ -2,9 +2,11 @@ import { ChatCircleDots, PaperPlaneTilt } from "@phosphor-icons/react";
 import * as S from "./styles";
 import { useState } from "react";
 import { Input } from "../Input";
+import { useLocation } from "react-router-dom";
 
 export const ChatBot = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const path = useLocation().pathname;
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -23,6 +25,10 @@ export const ChatBot = () => {
   //   const question = [
   //     { label: "Quais os horários do laborátorio disponivel hoje?" },
   //   ];
+
+  if (path == "/" || path == "/login" || path == "/register") {
+    return null;
+  }
 
   return (
     <S.Container>

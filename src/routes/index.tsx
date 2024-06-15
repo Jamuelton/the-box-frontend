@@ -13,6 +13,7 @@ import { Profile } from "../pages/profile";
 import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
+import { ChatBot } from "../components/ChatBot";
 
 const Container = styled.main`
   height: 100dvh;
@@ -42,6 +43,7 @@ export const AppRoutes = () => {
                 <Route path="/profile" element={<Profile />} />
               </Route>
             </Routes>
+            <ChatBot />
           </Container>
         </BrowserRouter>
       </DataProvider>

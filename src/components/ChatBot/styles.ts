@@ -8,6 +8,10 @@ export const OpenChatButton = styled(FloatButton)`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .ant-float-btn-body {
+    background: var(--blue-300);
+  }
 `;
 
 export const Chat = styled(Modal)`

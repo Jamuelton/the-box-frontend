@@ -12,7 +12,6 @@ import { InfoCard } from "../../features/home/InfoCard";
 import * as S from "./styles";
 import { Button } from "../../components/Button";
 import { useNavigate } from "react-router-dom";
-import { ChatBot } from "../../components/ChatBot";
 
 export function Home() {
   const navigate = useNavigate();
@@ -81,7 +80,6 @@ export function Home() {
             ))}
           </S.CardArea>
         </section>
-        <ChatBot />
       </S.Content>
     </S.Container>
   );
