@@ -5,24 +5,42 @@ import { Title } from "../../components/Title";
 import * as S from "./style";
 import { useEffect, useState } from "react";
 import { useData } from "../../config/data/UseData";
+import { PutUser } from "../../services/UserServices";
+import { UserInterface } from "../../services/Types/userType";
 
 export function Profile() {
-  const { userInfo } = useData();
+  const { userInfo, userId, token, reloadPage } = useData();
 
   useEffect(() => {
-    setName(userInfo?.name);
-    setEmail(userInfo?.email);
-    setPhone(userInfo?.phone);
+    if (userInfo) {
+      setName(userInfo?.name);
+      setEmail(userInfo?.email);
+      setPhone(userInfo?.phone);
+    }
   }, [userInfo]);
 
-  const [name, setName] = useState<string>();
-  const [email, setEmail] = useState<string>();
-  const [phone, setPhone] = useState<string>();
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
 
   const [isEdit, setIsEdit] = useState<boolean>();
 
   const handleSetIsEdit = () => {
     setIsEdit(!isEdit);
+  };
+
+  const userData: UserInterface = {
+    name: name,
+    email: email,
+    phone: phone,
+  };
+
+  const putUser = async () => {
+    const response = await PutUser(parseInt(userId), token, userData);
+    if (response?.status == 204) {
+      handleSetIsEdit();
+      reloadPage();
+    }
   };
 
   return (
@@ -62,7 +80,7 @@ export function Profile() {
           ></Input>
           <Button
             label={isEdit ? "Salvar" : "Editar"}
-            buttonFunction={handleSetIsEdit}
+            buttonFunction={isEdit ? putUser : handleSetIsEdit}
           ></Button>
         </S.InputArea>
       </S.formArea>

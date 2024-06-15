@@ -5,6 +5,8 @@ import { UserInterface } from "../../services/Types/userType";
 interface DataContextType {
   reloadPage: () => void;
   userInfo: UserInterface | undefined;
+  userId: string;
+  token: string;
 }
 
 export function useData(): DataContextType {

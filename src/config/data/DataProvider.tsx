@@ -7,6 +7,8 @@ import { UserInterface } from "../../services/Types/userType";
 interface DataContextType {
   reloadPage: () => void;
   userInfo: UserInterface | undefined;
+  userId: string;
+  token: string;
 }
 
 interface AuthProviderProps {
@@ -43,7 +45,7 @@ export function DataProvider({ children }: AuthProviderProps) {
   reload;
 
   return (
-    <DataContext.Provider value={{ reloadPage, userInfo }}>
+    <DataContext.Provider value={{ reloadPage, userInfo, userId, token }}>
       {children}
     </DataContext.Provider>
   );
