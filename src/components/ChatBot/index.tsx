@@ -17,6 +17,13 @@ export const ChatBot = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  //   const answer = [{ label: "Como poderia ajudar hoje?" }];
+
+  //   const question = [
+  //     { label: "Quais os horários do laborátorio disponivel hoje?" },
+  //   ];
+
   return (
     <S.Container>
       <S.OpenChatButton
@@ -34,7 +41,15 @@ export const ChatBot = () => {
             <PaperPlaneTilt size={24} weight="fill" />
           </>
         }
-      ></S.Chat>
+      >
+        <S.ChatLabel>
+          <p>Como poderia te ajudar hoje?</p>
+        </S.ChatLabel>
+        <S.userLabel>
+          <label htmlFor="">Você</label>
+          <p>Quais os horários do laborátorio disponivel hoje?</p>
+        </S.userLabel>
+      </S.Chat>
     </S.Container>
   );
 };
