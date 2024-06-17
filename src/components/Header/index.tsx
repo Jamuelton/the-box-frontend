@@ -11,6 +11,7 @@ import {
   FileText,
   MapPinArea,
   List,
+  XCircle,
 } from "@phosphor-icons/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/auth/UseAuth";
@@ -26,6 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
   const { isAuthenticated, logout, reloadPage } = useAuth();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [notificationModal, setNotificationModal] = useState<boolean>(false);
 
   const options = [
     {
@@ -67,6 +69,36 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
     navigate("/login");
   };
 
+  const notifications = [
+    {
+      key: 1,
+      title: "Lorem ipsum",
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus metus elit, luctus...",
+    },
+    {
+      key: 2,
+      title: "Lorem ipsum",
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus metus elit, luctus...",
+    },
+    {
+      key: 3,
+      title: "dfjkfhjkdhfjkd",
+      content: "ldksjfkjfks",
+    },
+    {
+      key: 4,
+      title: "dfjkfhjkdhfjkd",
+      content: "ldksjfkjfks",
+    },
+    {
+      key: 5,
+      title: "dfjkfhjkdhfjkd",
+      content: "ldksjfkjfks",
+    },
+  ];
+
   return (
     <S.Container>
       <S.headerArea>
@@ -80,7 +112,10 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
         </S.logoArea>
         {isAuthenticated ? (
           <S.icons>
-            <Bell size={22}></Bell>
+            <Bell
+              size={22}
+              onClick={() => setNotificationModal(!notificationModal)}
+            ></Bell>
             <Popover
               content={<S.LogoutArea onClick={logouting}>Sair</S.LogoutArea>}
             >
@@ -119,6 +154,27 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
           ))}
         </S.hamburguerOptions>
       )}
+      <S.NotificationModal
+        open={notificationModal}
+        onCancel={() => setNotificationModal(false)}
+        footer={<></>}
+        title="Notificações"
+        closeIcon={<></>}
+        width={600}
+      >
+        <S.Clean>Limpar</S.Clean>
+        <S.ModalContent>
+          {notifications.map(({ title, content, key }) => (
+            <S.ModalCard key={key}>
+              <div>
+                <h3>{title}</h3>
+                <XCircle size={27} weight="bold" color="#23335e" />
+              </div>
+              <p>{content}</p>
+            </S.ModalCard>
+          ))}
+        </S.ModalContent>
+      </S.NotificationModal>
     </S.Container>
   );
 };
