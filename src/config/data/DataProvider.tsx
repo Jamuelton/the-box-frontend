@@ -30,7 +30,6 @@ export function DataProvider({ children }: AuthProviderProps) {
     if (token) {
       const decoded = jwtDecode(token);
       const userId = decoded.sub || "";
-
       const getUser = async () => {
         const response = await GetUser(parseInt(userId), token);
         if (response?.status == 200) {
