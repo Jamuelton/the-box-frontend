@@ -27,11 +27,10 @@ export function DataProvider({ children }: AuthProviderProps) {
   const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
-    console.log("fez");
     if (token) {
       const decoded = jwtDecode(token);
       const userId = decoded.sub || "";
-      console.log(userId);
+
       const getUser = async () => {
         const response = await GetUser(parseInt(userId), token);
         if (response?.status == 200) {
