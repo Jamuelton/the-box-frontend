@@ -6,8 +6,18 @@ import * as S from "./style";
 import { useEffect, useState } from "react";
 import { useData } from "../../config/data/UseData";
 import { PutUser } from "../../services/UserServices";
-import { UserInterface } from "../../services/Types/userType";
+import { UserSchema } from "../../services/Types/userType";
 import { useNavigate } from "react-router-dom";
+import { ZodError } from "zod";
+import {
+  successNotification,
+  warningNotification,
+} from "../../components/Notification";
+
+interface ErrorInterface {
+  errorType: "" | "warning" | "error" | undefined;
+  errorShow: boolean;
+}
 
 export function Profile() {
   const { userInfo, userId, token, reloadPage } = useData();
@@ -26,23 +36,66 @@ export function Profile() {
   const [email, setEmail] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
 
+  const [errorName, setErrorName] = useState<ErrorInterface>();
+  const [errorEmail, setErrorEmail] = useState<ErrorInterface>();
+  const [errorPhone, setErrorPhone] = useState<ErrorInterface>();
+
   const [isEdit, setIsEdit] = useState<boolean>();
 
   const handleSetIsEdit = () => {
     setIsEdit(!isEdit);
   };
 
-  const userData: UserInterface = {
-    name: name,
-    email: email,
-    phone: phone,
+  const handleChangeName = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    try {
+      UserSchema.shape.name.parse(value);
+      setErrorName({ errorType: "", errorShow: false });
+    } catch (error) {
+      setErrorName({ errorType: "error", errorShow: true });
+    }
+    setName(value);
+  };
+
+  const handleChangeEmail = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    try {
+      UserSchema.shape.email.parse(value);
+      setErrorEmail({ errorType: "", errorShow: false });
+    } catch (error) {
+      setErrorEmail({ errorType: "error", errorShow: true });
+    }
+    setEmail(value);
+  };
+
+  const handleChangePhone = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    try {
+      UserSchema.shape.phone.parse(value);
+      setErrorPhone({ errorType: "", errorShow: false });
+    } catch (error) {
+      setErrorPhone({ errorType: "error", errorShow: true });
+    }
+    setPhone(value);
   };
 
   const putUser = async () => {
-    const response = await PutUser(parseInt(userId), token, userData);
-    if (response?.status == 204) {
-      handleSetIsEdit();
-      reloadPage();
+    try {
+      const userData = UserSchema.parse({
+        name: name,
+        email: email,
+        phone: phone,
+      });
+      const response = await PutUser(parseInt(userId), token, userData);
+      if (response?.status == 204) {
+        handleSetIsEdit();
+        successNotification("Usuário atualizado com sucesso!");
+        reloadPage();
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        warningNotification(error.issues[0].message);
+      }
     }
   };
 
@@ -62,28 +115,33 @@ export function Profile() {
             value={name}
             label="Nome"
             placeHolder="Nome do Usuário"
-            inputFunction={(e) => {
-              setName(e.target.value);
-            }}
+            inputFunction={handleChangeName}
             disabled={!isEdit}
+            status={errorName?.errorType}
+            errorShow={errorName?.errorShow}
+            errorText={"*O nome precisa ter entre 2 e 80 caracteres."}
           ></Input>
           <Input
             value={email}
             label="Email"
             placeHolder="usuario@upe.br"
-            inputFunction={(e) => {
-              setEmail(e.target.value);
-            }}
+            inputFunction={handleChangeEmail}
             disabled={!isEdit}
+            status={errorEmail?.errorType}
+            errorShow={errorEmail?.errorShow}
+            errorText={"*O email precisa ser válido."}
           ></Input>
           <Input
             value={phone}
             label="Telefone"
             placeHolder="(99) 9 9999-9999"
-            inputFunction={(e) => {
-              setPhone(e.target.value);
-            }}
+            inputFunction={handleChangePhone}
             disabled={!isEdit}
+            status={errorPhone?.errorType}
+            errorShow={errorPhone?.errorShow}
+            errorText={
+              "*O telefone precisa ter 11 caracteres e conter apenas números."
+            }
           ></Input>
           <Button
             label={isEdit ? "Salvar" : "Editar"}

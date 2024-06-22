@@ -30,8 +30,6 @@ export const Header: React.FC<HeaderProps> = () => {
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
 
-  console.log(userInfo);
-
   const options = [
     {
       icon: <ChatsCircle size={24} color="#7fc7d9" />,
