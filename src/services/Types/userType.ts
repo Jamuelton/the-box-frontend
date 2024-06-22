@@ -7,6 +7,8 @@ export interface UserInterface {
   profile?: "USER" | "SUPER_USER";
 }
 
+const isNumeric = (val: string) => /^\d+$/.test(val);
+
 export const UserSchema = z.object({
   name: z
     .string({
@@ -23,5 +25,9 @@ export const UserSchema = z.object({
     .string({
       required_error: "O número é obrigatório",
     })
-    .min(8, { message: "Necessário pelo menos 11 caracteres" }),
+    .min(11, { message: "Necessário pelo menos 11 caracteres" })
+    .max(11, { message: "Apenas 11 caracteres permitidos" })
+    .refine(isNumeric, {
+      message: "Deve conter apenas números",
+    }),
 });

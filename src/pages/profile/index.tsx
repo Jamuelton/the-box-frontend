@@ -9,7 +9,10 @@ import { PutUser } from "../../services/UserServices";
 import { UserSchema } from "../../services/Types/userType";
 import { useNavigate } from "react-router-dom";
 import { ZodError } from "zod";
-import { warningNotification } from "../../components/Notification";
+import {
+  successNotification,
+  warningNotification,
+} from "../../components/Notification";
 
 interface ErrorInterface {
   errorType: "" | "warning" | "error" | undefined;
@@ -86,6 +89,7 @@ export function Profile() {
       const response = await PutUser(parseInt(userId), token, userData);
       if (response?.status == 204) {
         handleSetIsEdit();
+        successNotification("Usuário atualizado com sucesso!");
         reloadPage();
       }
     } catch (error) {
@@ -115,7 +119,7 @@ export function Profile() {
             disabled={!isEdit}
             status={errorName?.errorType}
             errorShow={errorName?.errorShow}
-            errorText={"O nome precisa ter entre 2 e 80 caracteres."}
+            errorText={"*O nome precisa ter entre 2 e 80 caracteres."}
           ></Input>
           <Input
             value={email}
@@ -125,7 +129,7 @@ export function Profile() {
             disabled={!isEdit}
             status={errorEmail?.errorType}
             errorShow={errorEmail?.errorShow}
-            errorText={"O email precisa ser válido."}
+            errorText={"*O email precisa ser válido."}
           ></Input>
           <Input
             value={phone}
@@ -135,7 +139,9 @@ export function Profile() {
             disabled={!isEdit}
             status={errorPhone?.errorType}
             errorShow={errorPhone?.errorShow}
-            errorText={"O email precisa ser válido."}
+            errorText={
+              "*O telefone precisa ter 11 caracteres e conter apenas números."
+            }
           ></Input>
           <Button
             label={isEdit ? "Salvar" : "Editar"}
