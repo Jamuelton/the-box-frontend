@@ -144,8 +144,10 @@ export function Forum() {
               key={index}
               title={title}
               content={content}
-              rateCard={true}
+              rateCard={false}
+              like={true}
               extend={true}
+              details={true}
             />
           ))
         ) : (
