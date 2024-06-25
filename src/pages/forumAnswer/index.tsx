@@ -11,7 +11,49 @@ import axios from "axios";
 
 function ForumAnswer() {
   const mockData: IAnswer[] = [
-    // Seu array mockado de dados de resposta aqui
+    {
+      title: "How to learn TypeScript?",
+      username: "johndoe",
+      text: "I recommend starting with the official TypeScript documentation and then practicing by converting a small JavaScript project to TypeScript.",
+      likes: 34,
+      isAuthor: true,
+    },
+    {
+      username: "janedoe",
+      text: "You can also check out some great courses on platforms like Udemy or Coursera. They offer structured learning paths and projects to work on.",
+      likes: 28,
+      isAuthor: false,
+    },
+    {
+      username: "coder123",
+      text: "Don’t forget to use TypeScript's official playground to test out your code snippets. It’s a great way to get hands-on experience.",
+      likes: 15,
+      isAuthor: false,
+    },
+    {
+      username: "typescript_guru",
+      text: "Always enable strict mode in your tsconfig.json to catch common errors and ensure your code is type-safe.",
+      likes: 50,
+      isAuthor: true,
+    },
+    {
+      username: "dev_ninja",
+      text: "Make use of TypeScript’s advanced types like union types, intersection types, and conditional types to write more flexible and robust code.",
+      likes: 22,
+      isAuthor: false,
+    },
+    {
+      username: "webpack_master",
+      text: "You need to install ts-loader and configure it in your webpack.config.js file. Ensure that you also set up a tsconfig.json file for your project.",
+      likes: 30,
+      isAuthor: true,
+    },
+    {
+      username: "frontend_dev",
+      text: "Don’t forget to set resolve.extensions to include .ts and .tsx file extensions in your Webpack configuration.",
+      likes: 18,
+      isAuthor: false,
+    },
   ];
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
