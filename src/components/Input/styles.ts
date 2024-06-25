@@ -35,3 +35,9 @@ export const Label = styled.label`
   justify-content: space-between;
   align-self: start;
 `;
+
+export const Error = styled.label`
+  font-size: 0.85rem;
+  color: red;
+  padding: 0 1rem;
+`;

@@ -16,14 +16,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/auth/UseAuth";
 import { Popover } from "antd";
 import { warningNotification } from "../Notification";
+import { useData } from "../../config/data/UseData";
+import { isAuth } from "../../config/auth/Auth";
 
 interface HeaderProps {
   username?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ username }) => {
+export const Header: React.FC<HeaderProps> = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout, reloadPage } = useAuth();
+  const { userInfo } = useData();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
 
@@ -67,18 +70,22 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
     navigate("/login");
   };
 
+  const sendToHome = () => {
+    navigate("/home");
+  };
+
   return (
     <S.Container>
       <S.headerArea>
         <S.logoArea>
-          <S.logo src={Logo}></S.logo>
-          {isAuthenticated ? (
-            <S.title>Bem vindo, {username}!</S.title>
+          <S.logo src={Logo} onClick={sendToHome}></S.logo>
+          {isAuthenticated || isAuth() ? (
+            <S.title>Bem vindo, {userInfo?.name}!</S.title>
           ) : (
             <S.title>Portal do Aluno</S.title>
           )}
         </S.logoArea>
-        {isAuthenticated ? (
+        {isAuthenticated || isAuth() ? (
           <S.icons>
             <Bell size={22}></Bell>
             <Popover
@@ -97,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
           </S.info>
         )}
       </S.headerArea>
-      {isAuthenticated && path !== "/home" ? (
+      {isAuthenticated || (isAuth() && path !== "/home") ? (
         <S.optionsArea>
           {options.map(({ icon, title }, index) => (
             <S.optionDiv key={index}>

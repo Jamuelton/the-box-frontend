@@ -14,6 +14,8 @@ import {
   errorNotification,
   successNotification,
 } from "../../components/Notification";
+import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
+import { ZodError } from "zod";
 
 export function Forum() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
@@ -24,6 +26,23 @@ export function Forum() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [category, setCategory] = useState<CategoryEnum>();
+
+  interface ErrorInterface {
+    errorShow?: boolean;
+    errorText?: string;
+    status?: "" | "warning" | "error" | undefined;
+  }
+  const [errorTitle, setErrorTitle] = useState<ErrorInterface>({
+    errorShow: false,
+    errorText: "",
+    status: "",
+  });
+  const [errorContent, setErrorContent] = useState<ErrorInterface>({
+    errorShow: false,
+    errorText: "",
+    status: "",
+  });
+
   const items: MenuProps["items"] = [
     {
       key: 1,
@@ -92,6 +111,38 @@ export function Forum() {
     }
   };
 
+  const handleChangeTitle = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    try {
+      ForumPostSchema.shape.title.parse(value);
+      setErrorTitle({ errorShow: false });
+    } catch (error) {
+      setErrorTitle({
+        errorShow: true,
+        errorText: "Insira um título válido (1, 20)",
+        status: "error",
+      });
+    }
+
+    setTitle(value);
+  };
+
+  const handleChangeContent = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    try {
+      ForumPostSchema.shape.content.parse(value);
+      setErrorContent({ errorShow: false });
+    } catch (error) {
+      setErrorContent({
+        errorShow: true,
+        errorText: "Corpo da publicação ínvalido (1, 250)",
+        status: "error",
+      });
+    }
+
+    setContent(value);
+  };
+
   const ForumData: ForumInterface = {
     title: title,
     content: content,
@@ -100,14 +151,22 @@ export function Forum() {
   };
 
   const createPosts = async () => {
-    const response = await createPost(ForumData);
-    if (response?.status == 200) {
-      successNotification("Post publicado com sucesso");
-      setModalPost(false);
-      getPost();
-    }
-    if (response?.status == 400) {
-      errorNotification("Não foi possível criar post");
+    try {
+      ForumPostSchema.parse(ForumData);
+      const response = await createPost(ForumData);
+
+      if (response?.status == 200) {
+        successNotification("Post publicado com sucesso");
+        setModalPost(false);
+        getPost();
+      }
+      if (response?.status == 400) {
+        errorNotification("Não foi possível criar post");
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        errorNotification(error.issues[0].message);
+      }
     }
   };
 
@@ -191,7 +250,10 @@ export function Forum() {
             <S.newPostDiv>
               <Input
                 placeHolder="Título"
-                inputFunction={(e) => setTitle(e.target.value)}
+                inputFunction={handleChangeTitle}
+                status={errorTitle.status}
+                errorShow={errorTitle.errorShow}
+                errorText={errorTitle.errorText}
               ></Input>
               <S.SelectArea
                 placeholder="Categoria"
@@ -211,10 +273,12 @@ export function Forum() {
             <S.TextAreaContainer
               placeholder="Sua publicação..."
               rows={8}
-              onChange={(e) => {
-                setContent(e.target.value);
-              }}
+              onChange={handleChangeContent}
+              status={errorContent.status}
             ></S.TextAreaContainer>
+            {errorContent.errorShow && (
+              <S.TextAreaError>{errorContent.errorText}</S.TextAreaError>
+            )}
           </div>
         </S.newPostContent>
       </S.NewPostModal>

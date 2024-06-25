@@ -174,6 +174,13 @@ export const TextAreaContainer = styled(TextArea)`
   padding: 1rem;
   resize: none !important;
 `;
+
+export const TextAreaError = styled.label`
+  font-size: 0.85rem;
+  color: red;
+  padding: 0 1rem;
+`;
+
 export const TextAreaFooter = styled.div`
   display: flex;
   flex-direction: row;

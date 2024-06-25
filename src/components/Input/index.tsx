@@ -14,6 +14,7 @@ interface InputProps {
   infoText?: string;
   status?: "" | "warning" | "error" | undefined;
   errorShow?: boolean;
+  errorText?: string;
 }
 export const Input: React.FC<InputProps> = ({
   label,
@@ -26,6 +27,8 @@ export const Input: React.FC<InputProps> = ({
   inputFunction,
   status,
   optional,
+  errorText,
+  errorShow,
 }) => {
   return (
     <S.Container>
@@ -40,6 +43,7 @@ export const Input: React.FC<InputProps> = ({
         onChange={inputFunction}
         status={status}
       />
+      {errorShow && <S.Error htmlFor="">{errorText}</S.Error>}
     </S.Container>
   );
 };
