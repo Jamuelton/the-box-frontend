@@ -14,6 +14,7 @@ import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
+import { Documents } from "../pages/documents";
 
 const Container = styled.main`
   height: 100dvh;
@@ -41,6 +42,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/profile" element={<Profile />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/documents" element={<Documents />} />
               </Route>
             </Routes>
             <ChatBot />

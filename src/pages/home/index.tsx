@@ -35,7 +35,7 @@ export function Home() {
     {
       text: "Documentações do curso",
       icon: <FileText size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/documents",
     },
     {
       text: "Calendário Acadêmico",
