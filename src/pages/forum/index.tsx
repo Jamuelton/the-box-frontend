@@ -135,7 +135,7 @@ export function Forum() {
     } catch (error) {
       setErrorContent({
         errorShow: true,
-        errorText: "Corpo da publicação ínvalido (1, 250)",
+        errorText: "Insira um conteúdo válido (1, 250)",
         status: "error",
       });
     }
@@ -234,6 +234,7 @@ export function Forum() {
         open={modalPost}
         onCancel={() => setModalPost(false)}
         title="Novo Post"
+        width={800}
         closeIcon={<XCircle size={22} weight="bold" color="#23335e" />}
         footer={
           <S.TextAreaFooter>

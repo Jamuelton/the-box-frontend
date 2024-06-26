@@ -115,13 +115,12 @@ export const CheckboxArea = styled(Checkbox)`
 `;
 
 export const NewPostModal = styled(Modal)`
-  display: flex;
-  width: 100% !important;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* width: 100% !important; */
+  /* justify-content: center; */
+  /* align-items: center; */
 
   .ant-modal-content {
-    width: 130% !important;
     background-color: var(--blue-100) !important;
     padding-left: 3rem;
     padding-right: 3rem;
@@ -169,13 +168,23 @@ export const SelectArea = styled(Select)`
 `;
 
 export const TextAreaContainer = styled(TextArea)`
-  background-color: var(--gray-100);
+  background-color: var(--gray-100) !important;
   border-radius: 1rem;
   padding: 1rem;
   resize: none !important;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-100);
+  }
+
+  &:hover {
+    border-color: var(--blue-100);
+  }
 `;
 
 export const TextAreaError = styled.label`
+  display: flex;
   font-size: 0.85rem;
   color: red;
   padding: 0 1rem;
