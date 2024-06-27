@@ -7,6 +7,8 @@ import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
 import { useState } from "react";
 import { Input } from "../../components/Input";
+import axios from "axios";
+
 function ForumAnswer() {
   const mockData: IAnswer[] = [
     {
@@ -56,6 +58,7 @@ function ForumAnswer() {
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
+  const userId = 1; // Substitua pelo ID real do usuário que está comentando
 
   const handleChangeAnswer = (e: { target: { value: string } }) => {
     const { value } = e.target;
@@ -66,8 +69,8 @@ function ForumAnswer() {
     setModalOpen(value);
   };
 
-  const submitAnswer = () => {
-    if (answer.length == 0) {
+  const submitAnswer = async () => {
+    if (answer.length === 0) {
       message.open({
         content: "Não é possível enviar uma mensagem vazia",
         type: "error",
@@ -75,8 +78,44 @@ function ForumAnswer() {
       });
       return;
     }
-    console.log(answer);
+  
+    const postId = 1; //id estatico
+  
+    console.log("Enviando dados:", {
+      body: answer,
+      user_id: userId, 
+      post_id: postId, 
+    });
+  
+    try {
+      const response = await axios.post("http://localhost:3000/comment", {
+        body: answer,
+        user_id: userId,
+        post_id: postId,
+      });
+  
+      console.log("Resposta recebida do servidor:", response.data);
+  
+      message.open({
+        content: "Resposta enviada com sucesso",
+        type: "success",
+        duration: 3,
+      });
+  
+      setAnswer(""); 
+    } catch (error) {
+      console.error("Erro ao enviar resposta:", error);
+  
+      message.open({
+        content: "Erro ao enviar resposta",
+        type: "error",
+        duration: 3,
+      });
+    }
   };
+  
+  
+  
 
   return (
     <S.Container>
@@ -90,12 +129,13 @@ function ForumAnswer() {
           buttonFunction={() => handleModalOpen(true)}
         />
         <Modal
-          title="Adicione sua reposta"
+          title="Adicione sua resposta"
           open={modalOpen}
           okText="Publicar"
           cancelText="Cancelar"
           onOk={() => {
-            handleModalOpen(false), submitAnswer();
+            handleModalOpen(false);
+            submitAnswer();
           }}
           onCancel={() => handleModalOpen(false)}
         >
@@ -106,8 +146,8 @@ function ForumAnswer() {
           />
         </Modal>
       </S.ButtonContainer>
-      {mockData.map((answer: IAnswer) => {
-        return <Answer info={answer} />;
+      {mockData.map((answer: IAnswer, index: number) => {
+        return <Answer key={index} info={answer} />;
       })}
     </S.Container>
   );

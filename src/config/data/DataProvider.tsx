@@ -1,13 +1,13 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { GetUser } from "../../services/UserServices";
 import { UserInterface } from "../../services/Types/userType";
+import { useAuth } from "../auth/UseAuth";
 
 interface DataContextType {
   reloadPage: () => void;
   userInfo: UserInterface | undefined;
-  userId: string;
+  userId: string | undefined;
   token: string;
 }
 
@@ -20,23 +20,27 @@ export const DataContext = createContext<DataContextType | undefined>(
 );
 
 export function DataProvider({ children }: AuthProviderProps) {
-  const token = Cookies.get("token") || "";
-  const decoded = jwtDecode(token);
-  const userId = decoded.sub || "";
+  const { token } = useAuth();
 
   const [reload, setReload] = useState<number>(0);
   const [userInfo, setUserInfo] = useState<UserInterface | undefined>();
+  const [userId, setUserId] = useState<string>();
 
   useEffect(() => {
-    const getUser = async () => {
-      const response = await GetUser(parseInt(userId), token);
-      if (response?.status == 200) {
-        setUserInfo(response.data);
-      }
-    };
+    if (token) {
+      const decoded = jwtDecode(token);
+      const userId = decoded.sub || "";
+      const getUser = async () => {
+        const response = await GetUser(parseInt(userId), token);
+        if (response?.status == 200) {
+          setUserInfo(response.data);
+          setUserId(userId);
+        }
+      };
 
-    getUser();
-  }, [userId, reload, token]);
+      getUser();
+    }
+  }, [reload, token]);
 
   function reloadPage() {
     setReload((prev) => prev + 1);
