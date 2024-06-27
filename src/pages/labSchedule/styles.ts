@@ -142,7 +142,7 @@ export const Input = styled.input`
 `;
 
 export const InputDate = styled.div`
-  background-color: #ffff;
+  background-color: #A2B5D4;
   border-radius: 20px;
   padding: 10%;
   border: none;
