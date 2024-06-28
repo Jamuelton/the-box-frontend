@@ -4,16 +4,25 @@ import { ArrowRight, Heart } from "@phosphor-icons/react";
 import { Rate } from "antd";
 
 interface CardProps {
-  title: string;
-  content: string;
-  rateCard: boolean;
+  title?: string;
+  content?: string;
+  rateCard?: boolean;
+  like?: boolean;
   extend?: boolean;
+  details?: boolean;
 }
 
-export const Card: FC<CardProps> = ({ extend, title, content, rateCard }) => {
+export const Card: FC<CardProps> = ({
+  extend,
+  title,
+  content,
+  rateCard,
+  like,
+  details,
+}) => {
   return (
     <S.Container $extend={extend}>
-      {rateCard && (
+      {like && (
         <S.LikeArea>
           <Rate character={<Heart size={24} weight="fill" />} count={1} />
         </S.LikeArea>
@@ -25,7 +34,7 @@ export const Card: FC<CardProps> = ({ extend, title, content, rateCard }) => {
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>
-      {rateCard && (
+      {details && (
         <S.ButtonArea>
           <label htmlFor="">Ver detalhes</label>
           <ArrowRight size={24} weight="bold" color="#7fc7d9" />

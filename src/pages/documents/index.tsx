@@ -113,7 +113,7 @@ export function Documents() {
             key={index}
             title={item.title}
             content={item.content}
-            rateCard={true}
+            details
             extend
           />
         ))}
