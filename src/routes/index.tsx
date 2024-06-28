@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { Header } from "../components/Header";
 import { Forum } from "../pages/forum";
 import ForumAnswer from "../pages/forumAnswer";
-import {LabSchedule} from "../pages/labSchedule/index";
+import { LabSchedule } from "../pages/labSchedule/index";
 
 import { Profile } from "../pages/profile";
 
@@ -15,6 +15,7 @@ import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
+import { Documents } from "../pages/documents";
 
 const Container = styled.main`
   height: 100dvh;
@@ -31,8 +32,6 @@ export const AppRoutes = () => {
               <Route path="/" element={<Default />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Registration />} />
-              <Route path="/profile" element={<Profile />} />
-
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/home" element={<Home />} />
               </Route>
@@ -44,6 +43,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/profile" element={<Profile />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/documents" element={<Documents />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/lab-schedule" element={<LabSchedule />} />
