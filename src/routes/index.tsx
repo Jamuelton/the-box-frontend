@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { Header } from "../components/Header";
 import { Forum } from "../pages/forum";
 import ForumAnswer from "../pages/forumAnswer";
+import {LabSchedule} from "../pages/labSchedule/index";
 
 import { Profile } from "../pages/profile";
 
@@ -41,6 +42,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/profile" element={<Profile />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/lab-schedule" element={<LabSchedule />} />
               </Route>
             </Routes>
             <ChatBot />
