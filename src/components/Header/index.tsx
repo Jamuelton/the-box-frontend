@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
       title: "Materiais",
-      link: "/home",
+      link: "/material",
     },
     {
       icon: <FileText size={24} color="#7fc7d9" />,
@@ -106,8 +106,8 @@ export const Header: React.FC<HeaderProps> = () => {
       </S.headerArea>
       {isAuthenticated || (isAuth() && path !== "/home") ? (
         <S.optionsArea>
-          {options.map(({ icon, title }, index) => (
-            <S.optionDiv key={index}>
+          {options.map(({ icon, title, link }, index) => (
+            <S.optionDiv key={index} onClick={() => navigate(link)}>
               {icon}
               <S.optionTitle>{title}</S.optionTitle>
             </S.optionDiv>
