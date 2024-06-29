@@ -149,6 +149,7 @@ export function LabSchedule() {
           events={calendarEvents}
           style={{ height: "100vh" }}
           onSelectEvent={(event: { start: Date, end: Date, title: string }) => alert(`Evento: ${event.title} - Início: ${moment(event.start).format("DD/MM/YYYY HH:mm")} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`)}
+          onSelectSlot={handleSelect}
         />
         {showModal && (
           <ModalOverlay show={showModal}>
