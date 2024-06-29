@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { Header } from "../components/Header";
 import { Forum } from "../pages/forum";
 import ForumAnswer from "../pages/forumAnswer";
+import { LabSchedule } from "../pages/labSchedule/index";
 
 import { Profile } from "../pages/profile";
 
@@ -15,6 +16,7 @@ import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Material } from "../pages/material";
+import { Documents } from "../pages/documents";
 
 const Container = styled.main`
   height: 100dvh;
@@ -45,6 +47,12 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/material" element={<Material />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/documents" element={<Documents />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/lab-schedule" element={<LabSchedule />} />
               </Route>
             </Routes>
             <ChatBot />

@@ -115,10 +115,10 @@ export const CheckboxArea = styled(Checkbox)`
 `;
 
 export const NewPostModal = styled(Modal)`
-  /* display: flex; */
-  /* width: 100% !important; */
-  /* justify-content: center; */
-  /* align-items: center; */
+  /* /* display: flex; */ */
+  /* /* width: 100% !important; */ */
+  /* /* justify-content: center; */ */
+  /* /* align-items: center; */ */
 
   .ant-modal-content {
     background-color: var(--blue-100) !important;
@@ -168,10 +168,26 @@ export const SelectArea = styled(Select)`
 `;
 
 export const TextAreaContainer = styled(TextArea)`
-  background-color: var(--gray-100) !important;
+  background-color: var(--gray-100) !important !important;
   border-radius: 1rem;
   padding: 1rem;
   resize: none !important;
+
+  &:focus {
+    outline: none;
+    border-color: var(--blue-100);
+  }
+
+  &:hover {
+    border-color: var(--blue-100);
+  }
+`;
+
+export const TextAreaError = styled.label`
+  display: flex;
+  font-size: 0.85rem;
+  color: red;
+  padding: 0 1rem;
 
   &:focus {
     outline: none;
@@ -227,6 +243,11 @@ export const hamburguerSection = styled(Dropdown)`
   @media (max-width: 680px) {
     display: flex;
   }
+`;
+
+export const NoPost = styled.h3`
+  color: var(--blue-700);
+  align-self: center;
 `;
 
 export const NoPost = styled.h3`
