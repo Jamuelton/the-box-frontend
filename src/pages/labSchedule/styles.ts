@@ -133,21 +133,6 @@ export const FormGroup = styled.div`
   margin-bottom: 1rem;
 `;
 
-export const Label = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  color: #070F2B;
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  color: #070F2B;
-  padding: 8px;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px;
-`;
-
 export const InputDate = styled.div`
   background-color: #A2B5D4;
   border-radius: 20px;
