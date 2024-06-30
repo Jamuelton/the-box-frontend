@@ -1,10 +1,9 @@
 import * as S from "./styles";
-import { MenuProps } from "antd";
+import { Button, MenuProps } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
-import { SearchInput } from "../../components/Search";
 import { Title } from "../../components/Title/";
-import { List, Plus, XCircle } from "@phosphor-icons/react";
+import { List, MagnifyingGlass, Plus, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
 import { useEffect, useState } from "react";
 import { Input } from "../../components/Input";
@@ -20,7 +19,8 @@ import { ZodError } from "zod";
 export function Forum() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
-
+  const [ordering, setOrdering] = useState<string>("date");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [post, setPost] = useState<ForumInterface[]>([]);
   const [title, setTitle] = useState<string>("");
@@ -61,15 +61,11 @@ export function Forum() {
       children: [
         {
           key: "2-1",
-          label: "Postados Recentemente",
+          label: "Posts Recentes",
         },
         {
           key: "2-2",
-          label: "Quantidade de Replys",
-        },
-        {
-          key: "2-3",
-          label: "Quantidade de Curtidas",
+          label: "Posts Antigos",
         },
       ],
     },
@@ -78,21 +74,25 @@ export function Forum() {
   const ordenationItems: MenuProps["items"] = [
     {
       key: 1,
-      label: "Postados Recentemente",
+      label: "Posts Recentes",
+      onClick: () => {
+        setOrdering("date");
+        orderPost(post);
+      },
     },
     {
       type: "divider",
     },
     {
       key: 2,
-      label: "Quantidade de Replys",
+      label: "Posts antigos",
+      onClick: () => {
+        setOrdering("replies");
+        orderPost(post);
+      },
     },
     {
       type: "divider",
-    },
-    {
-      key: 3,
-      label: "Quantidade de Curtidas",
     },
   ];
 
@@ -102,10 +102,37 @@ export function Forum() {
     }
   };
 
+  const orderPost = (posts: ForumInterface[]) => {
+    console.log(posts);
+    switch (ordering) {
+      case "date":
+        posts.sort((a, b) => {
+          const dateA = new Date(a.created_at ?? 0).getTime();
+          const dateB = new Date(b.created_at ?? 0).getTime();
+          return dateB - dateA;
+        });
+        break;
+      case "replies":
+        posts.sort((a, b) => {
+          const dateA = new Date(a.created_at ?? 0).getTime();
+          const dateB = new Date(b.created_at ?? 0).getTime();
+          return dateA - dateB;
+        });
+        break;
+      // case "likes":
+      //   sortedPosts.sort((a, b) => b.likes - a.likes);
+      //   break;
+      default:
+        break;
+    }
+
+    setPost(posts);
+  };
+
   const getPost = async () => {
     const response = await getPosts();
     if (response?.status == 200) {
-      setPost(response.data);
+      orderPost(response.data);
     } else {
       errorNotification("Não foi possível carregar os posts");
     }
@@ -150,6 +177,27 @@ export function Forum() {
     user_id: 1,
   };
 
+  const handleSearchTermChange = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setSearchTerm(value);
+  };
+
+  const handleSearchFilter = () => {
+    if (searchTerm.length == 1 || searchTerm.length == 0) {
+      getPost();
+    } else {
+      setPost(
+        post.filter(
+          (post) =>
+            (post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+              false) ||
+            (post.content?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+              false)
+        )
+      );
+    }
+  };
+
   const createPosts = async () => {
     try {
       ForumPostSchema.parse(ForumData);
@@ -186,7 +234,30 @@ export function Forum() {
           <Plus size={20} weight="bold" />
         </S.NewButtonIcon>
         <span>
-          <SearchInput />
+          <span style={{ background: "#f2f2f2", borderRadius: 10, width: 250 }}>
+            <Input
+              placeHolder="Pesquisar"
+              inputFunction={handleSearchTermChange}
+            />
+            <Button
+              onClick={handleSearchFilter}
+              style={{
+                border: "none",
+                boxShadow: "none",
+                background: "transparent",
+              }}
+              icon={
+                <MagnifyingGlass
+                  size={24}
+                  style={{
+                    marginInline: 10,
+                    border: "none",
+                    background: "transparent",
+                  }}
+                />
+              }
+            />
+          </span>
           <S.hamburguerButtons>
             <OrdenationButton items={ordenationItems} placement="bottomRight" />
             <FilterButton buttonFunction={() => setModalFiltro(!modalFiltro)} />
