@@ -26,6 +26,41 @@ export function AcademicCalendar() {
   moment.locale("pt-br");
   const localizer = momentLocalizer(moment);
 
+  const messages = {
+    date: 'Data',
+    time: 'Hora',
+    event: 'Evento',
+    allDay: 'Dia Inteiro',
+    week: 'Semana',
+    work_week: 'Semana de Trabalho',
+    day: 'Dia',
+    month: 'Mês',
+    previous: 'Anterior',
+    next: 'Próximo',
+    yesterday: 'Ontem',
+    tomorrow: 'Amanhã',
+    today: 'Hoje',
+    agenda: 'Agenda',
+    noEventsInRange: 'Não há eventos nesta faixa de datas.',
+    showMore: (total: number) => `+ Ver mais (${total})`
+  };
+
+  const formats = {
+    monthHeaderFormat: "MMMM YYYY",
+    dayHeaderFormat: "dddd, DD/MM/YYYY",
+    dayRangeHeaderFormat: ({ start, end }: { start: Date, end: Date }) => {
+      const startDate = moment(start).format("DD MMMM");
+      const endDate = moment(end).format("DD MMMM YYYY");
+      return `${startDate} - ${endDate}`;
+    },
+    agendaDateFormat: "dddd, DD/MM/YYYY",
+    timeGutterFormat: "HH:mm",
+    dayFormat: "DD/MM/YYYY",
+    dateFormat: "DD",
+    monthFormat: "MMMM YYYY",
+    agendaTimeFormat: "HH:mm"
+  };
+
   const [eventsData, setEventsData] = useState<EventData[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [newEvent, setNewEvent] = useState<EventData>({
@@ -110,6 +145,8 @@ export function AcademicCalendar() {
             style={{ height: "100vh" }}
             onSelectEvent={(event: EventData) => alert(event.title)}
             onSelectSlot={handleSelect}
+            messages={messages}
+            formats={formats}
           />
           <EventModal
             title="Adicionar Novo Evento"
