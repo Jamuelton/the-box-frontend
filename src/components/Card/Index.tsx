@@ -30,7 +30,9 @@ export const Card: FC<CardProps> = ({
 
       <S.TitleArea>
         <S.Title>{title}</S.Title>
+        <S.RateArea>
         {rateCard && <Rate />}
+        </S.RateArea>
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>
