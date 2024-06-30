@@ -19,7 +19,7 @@ import {
 import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
-import { EventData } from "../../services/Types/EventType";
+import { EventData } from "../../services/Types/eventType";
 
 
 export function AcademicCalendar() {
