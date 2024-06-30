@@ -6,6 +6,7 @@ interface AuthContextType {
   auth: () => void;
   logout: () => void;
   reloadPage: () => void;
+  token: string;
 }
 
 export function useAuth(): AuthContextType {

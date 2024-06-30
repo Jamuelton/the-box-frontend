@@ -6,6 +6,7 @@ interface AuthContextType {
   auth: () => void;
   logout: () => void;
   reloadPage: () => void;
+  token: string;
 }
 
 interface AuthProviderProps {
@@ -17,7 +18,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const token = Cookies.get("token");
+  const token = Cookies.get("token") || "";
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [reload, setReload] = useState<number>(0);
@@ -42,7 +43,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   reload;
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, auth, logout, reloadPage }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, auth, logout, reloadPage, token }}
+    >
       {children}
     </AuthContext.Provider>
   );

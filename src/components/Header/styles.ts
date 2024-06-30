@@ -82,6 +82,8 @@ export const logo = styled.img`
   display: flex;
   height: 43px;
   width: 53px;
+
+  cursor: pointer;
 `;
 
 export const info = styled.div`

@@ -6,7 +6,7 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 12px;
+  /* gap: 12px; */
   width: 100%;
 `;
 
@@ -34,4 +34,10 @@ export const Label = styled.label`
   display: flex;
   justify-content: space-between;
   align-self: start;
+`;
+
+export const Error = styled.label`
+  font-size: 0.85rem;
+  color: red;
+  padding: 0 1rem;
 `;

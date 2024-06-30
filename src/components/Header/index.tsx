@@ -17,14 +17,17 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/auth/UseAuth";
 import { Popover } from "antd";
 import { warningNotification } from "../Notification";
+import { useData } from "../../config/data/UseData";
+import { isAuth } from "../../config/auth/Auth";
 
 interface HeaderProps {
   username?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ username }) => {
+export const Header: React.FC<HeaderProps> = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout, reloadPage } = useAuth();
+  const { userInfo } = useData();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [notificationModal, setNotificationModal] = useState<boolean>(false);
@@ -43,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
     {
       icon: <Clock size={24} color="#7fc7d9" />,
       title: "Horários",
-      link: "/home",
+      link: "/lab-schedule",
     },
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
@@ -53,12 +56,12 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
     {
       icon: <FileText size={24} color="#7fc7d9" />,
       title: "Documentações",
-      link: "/home",
+      link: "/documents",
     },
     {
       icon: <MapPinArea size={24} color="#7fc7d9" />,
       title: "Comércio Local",
-      link: "/home",
+      link: "/localCommerce",
     },
   ];
 
@@ -98,19 +101,26 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
       content: "ldksjfkjfks",
     },
   ];
+  const sendToHome = () => {
+    navigate("/home");
+  };
+
+  const sendTo = (path: string) => {
+    navigate(path);
+  };
 
   return (
     <S.Container>
       <S.headerArea>
         <S.logoArea>
-          <S.logo src={Logo}></S.logo>
-          {isAuthenticated ? (
-            <S.title>Bem vindo, {username}!</S.title>
+          <S.logo src={Logo} onClick={sendToHome}></S.logo>
+          {isAuthenticated || isAuth() ? (
+            <S.title>Bem-vindo, {userInfo?.name.split(" ")[0]}!</S.title>
           ) : (
             <S.title>Portal do Aluno</S.title>
           )}
         </S.logoArea>
-        {isAuthenticated ? (
+        {isAuthenticated || isAuth() ? (
           <S.icons>
             <Bell
               size={22}
@@ -132,10 +142,10 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
           </S.info>
         )}
       </S.headerArea>
-      {isAuthenticated && path !== "/home" ? (
+      {isAuthenticated || (isAuth() && path !== "/home") ? (
         <S.optionsArea>
-          {options.map(({ icon, title }, index) => (
-            <S.optionDiv key={index}>
+          {options.map(({ icon, title, link }, index) => (
+            <S.optionDiv key={index} onClick={() => sendTo(link)}>
               {icon}
               <S.optionTitle>{title}</S.optionTitle>
             </S.optionDiv>
@@ -146,8 +156,8 @@ export const Header: React.FC<HeaderProps> = ({ username }) => {
       )}
       {hamburguer && (
         <S.hamburguerOptions>
-          {options.map(({ icon, title }, index) => (
-            <S.hamburguerDiv key={index}>
+          {options.map(({ icon, title, link }, index) => (
+            <S.hamburguerDiv key={index} onClick={() => sendTo(link)}>
               {icon}
               <S.optionTitle>{title}</S.optionTitle>
             </S.hamburguerDiv>
