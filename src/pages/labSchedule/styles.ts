@@ -7,6 +7,13 @@ export const Container = styled.div`
   gap: 0.2rem;
 `;
 
+export const MainDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 2rem;
+`;
+
 export const CustomCalendarContainer = styled.div`
   .rbc-calendar {
     background-color: #DCF2F1;
@@ -53,7 +60,7 @@ export const CustomCalendarContainer = styled.div`
     border: 0.2rem solid white;
   }
   .rbc-today {
-    background-color:  #DCF2F1;
+    background-color:  #A2B5D4;
   }
   .rbc-current-time-indicator {
     background-color: red;

@@ -18,9 +18,11 @@ import {
   ButtonDiv,
   Container,
   Div,
+  MainDiv,
   InputDate
 } from "./styles";
 import { Button } from "../../components/Button";
+import { Title } from "../../components/Title";
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
@@ -127,113 +129,116 @@ export function LabSchedule() {
   );
 
   return (
-    <Container>
-      <DivButton>
-        <Button
-          color="#070F2B"
-          icon={<Plus size={24} />}
-          secondColor="#7FC7D9"
-          label="Adicionar Evento"
-          shape="round"
-          size="small"
-          buttonFunction={() => handleSelect()}
-        />
-      </DivButton>
-      <CustomCalendarContainer>
-        <Calendar
-          views={["day", "week", "month"]}
-          selectable
-          localizer={localizer}
-          defaultDate={new Date()}
-          defaultView="month"
-          events={calendarEvents}
-          style={{ height: "100vh" }}
-          onSelectEvent={(event: { start: Date, end: Date, title: string }) => alert(`Evento: ${event.title} - Início: ${moment(event.start).format("DD/MM/YYYY HH:mm")} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`)}
-          onSelectSlot={handleSelect}
-        />
-        {showModal && (
-          <ModalOverlay show={showModal}>
-            <ModalContent>
-              <ModalHeader>
-                <ModalTitle>Agendar Horário</ModalTitle>
-                <CloseButton onClick={() => setShowModal(false)}>
-                  <XCircle size={24} />
-                </CloseButton>
-              </ModalHeader>
-              <FormGroup>
-                <Label>Título*</Label>
-                <Input
-                  type="text"
-                  placeholder="Insira o título do evento"
-                  value={newEvent.title}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent({ ...newEvent, title: e.target.value })}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Hora de Início*</Label>
-                <Input
-                  type="time"
-                  value={moment(newEvent.startTime).format("HH:mm")}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    const updatedStartTime = new Date(newEvent.startTime);
-                    updatedStartTime.setHours(hours, minutes);
-                    setNewEvent({ ...newEvent, startTime: updatedStartTime });
-                  }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Hora de Término*</Label>
-                <Input
-                  type="time"
-                  value={moment(newEvent.endTime).format("HH:mm")}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    const updatedEndTime = new Date(newEvent.endTime);
-                    updatedEndTime.setHours(hours, minutes);
-                    setNewEvent({ ...newEvent, endTime: updatedEndTime });
-                  }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Selecione os Dias*</Label>
-                <Input
-                  type="date"
-                  onChange={handleDayChange}
-                />
-                <Div>
-                  {newEvent.dates.map((day, index) => (
-                    <InputDiv key={index}>
-                          <InputDate >
-                            <span>{moment(day).format("DD/MM/YYYY")}</span>
-                            <CloseButton onClick={() => removeDay(day)} >&times;</CloseButton>
-                          </InputDate>
-                    </InputDiv>
-                  ))}
-                </Div>
-              </FormGroup>
-              <ButtonDiv>
-                <Button
-                  color="#ffff"
-                  secondColor="#070F2B"
-                  label="Cancelar"
-                  shape="round"
-                  size="small"
-                  buttonFunction={() => setShowModal(false)}
-                />
-                <Button
-                  color="#070F2B"
-                  secondColor="#7FC7D9"
-                  label="Adicionar"
-                  shape="round"
-                  size="small"
-                  buttonFunction={handleSave}
-                />
-              </ButtonDiv>
-            </ModalContent>
-          </ModalOverlay>
-        )}
-      </CustomCalendarContainer>
-    </Container>
+    <MainDiv>
+      <Title text="Horário dos Laboratórios"></Title>
+      <Container>
+        <DivButton>
+          <Button
+            color="#070F2B"
+            icon={<Plus size={24} />}
+            secondColor="#7FC7D9"
+            label="Adicionar Evento"
+            shape="round"
+            size="small"
+            buttonFunction={() => handleSelect()}
+          />
+        </DivButton>
+        <CustomCalendarContainer>
+          <Calendar
+            views={["day", "week", "month"]}
+            selectable
+            localizer={localizer}
+            defaultDate={new Date()}
+            defaultView="month"
+            events={calendarEvents}
+            style={{ height: "100vh" }}
+            onSelectEvent={(event: { start: Date, end: Date, title: string }) => alert(`Evento: ${event.title} - Início: ${moment(event.start).format("DD/MM/YYYY HH:mm")} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`)}
+            onSelectSlot={handleSelect}
+          />
+          {showModal && (
+            <ModalOverlay show={showModal}>
+              <ModalContent>
+                <ModalHeader>
+                  <ModalTitle>Agendar Horário</ModalTitle>
+                  <CloseButton onClick={() => setShowModal(false)}>
+                    <XCircle size={24} />
+                  </CloseButton>
+                </ModalHeader>
+                <FormGroup>
+                  <Label>Título*</Label>
+                  <Input
+                    type="text"
+                    placeholder="Insira o título do evento"
+                    value={newEvent.title}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent({ ...newEvent, title: e.target.value })}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Hora de Início*</Label>
+                  <Input
+                    type="time"
+                    value={moment(newEvent.startTime).format("HH:mm")}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const [hours, minutes] = e.target.value.split(":").map(Number);
+                      const updatedStartTime = new Date(newEvent.startTime);
+                      updatedStartTime.setHours(hours, minutes);
+                      setNewEvent({ ...newEvent, startTime: updatedStartTime });
+                    }}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Hora de Término*</Label>
+                  <Input
+                    type="time"
+                    value={moment(newEvent.endTime).format("HH:mm")}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const [hours, minutes] = e.target.value.split(":").map(Number);
+                      const updatedEndTime = new Date(newEvent.endTime);
+                      updatedEndTime.setHours(hours, minutes);
+                      setNewEvent({ ...newEvent, endTime: updatedEndTime });
+                    }}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Selecione os Dias*</Label>
+                  <Input
+                    type="date"
+                    onChange={handleDayChange}
+                  />
+                  <Div>
+                    {newEvent.dates.map((day, index) => (
+                      <InputDiv key={index}>
+                            <InputDate >
+                              <span>{moment(day).format("DD/MM/YYYY")}</span>
+                              <CloseButton onClick={() => removeDay(day)} >&times;</CloseButton>
+                            </InputDate>
+                      </InputDiv>
+                    ))}
+                  </Div>
+                </FormGroup>
+                <ButtonDiv>
+                  <Button
+                    color="#ffff"
+                    secondColor="#070F2B"
+                    label="Cancelar"
+                    shape="round"
+                    size="small"
+                    buttonFunction={() => setShowModal(false)}
+                  />
+                  <Button
+                    color="#070F2B"
+                    secondColor="#7FC7D9"
+                    label="Adicionar"
+                    shape="round"
+                    size="small"
+                    buttonFunction={handleSave}
+                  />
+                </ButtonDiv>
+              </ModalContent>
+            </ModalOverlay>
+          )}
+        </CustomCalendarContainer>
+      </Container>
+    </MainDiv>
   );
 }
