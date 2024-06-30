@@ -25,7 +25,7 @@ export function Home() {
     {
       text: "Horário dos laboratórios",
       icon: <Clock size={32} color="#7fc7d9" />,
-      link: "/lab-schedule",
+      link: "/home",
     },
     {
       text: "Materiais de Apoio",
