@@ -1,4 +1,4 @@
-import { MenuProps, Upload, UploadFile } from "antd";
+import { MenuProps, Upload } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
 import { SearchInput } from "../../components/Search";
@@ -21,7 +21,7 @@ export function Material() {
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [archiveName, setArchiveName] = useState<string>();
   const [archiveDescription, setArchiveDescription] = useState<string>();
-  const [file, setFile] = useState<UploadFile>();
+  // const [file, setFile] = useState<UploadFile>();
   const { userInfo } = useData();
   const userProfile = userInfo?.profile;
 
@@ -77,19 +77,27 @@ export function Material() {
       ],
     },
   ];
+  const handleDescription = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setArchiveDescription(value);
+  };
+  const handleName = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setArchiveName(value);
+  };
 
   const { Dragger } = Upload;
 
   const props: UploadProps = {
     name: "file",
     multiple: false,
-    beforeUpload(file) {
-      const isPDF = file.type === "application/pdf";
-      if (!isPDF) {
-        errorNotification("You can only upload PDF file!");
-      }
-      return false;
-    },
+    // beforeUpload(file) {
+    //   const isPDF = file.type === "application/pdf";
+    //   if (!isPDF) {
+    //     errorNotification("You can only upload PDF file!");
+    //   }
+    //   return false;
+    // },
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
@@ -106,6 +114,7 @@ export function Material() {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
+
   return (
     <S.Container>
       <S.TitleArea>
@@ -147,13 +156,17 @@ export function Material() {
           extend={true}
           title="Material de Apoio"
           content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          rateCard={false}
+          download={true}
+          edit={userProfile == "SUPER_USER"}
+          editFunction={() => setAttachModal(true)}
         ></Card>
         <Card
           extend={true}
           title="Material de Apoio"
           content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          rateCard={false}
+          download={true}
+          edit={userProfile == "SUPER_USER"}
+          editFunction={() => setAttachModal(true)}
         ></Card>
       </S.CardArea>
       <S.ModalFilterArea
@@ -201,11 +214,13 @@ export function Material() {
           <Input
             label="Nome do Arquivo*"
             value={archiveName}
-            inputFunction={(e) => setArchiveName(e)}
+            inputFunction={handleName}
           ></Input>
           <Input
             label="Descrição do Arquivo*"
             placeHolder="Escreva algo..."
+            inputFunction={handleDescription}
+            value={archiveDescription}
           ></Input>
         </S.AttachModalContent>
       </S.AttachModal>
