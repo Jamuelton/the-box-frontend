@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <Clock size={24} color="#7fc7d9" />,
       title: "Horários",
-      link: "/home",
+      link: "/lab-schedule",
     },
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
