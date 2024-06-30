@@ -19,7 +19,6 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const token = Cookies.get("token") || "";
-  console.log(token);
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [reload, setReload] = useState<number>(0);

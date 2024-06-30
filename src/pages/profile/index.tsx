@@ -10,6 +10,7 @@ import { UserSchema } from "../../services/Types/userType";
 import { useNavigate } from "react-router-dom";
 import { ZodError } from "zod";
 import {
+  errorNotification,
   successNotification,
   warningNotification,
 } from "../../components/Notification";
@@ -91,6 +92,12 @@ export function Profile() {
         handleSetIsEdit();
         successNotification("Usuário atualizado com sucesso!");
         reloadPage();
+      }
+      if (
+        response?.status == 400 &&
+        response.data.error.meta.target[0] == "email"
+      ) {
+        errorNotification("Email inválido!");
       }
     } catch (error) {
       if (error instanceof ZodError) {
