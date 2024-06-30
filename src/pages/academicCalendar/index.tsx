@@ -19,12 +19,8 @@ import {
 import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
+import { EventData } from "../../services/Types/EventType";
 
-type EventData = {
-  title: string;
-  start: Date;
-  end: Date;
-};
 
 export function AcademicCalendar() {
   moment.locale("pt-br");

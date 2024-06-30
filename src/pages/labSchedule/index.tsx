@@ -19,13 +19,8 @@ import {
 } from "./styles";
 import { Button } from "../../components/Button";
 import { Title } from "../../components/Title";
+import { ScheduleData } from "../../services/Types/scheduleType";
 
-type EventData = {
-  title: string;
-  dates: Date[];
-  startTime: Date;
-  endTime: Date;
-};
 
 export function LabSchedule() {
   moment.locale("pt-br");
@@ -66,9 +61,9 @@ export function LabSchedule() {
     agendaTimeFormat: "HH:mm"
   };
 
-  const [eventsData, setEventsData] = useState<EventData[]>([]);
+  const [eventsData, setEventsData] = useState<ScheduleData[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [newEvent, setNewEvent] = useState<EventData>({
+  const [newEvent, setNewEvent] = useState<ScheduleData>({
     title: "",
     dates: [],
     startTime: new Date(),
