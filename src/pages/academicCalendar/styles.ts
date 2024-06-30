@@ -8,6 +8,13 @@ export const Container = styled.div`
   gap: 0.2rem;
 `;
 
+export const MainDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1rem 2rem;
+`;
+
 export const CustomCalendarContainer = styled.div`
   .rbc-calendar {
     background-color: #DCF2F1;
@@ -54,7 +61,7 @@ export const CustomCalendarContainer = styled.div`
     border: 0.2rem solid white;
   }
   .rbc-today {
-    background-color:  #DCF2F1;
+    background-color:  #A2B5D4;
   }
   .rbc-current-time-indicator {
     background-color: red;
@@ -69,7 +76,7 @@ export const CustomCalendarContainer = styled.div`
 
 export const DivButton = styled.div`
   display: flex;
-  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 export const ModalOverlay = styled.div.attrs<{ show: boolean }>(({ show }) => ({
@@ -169,8 +176,15 @@ export const ButtonDiv = styled.div`
 export const Div = styled.div`
   display: flex;
   flex-direction: row; 
-  gap: 2rem;
   flex-wrap: wrap; 
-  margin: 10px;
+  align-content: center;
+  justify-content: space-between;
+}
 `;
 
+export const ButtonGroup = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
