@@ -5,7 +5,7 @@ import { UserInterface } from "../../services/Types/userType";
 interface DataContextType {
   reloadPage: () => void;
   userInfo: UserInterface | undefined;
-  userId: string;
+  userId: string | undefined;
   token: string;
 }
 

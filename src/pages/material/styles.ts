@@ -1,4 +1,4 @@
-import { Button, Checkbox, Modal } from "antd";
+import { Button, Checkbox, Dropdown, Modal } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -48,10 +48,22 @@ export const AttachButton = styled(Button)`
   border-radius: 1.4rem;
   gap: 0.5rem;
   font-weight: bold;
-  /* 
+
   @media (max-width: 480px) {
     display: none;
-  } */
+  }
+`;
+
+export const AttachButtonIcon = styled(Button)`
+  display: none;
+  background-color: var(--blue-100);
+  color: var(--blue-700);
+  align-items: center;
+  border-radius: 1.4rem;
+
+  @media (max-width: 480px) {
+    display: flex;
+  }
 `;
 
 export const AttachModal = styled(Modal)`
@@ -106,6 +118,7 @@ export const uploadAttach = styled.div`
     color: var(--blue-700) !important;
   }
 `;
+
 export const ModalFooter = styled.div`
   display: flex;
   flex-direction: row;
@@ -171,4 +184,30 @@ export const ModalButton = styled(Button)`
   color: var(--blue-900);
   font-weight: bold;
   border-radius: 20px;
+`;
+
+export const hamburguerButtons = styled.section`
+  display: flex;
+  flex-direction: row;
+  width: 121%;
+  gap: 1rem;
+  height: 100%;
+
+  @media (max-width: 680px) {
+    display: none;
+  }
+`;
+
+export const hamburguerSection = styled(Dropdown)`
+  display: none;
+  color: var(--blue-700);
+
+  @media (max-width: 680px) {
+    display: flex;
+  }
+`;
+
+export const NoPost = styled.h3`
+  color: var(--blue-700);
+  align-self: center;
 `;

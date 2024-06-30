@@ -1,10 +1,10 @@
-import { MenuProps, Upload } from "antd";
+import { MenuProps, Upload, UploadFile } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
 import { SearchInput } from "../../components/Search";
 import { Title } from "../../components/Title";
 import * as S from "./styles";
-import { Paperclip, Upload as UP, XCircle } from "@phosphor-icons/react";
+import { List, Paperclip, Upload as UP, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
 import { useState } from "react";
 import { UploadProps } from "antd/lib";
@@ -13,11 +13,19 @@ import {
   successNotification,
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
-export function Material() {
-  const [attachModal, setAttachModal] = useState<boolean>();
-  const [modalFiltro, setModalFiltro] = useState<boolean>(false);
+import { useData } from "../../config/data/UseData";
 
-  const items: MenuProps["items"] = [
+export function Material() {
+  const [attachModal, setAttachModal] = useState<boolean>(false);
+  const [modalFiltro, setModalFiltro] = useState<boolean>(false);
+  const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [archiveName, setArchiveName] = useState<string>();
+  const [archiveDescription, setArchiveDescription] = useState<string>();
+  const [file, setFile] = useState<UploadFile>();
+  const { userInfo } = useData();
+  const userProfile = userInfo?.profile;
+
+  const ordenationItems: MenuProps["items"] = [
     {
       key: 1,
       label: "Postados Recentemente",
@@ -38,16 +46,55 @@ export function Material() {
     },
   ];
 
+  const items: MenuProps["items"] = [
+    {
+      key: 1,
+      label: "Filtros",
+      onClick: () => {
+        setModalFiltro(!modalFiltro);
+      },
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: 2,
+      type: "group",
+      label: "Ordenar",
+      children: [
+        {
+          key: "2-1",
+          label: "Postados Recentemente",
+        },
+        {
+          key: "2-2",
+          label: "Quantidade de Replys",
+        },
+        {
+          key: "2-3",
+          label: "Quantidade de Curtidas",
+        },
+      ],
+    },
+  ];
+
   const { Dragger } = Upload;
 
   const props: UploadProps = {
     name: "file",
-    multiple: true,
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    multiple: false,
+    beforeUpload(file) {
+      const isPDF = file.type === "application/pdf";
+      if (!isPDF) {
+        errorNotification("You can only upload PDF file!");
+      }
+      return false;
+    },
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
         console.log(info.file, info.fileList);
+        console.log("not done");
       }
       if (status === "done") {
         successNotification(`${info.file.name} file uploaded successfully.`);
@@ -68,15 +115,23 @@ export function Material() {
         <S.AttachButton onClick={() => setAttachModal(!attachModal)}>
           Anexar Material <Paperclip size={24} weight="bold" />
         </S.AttachButton>
+        <S.AttachButtonIcon onClick={() => setAttachModal(!attachModal)}>
+          <Paperclip size={20} weight="bold" />
+        </S.AttachButtonIcon>
         <span>
           <SearchInput />
-          <OrdenationButton
-            items={items}
-            placement="bottomRight"
-          ></OrdenationButton>
-          <FilterButton
-            buttonFunction={() => setModalFiltro(!modalFiltro)}
-          ></FilterButton>
+          <S.hamburguerButtons>
+            <OrdenationButton
+              items={ordenationItems}
+              placement="bottomRight"
+            ></OrdenationButton>
+            <FilterButton
+              buttonFunction={() => setModalFiltro(!modalFiltro)}
+            ></FilterButton>
+          </S.hamburguerButtons>
+          <S.hamburguerSection menu={{ items }}>
+            <List size={30} onClick={() => setHamburguer(!hamburguer)} />
+          </S.hamburguerSection>
         </span>
       </S.ButtonsArea>
       <S.CardArea>
@@ -84,7 +139,9 @@ export function Material() {
           extend={true}
           title="Material de Apoio"
           content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          rateCard={false}
+          download={true}
+          edit={userProfile == "SUPER_USER"}
+          editFunction={() => setAttachModal(true)}
         ></Card>
         <Card
           extend={true}
@@ -141,7 +198,11 @@ export function Material() {
               </p>
             </Dragger>
           </S.uploadAttach>
-          <Input label="Nome do Arquivo*"></Input>
+          <Input
+            label="Nome do Arquivo*"
+            value={archiveName}
+            inputFunction={(e) => setArchiveName(e)}
+          ></Input>
           <Input
             label="Descrição do Arquivo*"
             placeHolder="Escreva algo..."
