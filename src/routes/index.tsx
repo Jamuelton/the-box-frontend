@@ -16,7 +16,8 @@ import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Documents } from "../pages/documents";
-import AcademicCalendar from "../pages/academicCalendar";
+import { AcademicCalendar } from "../pages/academicCalendar";
+import { AddCalendar } from "../pages/AddCalendar";
 
 const Container = styled.main`
   height: 100dvh;
@@ -53,6 +54,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/academic-calendar" element={<AcademicCalendar />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/add-calendar" element={<AddCalendar/>} />
               </Route>
             </Routes>
             <ChatBot />
