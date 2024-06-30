@@ -12,6 +12,8 @@ import { Card } from "../../components/Card/Index";
 export function LocalCommerce() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [favoriteMode, setFavoriteMode] = useState<boolean>(false);
+  const [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   const items: MenuProps["items"] = [
     {
@@ -98,9 +100,25 @@ export function LocalCommerce() {
     },
   ];
 
-  function favoritePlaces(): void {
-    throw new Error("Function not implemented.");
-  }
+  const toggleFavorite = (key: number) => {
+    setFavorites((prevFavorites) => {
+      const newFavorites = new Set(prevFavorites);
+      if (newFavorites.has(key)) {
+        newFavorites.delete(key);
+      } else {
+        newFavorites.add(key);
+      }
+      return newFavorites;
+    });
+  };
+
+  const favoritePlaces = () => {
+    setFavoriteMode(!favoriteMode);
+  };
+
+  const displayedContent = favoriteMode
+    ? cardContent.filter((item) => favorites.has(item.key))
+    : cardContent;
 
   return (
     <S.Container>
@@ -140,15 +158,16 @@ export function LocalCommerce() {
           </span>
         </S.ButtonsArea>
         <S.CardArea>
-          {cardContent.map((item, index) => (
+          {displayedContent.map((item, index) => (
             <Card
               key={index}
               title={item.title}
               content={item.content}
               rateCard={true}
-              like={true}
+              like={favorites.has(item.key)}
               extend={true}
               details={true}
+              onLikeToggle={() => toggleFavorite(item.key)}
             />
           ))}
         </S.CardArea>
