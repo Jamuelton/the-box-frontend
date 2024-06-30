@@ -16,6 +16,7 @@ import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Documents } from "../pages/documents";
+import { LocalCommerce } from "../pages/localCommerce";
 
 const Container = styled.main`
   height: 100dvh;
@@ -49,6 +50,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/lab-schedule" element={<LabSchedule />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/localCommerce" element={<LocalCommerce />} />
               </Route>
             </Routes>
             <ChatBot />

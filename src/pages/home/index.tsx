@@ -45,7 +45,7 @@ export function Home() {
     {
       text: "Comércio local",
       icon: <MapPinArea size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/localCommerce",
     },
   ];
 
