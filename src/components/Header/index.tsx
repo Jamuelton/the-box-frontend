@@ -44,7 +44,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <Clock size={24} color="#7fc7d9" />,
       title: "Horários",
-      link: "/home",
+      link: "/lab-schedule",
     },
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
@@ -54,12 +54,12 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <FileText size={24} color="#7fc7d9" />,
       title: "Documentações",
-      link: "/home",
+      link: "/documents",
     },
     {
       icon: <MapPinArea size={24} color="#7fc7d9" />,
       title: "Comércio Local",
-      link: "/home",
+      link: "/localCommerce",
     },
   ];
 
@@ -74,13 +74,17 @@ export const Header: React.FC<HeaderProps> = () => {
     navigate("/home");
   };
 
+  const sendTo = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <S.Container>
       <S.headerArea>
         <S.logoArea>
           <S.logo src={Logo} onClick={sendToHome}></S.logo>
           {isAuthenticated || isAuth() ? (
-            <S.title>Bem vindo, {userInfo?.name}!</S.title>
+            <S.title>Bem-vindo, {userInfo?.name.split(" ")[0]}!</S.title>
           ) : (
             <S.title>Portal do Aluno</S.title>
           )}
@@ -106,8 +110,8 @@ export const Header: React.FC<HeaderProps> = () => {
       </S.headerArea>
       {isAuthenticated || (isAuth() && path !== "/home") ? (
         <S.optionsArea>
-          {options.map(({ icon, title }, index) => (
-            <S.optionDiv key={index}>
+          {options.map(({ icon, title, link }, index) => (
+            <S.optionDiv key={index} onClick={() => sendTo(link)}>
               {icon}
               <S.optionTitle>{title}</S.optionTitle>
             </S.optionDiv>
@@ -118,8 +122,8 @@ export const Header: React.FC<HeaderProps> = () => {
       )}
       {hamburguer && (
         <S.hamburguerOptions>
-          {options.map(({ icon, title }, index) => (
-            <S.hamburguerDiv key={index}>
+          {options.map(({ icon, title, link }, index) => (
+            <S.hamburguerDiv key={index} onClick={() => sendTo(link)}>
               {icon}
               <S.optionTitle>{title}</S.optionTitle>
             </S.hamburguerDiv>
