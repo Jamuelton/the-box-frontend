@@ -17,6 +17,7 @@ import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Documents } from "../pages/documents";
 import { LocalCommerce } from "../pages/localCommerce";
+import { LockerRoutes } from "../config/lockerRoutes";
 
 const Container = styled.main`
   height: 100dvh;
@@ -31,8 +32,13 @@ export const AppRoutes = () => {
             <Header />
             <Routes>
               <Route path="/" element={<Default />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Registration />} />
+
+              <Route element={<LockerRoutes redirectPath="/home" />}>
+                <Route path="/login" element={<Login />} />
+              </Route>
+              <Route element={<LockerRoutes redirectPath="/home" />}>
+                <Route path="/register" element={<Registration />} />
+              </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/home" element={<Home />} />
               </Route>
