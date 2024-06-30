@@ -24,7 +24,7 @@ export const Content = styled.div`
 export const Div = styled.div`
     display: flex;
     align-items: flex-start;
-    margin: 2rem;
+    marginTop: 2rem;
 `;
 
 export const Header = styled.div`
@@ -53,3 +53,52 @@ export const ButtonDiv = styled.div`
   margin-top: 24;
 `; 
 
+export const FileInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 20px;
+  flex-direction: column;
+`;
+
+export const HiddenInput = styled.input`
+  display: none;
+`;
+
+export const CustomButton = styled.button`
+  background-color: #f2f2f2;
+  color: grey;
+  width: 100%;
+  height: 10rem;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #7FC7D9;
+  }
+
+  &:active {
+    background-color: #005F73;
+  }
+`;
+
+export const FileLabel = styled.span`
+  margin-left: 10px;
+  font-size: 16px;
+  color: #070F2B;
+  margin-top: 10px;
+  font-weight: normal;
+  transition: color 0.3s ease;
+  text-align: center;
+
+  ${CustomButton}:hover + & {
+    color: #070F2B;
+  }
+`;
