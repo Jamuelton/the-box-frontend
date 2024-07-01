@@ -40,7 +40,7 @@ export function Home() {
     {
       text: "Calendário Acadêmico",
       icon: <CalendarDots size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/academic-calendar",
     },
     {
       text: "Comércio local",
