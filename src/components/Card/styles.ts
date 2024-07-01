@@ -35,6 +35,14 @@ export const LikeArea = styled.div`
   align-self: flex-end;
 `;
 
+export const MaterialArea = styled.div`
+  display: flex;
+  align-self: flex-end;
+  gap: 1.2rem;
+  color: #ffffff;
+  cursor: pointer;
+`;
+
 export const TitleArea = styled.div``;
 
 export const RateArea = styled.div`

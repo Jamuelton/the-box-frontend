@@ -136,10 +136,11 @@ export const CheckboxArea = styled(Checkbox)`
 `;
 
 export const NewPostModal = styled(Modal)`
-  /* display: flex; */
-  /* width: 100% !important; */
-  /* justify-content: center; */
-  /* align-items: center; */
+  /* /* display: flex; */
+  */
+  /* /* width: 100% !important; */ */
+  /* /* justify-content: center; */ */
+  /* /* align-items: center; */ */
 
   .ant-modal-content {
     background-color: var(--blue-100) !important;
@@ -209,6 +210,15 @@ export const TextAreaError = styled.label`
   font-size: 0.85rem;
   color: red;
   padding: 0 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--gray-100);
+  }
+
+  &:hover {
+    border-color: var(--gray-100);
+  }
 `;
 
 export const TextAreaFooter = styled.div`
@@ -235,6 +245,7 @@ export const hamburguerButtons = styled.section`
   flex-direction: row;
   width: 121%;
   gap: 1rem;
+  height: 100%;
 
   @media (max-width: 680px) {
     display: none;

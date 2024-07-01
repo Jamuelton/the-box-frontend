@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
       title: "Materiais",
-      link: "/home",
+      link: "/material",
     },
     {
       icon: <FileText size={24} color="#7fc7d9" />,

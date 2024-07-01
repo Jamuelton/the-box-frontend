@@ -30,7 +30,7 @@ export function Home() {
     {
       text: "Materiais de Apoio",
       icon: <FolderSimple size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/material",
     },
     {
       text: "Documentações do curso",

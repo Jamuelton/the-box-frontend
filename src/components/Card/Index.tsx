@@ -1,6 +1,6 @@
 import { FC } from "react";
 import * as S from "./styles";
-import { ArrowRight, Heart } from "@phosphor-icons/react";
+import { ArrowRight, Download, Heart, NotePencil } from "@phosphor-icons/react";
 import { Rate } from "antd";
 
 interface CardProps {
@@ -10,6 +10,9 @@ interface CardProps {
   like?: boolean;
   extend?: boolean;
   details?: boolean;
+  download?: boolean;
+  edit?: boolean;
+  editFunction?: () => void;
   onLikeToggle?: () => void;
 }
 
@@ -20,6 +23,9 @@ export const Card: FC<CardProps> = ({
   rateCard,
   like,
   details,
+  download,
+  edit,
+  editFunction,
   onLikeToggle,
 }) => {
   return (
@@ -30,9 +36,17 @@ export const Card: FC<CardProps> = ({
             character={<Heart size={24} weight="fill" />}
             count={1}
             value={like ? 1 : 0}
-            style={{ color: "#7fc7d9"}}
+            style={{ color: "#7fc7d9" }}
           />
         </S.LikeArea>
+      )}
+      {download && (
+        <S.MaterialArea>
+          {edit && (
+            <NotePencil onClick={editFunction} size={32} weight="fill" />
+          )}
+          <Download size={32} weight="fill" />
+        </S.MaterialArea>
       )}
 
       <S.TitleArea>

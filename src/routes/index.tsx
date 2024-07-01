@@ -15,6 +15,7 @@ import { AuthProvider } from "../config/auth/AuthProvider";
 import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
+import { Material } from "../pages/material";
 import { Documents } from "../pages/documents";
 import { AcademicCalendar } from "../pages/academicCalendar";
 import { AddCalendar } from "../pages/AddCalendar";
@@ -53,6 +54,9 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/profile" element={<Profile />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/material" element={<Material />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/documents" element={<Documents />} />
