@@ -8,6 +8,7 @@ import { OrdenationButton } from "../../components/OrdenationButton";
 import { SearchInput } from "../../components/Search";
 import { MenuProps } from "antd";
 import { Card } from "../../components/Card/Index";
+import { useNavigate } from "react-router-dom";
 
 export function LocalCommerce() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
@@ -120,6 +121,8 @@ export function LocalCommerce() {
     ? cardContent.filter((item) => favorites.has(item.key))
     : cardContent;
 
+  const navigate = useNavigate();
+
   return (
     <S.Container>
       <S.Title>
@@ -168,6 +171,9 @@ export function LocalCommerce() {
               extend={true}
               details={true}
               onLikeToggle={() => toggleFavorite(item.key)}
+              buttonFunction={() =>
+                navigate(`/localCommerce/establishment/${item.key}`)
+              }
             />
           ))}
         </S.CardArea>

@@ -65,7 +65,8 @@ export const hamburguerSection = styled(Dropdown)`
 export const CardArea = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 270px);
-  gap: 116px;
+  gap: 84px;
+  padding: 1rem;
   padding-left: 5rem;
   padding-right: 5rem;
 `;
