@@ -16,6 +16,8 @@ import { PrivateRoutes } from "../config/privateRoutes";
 import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Documents } from "../pages/documents";
+import { AcademicCalendar } from "../pages/academicCalendar";
+import { AddCalendar } from "../pages/AddCalendar";
 import { LocalCommerce } from "../pages/localCommerce";
 import { LockerRoutes } from "../config/lockerRoutes";
 
@@ -58,6 +60,10 @@ export const AppRoutes = () => {
                 <Route path="/lab-schedule" element={<LabSchedule />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/academic-calendar" element={<AcademicCalendar />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/add-calendar" element={<AddCalendar/>} />
                 <Route path="/localCommerce" element={<LocalCommerce />} />
               </Route>
             </Routes>
