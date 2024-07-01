@@ -13,6 +13,7 @@ interface CardProps {
   download?: boolean;
   edit?: boolean;
   editFunction?: () => void;
+  onLikeToggle?: () => void;
 }
 
 export const Card: FC<CardProps> = ({
@@ -25,12 +26,18 @@ export const Card: FC<CardProps> = ({
   download,
   edit,
   editFunction,
+  onLikeToggle,
 }) => {
   return (
     <S.Container $extend={extend}>
-      {like && (
-        <S.LikeArea>
-          <Rate character={<Heart size={24} weight="fill" />} count={1} />
+      {like !== undefined && (
+        <S.LikeArea onClick={onLikeToggle}>
+          <Rate
+            character={<Heart size={24} weight="fill" />}
+            count={1}
+            value={like ? 1 : 0}
+            style={{ color: "#7fc7d9" }}
+          />
         </S.LikeArea>
       )}
       {download && (
@@ -44,7 +51,9 @@ export const Card: FC<CardProps> = ({
 
       <S.TitleArea>
         <S.Title>{title}</S.Title>
-        {rateCard && <Rate />}
+        <S.RateArea>
+          {rateCard && <Rate style={{ color: "#7fc7d9" }} />}
+        </S.RateArea>
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>

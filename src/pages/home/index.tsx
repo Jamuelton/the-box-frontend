@@ -25,7 +25,7 @@ export function Home() {
     {
       text: "Horário dos laboratórios",
       icon: <Clock size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/lab-schedule",
     },
     {
       text: "Materiais de Apoio",
@@ -45,7 +45,7 @@ export function Home() {
     {
       text: "Comércio local",
       icon: <MapPinArea size={32} color="#7fc7d9" />,
-      link: "/home",
+      link: "/localCommerce",
     },
   ];
 

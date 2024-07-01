@@ -10,4 +10,5 @@ export interface ForumInterface {
   content?: string;
   category?: CategoryEnum;
   user_id?: number;
+  created_at?: Date;
 }

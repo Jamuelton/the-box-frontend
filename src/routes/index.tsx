@@ -17,6 +17,11 @@ import { DataProvider } from "../config/data/DataProvider";
 import { ChatBot } from "../components/ChatBot";
 import { Material } from "../pages/material";
 import { Documents } from "../pages/documents";
+import { AcademicCalendar } from "../pages/academicCalendar";
+import { AddCalendar } from "../pages/AddCalendar";
+import { LocalCommerce } from "../pages/localCommerce";
+import { LockerRoutes } from "../config/lockerRoutes";
+import LabSchedulingConfirmationListing from "../pages/labSchedulingConfirmationListing";
 
 const Container = styled.main`
   height: 100dvh;
@@ -31,8 +36,13 @@ export const AppRoutes = () => {
             <Header />
             <Routes>
               <Route path="/" element={<Default />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Registration />} />
+
+              <Route element={<LockerRoutes redirectPath="/home" />}>
+                <Route path="/login" element={<Login />} />
+              </Route>
+              <Route element={<LockerRoutes redirectPath="/home" />}>
+                <Route path="/register" element={<Registration />} />
+              </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/home" element={<Home />} />
               </Route>
@@ -53,6 +63,20 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/lab-schedule" element={<LabSchedule />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/academic-calendar" element={<AcademicCalendar />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/add-calendar" element={<AddCalendar/>} />
+                <Route path="/localCommerce" element={<LocalCommerce />} />
+              </Route>
+
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route
+                  path="/lab-scheduling-confirmation"
+                  element={<LabSchedulingConfirmationListing />}
+                />
               </Route>
             </Routes>
             <ChatBot />

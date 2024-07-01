@@ -45,11 +45,16 @@ export const MaterialArea = styled.div`
 
 export const TitleArea = styled.div``;
 
+export const RateArea = styled.div`
+
+`;
+
 export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  font-weight: bold;
   label {
     color: var(--blue-300);
     cursor: pointer;
