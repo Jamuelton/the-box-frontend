@@ -20,8 +20,11 @@ import {
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
 import { CheckboxProps } from "antd/lib";
+import { useData } from "../../config/data/UseData";
 
 export function Forum() {
+  const { userId } = useData();
+
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
   const [ordering, setOrdering] = useState<string>("date");
@@ -109,7 +112,6 @@ export function Forum() {
   };
 
   const orderPost = (posts: ForumInterface[]) => {
-    console.log(posts);
     switch (ordering) {
       case "date":
         posts.sort((a, b) => {
@@ -188,13 +190,6 @@ export function Forum() {
     setContent(value);
   };
 
-  const ForumData: ForumInterface = {
-    title: title,
-    content: content,
-    category: category,
-    user_id: 1,
-  };
-
   const handleSearchTermChange = (e: { target: { value: string } }) => {
     const { value } = e.target;
     setSearchTerm(value);
@@ -218,16 +213,26 @@ export function Forum() {
 
   const createPosts = async () => {
     try {
-      ForumPostSchema.parse(ForumData);
-      const response = await createPost(ForumData);
+      if (userId) {
+        const ForumData: ForumInterface = {
+          title: title,
+          content: content,
+          category: category,
+          user_id: parseInt(userId),
+        };
+        ForumPostSchema.parse(ForumData);
+        const response = await createPost(ForumData);
 
-      if (response?.status == 200) {
-        successNotification("Post publicado com sucesso");
-        setModalPost(false);
-        getPost();
-      }
-      if (response?.status == 400) {
-        errorNotification("Não foi possível criar post");
+        if (response?.status == 200) {
+          successNotification("Post publicado com sucesso");
+          setContent("");
+          setTitle("");
+          setModalPost(false);
+          getPost();
+        }
+        if (response?.status == 400) {
+          errorNotification("Não foi possível criar post");
+        }
       }
     } catch (error) {
       if (error instanceof ZodError) {
@@ -395,6 +400,7 @@ export function Forum() {
                 status={errorTitle.status}
                 errorShow={errorTitle.errorShow}
                 errorText={errorTitle.errorText}
+                value={title}
               ></Input>
               <S.SelectArea
                 placeholder="Categoria"
@@ -416,6 +422,7 @@ export function Forum() {
               rows={8}
               onChange={handleChangeContent}
               status={errorContent.status}
+              value={content}
             ></S.TextAreaContainer>
             {errorContent.errorShow && (
               <S.TextAreaError>{errorContent.errorText}</S.TextAreaError>
