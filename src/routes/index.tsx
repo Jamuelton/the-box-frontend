@@ -18,6 +18,7 @@ import { ChatBot } from "../components/ChatBot";
 import { Documents } from "../pages/documents";
 import { LocalCommerce } from "../pages/localCommerce";
 import { LockerRoutes } from "../config/lockerRoutes";
+import { Establishment } from "../pages/establishment";
 
 const Container = styled.main`
   height: 100dvh;
@@ -59,6 +60,12 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/localCommerce" element={<LocalCommerce />} />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route
+                  path="/localCommerce/establishment/:id"
+                  element={<Establishment />}
+                />
               </Route>
             </Routes>
             <ChatBot />
