@@ -45,6 +45,10 @@ export const DateTitle = styled.div`
 export const TimeDataSpan = styled.span`
   display: flex;
   flex-direction: row;
+  @media (max-width: 550px) {
+    flex-direction: column;
+    justify-content: center;
+  }
 `;
 
 export const InputContainerDate = styled.div`
@@ -59,6 +63,10 @@ export const InputContainerDate = styled.div`
 export const FooterContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  @media (max-width: 550px) {
+    flex-direction: column;
+    justify-content: center;
+  }
 `;
 
 export const CustomButton = styled(Button)<ButtonProps>`

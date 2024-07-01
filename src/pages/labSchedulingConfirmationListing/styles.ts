@@ -9,6 +9,9 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 2rem;
+  @media (max-width: 550px) {
+    padding: 0rem;
+  }
 `;
 
 export const TitleContainer = styled.div``;
@@ -33,6 +36,11 @@ export const ConfirmationContainer = styled.div`
   &::-webkit-scrollbar-thumb {
     background: gray;
     border-radius: 10px;
+  }
+  @media (max-width: 550px) {
+    overflow: visible;
+    border: none;
+    with: 100%;
   }
 `;
 
