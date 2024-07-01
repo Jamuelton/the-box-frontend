@@ -30,7 +30,7 @@ export const Card: FC<CardProps> = ({
 }) => {
   return (
     <S.Container $extend={extend}>
-      {like !== undefined && (
+      {like !== false && (
         <S.LikeArea onClick={onLikeToggle}>
           <Rate
             character={<Heart size={24} weight="fill" />}

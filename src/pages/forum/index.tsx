@@ -164,7 +164,7 @@ export function Forum() {
     } catch (error) {
       setErrorTitle({
         errorShow: true,
-        errorText: "Insira um título válido (1, 20)",
+        errorText: "Insira um título válido (1, 100)",
         status: "error",
       });
     }
@@ -180,7 +180,7 @@ export function Forum() {
     } catch (error) {
       setErrorContent({
         errorShow: true,
-        errorText: "Insira um conteúdo válido (1, 250)",
+        errorText: "Insira um conteúdo válido (1, 500)",
         status: "error",
       });
     }
@@ -254,6 +254,7 @@ export function Forum() {
   };
   useEffect(() => {
     getPost();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <S.Container>
@@ -309,7 +310,7 @@ export function Forum() {
               title={title}
               content={content}
               rateCard={false}
-              like={true}
+              like={false}
               extend={true}
               details={true}
             />
