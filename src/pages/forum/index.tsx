@@ -8,7 +8,11 @@ import { List, Plus, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
 import { useEffect, useState } from "react";
 import { Input } from "../../components/Input";
-import { createPost, getPosts } from "../../services/ForumServices";
+import {
+  createPost,
+  getPosts,
+  getPostsByCategory,
+} from "../../services/ForumServices";
 import { CategoryEnum, ForumInterface } from "../../services/Types/forumTypes";
 import {
   errorNotification,
@@ -16,12 +20,14 @@ import {
 } from "../../components/Notification";
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
+import { CheckboxProps } from "antd/lib";
 
 export function Forum() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
 
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [filter, setfilter] = useState<boolean>(false);
   const [post, setPost] = useState<ForumInterface[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -111,6 +117,18 @@ export function Forum() {
     }
   };
 
+  const getPostByCategory = async () => {
+    if (category != undefined) {
+      const response = await getPostsByCategory(category);
+      if (response?.status == 200) {
+        setPost(response.data);
+      } else {
+        errorNotification("Não foi possível aplicar filtro");
+        getPost();
+      }
+    }
+  };
+
   const handleChangeTitle = (e: { target: { value: string } }) => {
     const { value } = e.target;
     try {
@@ -170,6 +188,22 @@ export function Forum() {
     }
   };
 
+  const handleCheckbox: CheckboxProps["onChange"] = (e) => {
+    console.log(e.target.value);
+    setCategory(e.target.value);
+  };
+
+  const handleFilters = () => {
+    getPostByCategory();
+    setfilter(true);
+    setModalFiltro(false);
+  };
+
+  const handleCleanFilters = () => {
+    getPost();
+    setfilter(false);
+    setModalFiltro(false);
+  };
   useEffect(() => {
     getPost();
   }, []);
@@ -216,7 +250,16 @@ export function Forum() {
       <S.ModalArea
         open={modalFiltro}
         onCancel={() => setModalFiltro(false)}
-        footer={<S.ModalButton>Aplicar</S.ModalButton>}
+        footer={
+          <S.ModalFilterBtnArea>
+            {filter && (
+              <S.ModalCleanButton onClick={handleCleanFilters}>
+                Limpar Filtros
+              </S.ModalCleanButton>
+            )}
+            <S.ModalButton onClick={handleFilters}>Aplicar</S.ModalButton>
+          </S.ModalFilterBtnArea>
+        }
         title="Filtros"
         centered
         closeIcon={<XCircle size={22} weight="bold" color="#23335e" />}
@@ -224,9 +267,34 @@ export function Forum() {
         <S.ModalContent>
           <h3>Categorias</h3>
           <div>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="TECHNOLOGY"
+              checked={category?.toString() == "TECHNOLOGY"}
+            >
+              Tecnologia
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="LIFESTYLE"
+              checked={category?.toString() == "LIFESTYLE"}
+            >
+              Lifestyle
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="UNIVERSITY"
+              checked={category?.toString() == "UNIVERSITY"}
+            >
+              Universidade
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="RESEARCH"
+              checked={category?.toString() == "RESEARCH"}
+            >
+              Pesquisa
+            </S.CheckboxArea>
           </div>
         </S.ModalContent>
       </S.ModalArea>

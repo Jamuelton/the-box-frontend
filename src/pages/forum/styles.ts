@@ -80,12 +80,33 @@ export const ModalArea = styled(Modal)`
     padding-bottom: 0.5rem;
   }
 `;
+export const ModalFilterBtnArea = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 17rem;
+`;
 
 export const ModalButton = styled(Button)`
   background-color: var(--blue-300);
   color: var(--blue-900);
   font-weight: bold;
   border-radius: 20px;
+  align-self: flex-end;
+`;
+
+export const ModalCleanButton = styled(Button)`
+  background-color: var(--blue-300);
+  color: var(--blue-900);
+  font-weight: bold;
+  border-radius: 20px;
+  align-self: flex-start;
+
+  &:hover {
+    background-color: #ffffff !important;
+    color: red !important;
+    border: none !important;
+  }
 `;
 
 export const ModalContent = styled.div`
