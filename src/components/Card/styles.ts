@@ -45,7 +45,15 @@ export const MaterialArea = styled.div`
   cursor: pointer;
 `;
 
-export const TitleArea = styled.div``;
+export const TitleArea = styled.div`
+  section {
+    display: flex;
+    justify-content: space-between;
+    p {
+      color: white;
+    }
+  }
+`;
 
 export const RateArea = styled.div``;
 

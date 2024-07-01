@@ -309,7 +309,7 @@ export function Forum() {
       </S.ButtonsArea>
       <S.CardArea>
         {post.length > 0 ? (
-          post.map(({ title, content }, index) => (
+          post.map(({ title, content, created_at }, index) => (
             <Card
               key={index}
               title={title}
@@ -318,6 +318,7 @@ export function Forum() {
               like={false}
               extend={true}
               details={true}
+              datePost={created_at}
             />
           ))
         ) : (
