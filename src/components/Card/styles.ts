@@ -29,6 +29,8 @@ export const Title = styled.label`
 
 export const Content = styled.label`
   color: white;
+  word-break: break-word;
+  white-space: pre-wrap;
 `;
 
 export const LikeArea = styled.div`
@@ -43,11 +45,17 @@ export const MaterialArea = styled.div`
   cursor: pointer;
 `;
 
-export const TitleArea = styled.div``;
-
-export const RateArea = styled.div`
-
+export const TitleArea = styled.div`
+  section {
+    display: flex;
+    justify-content: space-between;
+    p {
+      color: white;
+    }
+  }
 `;
+
+export const RateArea = styled.div``;
 
 export const ButtonArea = styled.div`
   display: flex;

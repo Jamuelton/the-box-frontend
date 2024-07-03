@@ -20,8 +20,11 @@ import {
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
 import { CheckboxProps } from "antd/lib";
+import { useData } from "../../config/data/UseData";
 
 export function Forum() {
+  const { userId } = useData();
+
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
   const [ordering, setOrdering] = useState<string>("date");
@@ -109,7 +112,6 @@ export function Forum() {
   };
 
   const orderPost = (posts: ForumInterface[]) => {
-    console.log(posts);
     switch (ordering) {
       case "date":
         posts.sort((a, b) => {
@@ -164,7 +166,7 @@ export function Forum() {
     } catch (error) {
       setErrorTitle({
         errorShow: true,
-        errorText: "Insira um título válido (1, 20)",
+        errorText: "Insira um título válido (1, 100)",
         status: "error",
       });
     }
@@ -180,19 +182,12 @@ export function Forum() {
     } catch (error) {
       setErrorContent({
         errorShow: true,
-        errorText: "Insira um conteúdo válido (1, 250)",
+        errorText: "Insira um conteúdo válido (1, 500)",
         status: "error",
       });
     }
 
     setContent(value);
-  };
-
-  const ForumData: ForumInterface = {
-    title: title,
-    content: content,
-    category: category,
-    user_id: 1,
   };
 
   const handleSearchTermChange = (e: { target: { value: string } }) => {
@@ -218,16 +213,26 @@ export function Forum() {
 
   const createPosts = async () => {
     try {
-      ForumPostSchema.parse(ForumData);
-      const response = await createPost(ForumData);
+      if (userId) {
+        const ForumData: ForumInterface = {
+          title: title,
+          content: content,
+          category: category,
+          user_id: parseInt(userId),
+        };
+        ForumPostSchema.parse(ForumData);
+        const response = await createPost(ForumData);
 
-      if (response?.status == 200) {
-        successNotification("Post publicado com sucesso");
-        setModalPost(false);
-        getPost();
-      }
-      if (response?.status == 400) {
-        errorNotification("Não foi possível criar post");
+        if (response?.status == 200) {
+          successNotification("Post publicado com sucesso");
+          setContent("");
+          setTitle("");
+          setModalPost(false);
+          getPost();
+        }
+        if (response?.status == 400) {
+          errorNotification("Não foi possível criar post");
+        }
       }
     } catch (error) {
       if (error instanceof ZodError) {
@@ -252,8 +257,11 @@ export function Forum() {
     setfilter(false);
     setModalFiltro(false);
   };
+
   useEffect(() => {
     getPost();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <S.Container>
@@ -303,15 +311,16 @@ export function Forum() {
       </S.ButtonsArea>
       <S.CardArea>
         {post.length > 0 ? (
-          post.map(({ title, content }, index) => (
+          post.map(({ title, content, created_at }, index) => (
             <Card
               key={index}
               title={title}
               content={content}
               rateCard={false}
-              like={true}
+              like={false}
               extend={true}
               details={true}
+              datePost={created_at}
             />
           ))
         ) : (
@@ -394,6 +403,7 @@ export function Forum() {
                 status={errorTitle.status}
                 errorShow={errorTitle.errorShow}
                 errorText={errorTitle.errorText}
+                value={title}
               ></Input>
               <S.SelectArea
                 placeholder="Categoria"
@@ -415,6 +425,7 @@ export function Forum() {
               rows={8}
               onChange={handleChangeContent}
               status={errorContent.status}
+              value={content}
             ></S.TextAreaContainer>
             {errorContent.errorShow && (
               <S.TextAreaError>{errorContent.errorText}</S.TextAreaError>

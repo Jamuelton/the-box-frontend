@@ -2,6 +2,7 @@ import { FC } from "react";
 import * as S from "./styles";
 import { ArrowRight, Download, Heart, NotePencil } from "@phosphor-icons/react";
 import { Rate } from "antd";
+import moment from "moment";
 
 interface CardProps {
   title?: string;
@@ -14,6 +15,7 @@ interface CardProps {
   edit?: boolean;
   editFunction?: () => void;
   onLikeToggle?: () => void;
+  datePost?: Date;
 }
 
 export const Card: FC<CardProps> = ({
@@ -27,10 +29,11 @@ export const Card: FC<CardProps> = ({
   edit,
   editFunction,
   onLikeToggle,
+  datePost,
 }) => {
   return (
     <S.Container $extend={extend}>
-      {like !== undefined && (
+      {like !== false && (
         <S.LikeArea onClick={onLikeToggle}>
           <Rate
             character={<Heart size={24} weight="fill" />}
@@ -50,7 +53,11 @@ export const Card: FC<CardProps> = ({
       )}
 
       <S.TitleArea>
-        <S.Title>{title}</S.Title>
+        <section>
+          <S.Title>{title}</S.Title>
+          {datePost && <p>{moment().format("DD/MM/YYYY HH:MM")}</p>}
+        </section>
+
         <S.RateArea>
           {rateCard && <Rate style={{ color: "#7fc7d9" }} />}
         </S.RateArea>

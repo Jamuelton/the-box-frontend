@@ -102,7 +102,7 @@ export function Login() {
       auth();
       reloadPage();
       successNotification("Usuário logado com sucesso!");
-      navigate("/home");
+      navigate("/");
     }
     if (response?.status === 401) {
       warningNotification("Email e/ou senha incorretos");
