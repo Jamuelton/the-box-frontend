@@ -131,10 +131,6 @@ export function Establishment() {
             <div className="rectangle-blue"></div>
             <div className="rectangle-grey">Imagem aqui</div>
           </S.ImageEstablishmentContainer>
-          <S.RateEstablishment/>
-          <S.AvaliationEstablishmentContainer>
-            Ver Avaliação
-          </S.AvaliationEstablishmentContainer>
         </S.EstablishmentGrouped>
       </S.Wrapper>
     </S.Container>

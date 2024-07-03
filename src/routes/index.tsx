@@ -34,16 +34,16 @@ export const AppRoutes = () => {
             <Routes>
               <Route path="/" element={<Default />} />
 
-              <Route element={<LockerRoutes redirectPath="/home" />}>
+              <Route element={<LockerRoutes redirectPath="/localCommerce" />}>
                 <Route path="/login" element={<Login />} />
               </Route>
-              <Route element={<LockerRoutes redirectPath="/home" />}>
+              <Route element={<LockerRoutes redirectPath="/localCommerce" />}>
                 <Route path="/register" element={<Registration />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/home" element={<Home />} />
               </Route>
-              <Route element={<PrivateRoutes redirectPath="/login" />}>
+              {/*<Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/forum-answer" element={<ForumAnswer />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
@@ -57,7 +57,7 @@ export const AppRoutes = () => {
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/lab-schedule" element={<LabSchedule />} />
-              </Route>
+              </Route>}*/}
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/localCommerce" element={<LocalCommerce />} />
               </Route>

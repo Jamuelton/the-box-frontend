@@ -6,11 +6,11 @@ export const Container = styled.div<{
   background: var(--blue-500);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   width: 100%;
   height: 48dvh;
-  padding: 2rem;
-  border-radius: 2rem;
+  padding: 22px;
+  border-radius: 30px;
+  justify-content: space-between;
 
   @media (min-width: 426px) and (max-width: 1023px) {
     width: ${(props) => (props.$extend ? "100%" : "40dvw")};
@@ -24,11 +24,16 @@ export const Container = styled.div<{
 
 export const Title = styled.label`
   color: var(--blue-300);
-  font-size: 1.2rem;
+  font-size: 20px;
+  
+  font-weight: bold;
 `;
 
 export const Content = styled.label`
   color: white;
+  margin: 10px 0 0;
+  font-size: 16px;
+  padding: 2rem 0 2rem 0;
 `;
 
 export const LikeArea = styled.div`
@@ -45,12 +50,10 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 0.25rem;
+  font-size: 20px;
   font-weight: bold;
-  label {
-    color: var(--blue-300);
-    cursor: pointer;
-  }
+  cursor: pointer;
+  color: var(--blue-300);
 
   svg {
     cursor: pointer;

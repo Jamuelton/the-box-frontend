@@ -100,11 +100,3 @@ export const ImageEstablishmentContainer = styled.div`
 `;
 
 export const Img = styled.div``;
-
-export const RateEstablishment = styled.div`
-display: flex;
-`;
-
-export const AvaliationEstablishmentContainer = styled.div`
-display: flex;
-`;

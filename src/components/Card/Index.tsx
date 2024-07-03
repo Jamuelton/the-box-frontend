@@ -47,7 +47,7 @@ export const Card: FC<CardProps> = ({
       <S.Content>{content}</S.Content>
       {details && (
         <S.ButtonArea onClick={buttonFunction}>
-          <label htmlFor="">Ver detalhes</label>
+          Ver detalhes
           <ArrowRight size={24} weight="bold" color="#7fc7d9" />
         </S.ButtonArea>
       )}
