@@ -2,8 +2,12 @@ import ScheduleConfirmation from "../../components/ScheduleConfirmation/index";
 import * as S from "./styles";
 import { Title } from "../../components/Title";
 import { useEffect, useState } from "react";
+import { useData } from "../../config/data/UseData";
+import { useNavigate } from "react-router-dom";
 
 function LabSchedulingConfirmationListing() {
+  const { userInfo } = useData();
+  const navigate = useNavigate();
   const [lab, setLab] = useState<string>("windows");
 
   const handleLabClick = (value: string) => {
@@ -39,6 +43,10 @@ function LabSchedulingConfirmationListing() {
       owner: "Carlos",
     },
   ];
+
+  if (userInfo?.profile == "USER") {
+    navigate("/");
+  }
 
   return (
     <S.Container>

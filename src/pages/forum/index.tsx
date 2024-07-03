@@ -257,8 +257,10 @@ export function Forum() {
     setfilter(false);
     setModalFiltro(false);
   };
+
   useEffect(() => {
     getPost();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (

@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <Calendar size={24} color="#7fc7d9" />,
       title: "Calendário Acadêmico",
-      link: "/home",
+      link: "/academic-calendar",
     },
     {
       icon: <Clock size={24} color="#7fc7d9" />,
@@ -102,7 +102,7 @@ export const Header: React.FC<HeaderProps> = () => {
     },
   ];
   const sendToHome = () => {
-    navigate("/home");
+    navigate("/");
   };
 
   const sendTo = (path: string) => {
