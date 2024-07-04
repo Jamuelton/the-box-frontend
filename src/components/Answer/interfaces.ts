@@ -1,7 +1,8 @@
 export interface IAnswer {
     title?: string;
-    username?: string;
-    text?: string;
+    user?: string;
+    body?: string;
     likes?: number;
+    liked?: boolean;
     isAuthor?: boolean;
 }

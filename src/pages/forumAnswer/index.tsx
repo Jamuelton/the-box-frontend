@@ -5,60 +5,38 @@ import { Plus } from "@phosphor-icons/react";
 import Answer from "../../components/Answer";
 import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
 import axios from "axios";
+import Cookies from 'js-cookie';
 
 function ForumAnswer() {
-  const mockData: IAnswer[] = [
-    {
-      title: "How to learn TypeScript?",
-      username: "johndoe",
-      text: "I recommend starting with the official TypeScript documentation and then practicing by converting a small JavaScript project to TypeScript.",
-      likes: 34,
-      isAuthor: true,
-    },
-    {
-      username: "janedoe",
-      text: "You can also check out some great courses on platforms like Udemy or Coursera. They offer structured learning paths and projects to work on.",
-      likes: 28,
-      isAuthor: false,
-    },
-    {
-      username: "coder123",
-      text: "Don’t forget to use TypeScript's official playground to test out your code snippets. It’s a great way to get hands-on experience.",
-      likes: 15,
-      isAuthor: false,
-    },
-    {
-      username: "typescript_guru",
-      text: "Always enable strict mode in your tsconfig.json to catch common errors and ensure your code is type-safe.",
-      likes: 50,
-      isAuthor: true,
-    },
-    {
-      username: "dev_ninja",
-      text: "Make use of TypeScript’s advanced types like union types, intersection types, and conditional types to write more flexible and robust code.",
-      likes: 22,
-      isAuthor: false,
-    },
-    {
-      username: "webpack_master",
-      text: "You need to install ts-loader and configure it in your webpack.config.js file. Ensure that you also set up a tsconfig.json file for your project.",
-      likes: 30,
-      isAuthor: true,
-    },
-    {
-      username: "frontend_dev",
-      text: "Don’t forget to set resolve.extensions to include .ts and .tsx file extensions in your Webpack configuration.",
-      likes: 18,
-      isAuthor: false,
-    },
-  ];
-
+  const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
-  const userId = 1; // Substitua pelo ID real do usuário que está comentando
+  const userId = 1; // Id do user estatico
+  const postId = 1; // ID estático do post
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const token = Cookies.get('token'); 
+        const response = await axios.get('http://localhost:3000/comment', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log("Comentários recebidos:", response.data);
+        const filteredComments = response.data.comments.filter((comment: IAnswer) => comment.postId === postId);
+        setAnswers(filteredComments);
+      } catch (error) {
+        console.error("Erro ao buscar comentários:", error);
+        message.error("Erro ao carregar comentários");
+      }
+    };
+
+    fetchComments();
+  }, [postId]);
 
   const handleChangeAnswer = (e: { target: { value: string } }) => {
     const { value } = e.target;
@@ -78,31 +56,35 @@ function ForumAnswer() {
       });
       return;
     }
-  
-    const postId = 1; //id estatico
-  
+
     console.log("Enviando dados:", {
       body: answer,
-      user_id: userId, 
-      post_id: postId, 
+      user_id: userId,
+      post_id: postId,
     });
-  
+
     try {
+      const token = Cookies.get('token');
       const response = await axios.post("http://localhost:3000/comment", {
         body: answer,
         user_id: userId,
         post_id: postId,
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
-  
+
       console.log("Resposta recebida do servidor:", response.data);
-  
+
       message.open({
         content: "Resposta enviada com sucesso",
         type: "success",
         duration: 3,
       });
-  
-      setAnswer(""); 
+
+      setAnswer("");
+      setAnswers([...answers, response.data]);
     } catch (error) {
       console.error("Erro ao enviar resposta:", error);
   
@@ -113,9 +95,13 @@ function ForumAnswer() {
       });
     }
   };
-  
-  
-  
+  const handleLike = (id: string, liked: boolean) => {
+    setAnswers(prevAnswers =>
+      prevAnswers.map(answer =>
+        answer.id === id ? { ...answer, liked, likes: liked ? answer.likes + 1 : answer.likes - 1 } : answer
+      )
+    );
+  };
 
   return (
     <S.Container>
@@ -146,9 +132,9 @@ function ForumAnswer() {
           />
         </Modal>
       </S.ButtonContainer>
-      {mockData.map((answer: IAnswer, index: number) => {
-        return <Answer key={index} info={answer} />;
-      })}
+      {answers.map((answer: IAnswer, index: number) => (
+        <Answer key={index} info={answer} onLike={handleLike} />
+      ))}
     </S.Container>
   );
 }
