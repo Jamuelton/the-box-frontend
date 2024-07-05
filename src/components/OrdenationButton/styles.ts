@@ -14,6 +14,7 @@ export const ordenationButton = styled(Dropdown)`
   width: 70%;
   padding-left: 0.7rem;
   padding-right: 0.7rem;
+  height: 100%;
 
   span {
     justify-content: center;

@@ -29,17 +29,33 @@ export const Title = styled.label`
 
 export const Content = styled.label`
   color: white;
+  word-break: break-word;
+  white-space: pre-wrap;
 `;
 
 export const LikeArea = styled.div`
   align-self: flex-end;
 `;
 
-export const TitleArea = styled.div``;
-
-export const RateArea = styled.div`
-
+export const MaterialArea = styled.div`
+  display: flex;
+  align-self: flex-end;
+  gap: 1.2rem;
+  color: #ffffff;
+  cursor: pointer;
 `;
+
+export const TitleArea = styled.div`
+  section {
+    display: flex;
+    justify-content: space-between;
+    p {
+      color: white;
+    }
+  }
+`;
+
+export const RateArea = styled.div``;
 
 export const ButtonArea = styled.div`
   display: flex;

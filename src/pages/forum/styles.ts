@@ -80,12 +80,33 @@ export const ModalArea = styled(Modal)`
     padding-bottom: 0.5rem;
   }
 `;
+export const ModalFilterBtnArea = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 17rem;
+`;
 
 export const ModalButton = styled(Button)`
   background-color: var(--blue-300);
   color: var(--blue-900);
   font-weight: bold;
   border-radius: 20px;
+  align-self: flex-end;
+`;
+
+export const ModalCleanButton = styled(Button)`
+  background-color: var(--blue-300);
+  color: var(--blue-900);
+  font-weight: bold;
+  border-radius: 20px;
+  align-self: flex-start;
+
+  &:hover {
+    background-color: #ffffff !important;
+    color: red !important;
+    border: none !important;
+  }
 `;
 
 export const ModalContent = styled.div`
@@ -115,10 +136,11 @@ export const CheckboxArea = styled(Checkbox)`
 `;
 
 export const NewPostModal = styled(Modal)`
-  /* display: flex; */
-  /* width: 100% !important; */
-  /* justify-content: center; */
-  /* align-items: center; */
+  /* /* display: flex; */
+  */
+  /* /* width: 100% !important; */ */
+  /* /* justify-content: center; */ */
+  /* /* align-items: center; */ */
 
   .ant-modal-content {
     background-color: var(--blue-100) !important;
@@ -188,6 +210,15 @@ export const TextAreaError = styled.label`
   font-size: 0.85rem;
   color: red;
   padding: 0 1rem;
+
+  &:focus {
+    outline: none;
+    border-color: var(--gray-100);
+  }
+
+  &:hover {
+    border-color: var(--gray-100);
+  }
 `;
 
 export const TextAreaFooter = styled.div`
@@ -214,6 +245,7 @@ export const hamburguerButtons = styled.section`
   flex-direction: row;
   width: 121%;
   gap: 1rem;
+  height: 100%;
 
   @media (max-width: 680px) {
     display: none;
