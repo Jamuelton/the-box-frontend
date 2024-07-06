@@ -7,35 +7,38 @@ import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
-import axios from "axios";
+import { fetchComments } from '../../services/AnswerServices/CommentService';
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
-function ForumAnswer() {
+const ForumAnswer: React.FC = () => {
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
-  const userId = 1; // Id do user estatico
+  const [userId, setUserId] = useState<number | null>(null);
   const postId = 1; // ID estático do post
 
   useEffect(() => {
-    const fetchComments = async () => {
+    const token = Cookies.get('token');
+    if (token) {
+      const decoded = jwtDecode<{ sub: string }>(token);
+      const userId = parseInt(decoded.sub, 10);
+      setUserId(userId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchCommentsData = async () => {
       try {
-        const token = Cookies.get('token'); 
-        const response = await axios.get('http://localhost:3000/comment', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        console.log("Comentários recebidos:", response.data);
-        const filteredComments = response.data.comments.filter((comment: IAnswer) => comment.postId === postId);
-        setAnswers(filteredComments);
+        const comments = await fetchComments(postId);
+        setAnswers(comments);
       } catch (error) {
         console.error("Erro ao buscar comentários:", error);
         message.error("Erro ao carregar comentários");
       }
     };
 
-    fetchComments();
+    fetchCommentsData();
   }, [postId]);
 
   const handleChangeAnswer = (e: { target: { value: string } }) => {
@@ -57,6 +60,15 @@ function ForumAnswer() {
       return;
     }
 
+    if (!userId) {
+      message.open({
+        content: "Erro ao obter informações do usuário",
+        type: "error",
+        duration: 3,
+      });
+      return;
+    }
+
     console.log("Enviando dados:", {
       body: answer,
       user_id: userId,
@@ -65,17 +77,8 @@ function ForumAnswer() {
 
     try {
       const token = Cookies.get('token');
-      const response = await axios.post("http://localhost:3000/comment", {
-        body: answer,
-        user_id: userId,
-        post_id: postId,
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
 
-      console.log("Resposta recebida do servidor:", response.data);
+      console.log("Resposta enviada com sucesso");
 
       message.open({
         content: "Resposta enviada com sucesso",
@@ -84,10 +87,9 @@ function ForumAnswer() {
       });
 
       setAnswer("");
-      setAnswers([...answers, response.data]);
     } catch (error) {
       console.error("Erro ao enviar resposta:", error);
-  
+
       message.open({
         content: "Erro ao enviar resposta",
         type: "error",
@@ -95,6 +97,7 @@ function ForumAnswer() {
       });
     }
   };
+
   const handleLike = (id: string, liked: boolean) => {
     setAnswers(prevAnswers =>
       prevAnswers.map(answer =>
@@ -137,6 +140,6 @@ function ForumAnswer() {
       ))}
     </S.Container>
   );
-}
+};
 
 export default ForumAnswer;
