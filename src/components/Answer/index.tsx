@@ -5,20 +5,22 @@ import { Button } from "../Button";
 import { IAnswer } from "./interfaces";
 import { useState } from 'react';
 import { likeAnswer, editComment } from '../../services/AnswerServices/Answer';
-import Cookies from 'js-cookie';
+
 
 interface AnswerProps {
   info: IAnswer;
   onLike: (id: string, liked: boolean) => void;
+  currentUserId: number | null;
 }
 
-const Answer: React.FC<AnswerProps> = ({ info, onLike }) => {
+const Answer: React.FC<AnswerProps> = ({ info, onLike, currentUserId }) => {
   const [liked, setLiked] = useState(info.liked);
   const [likes, setLikes] = useState(info.likes);
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(info.body);
-  const currentUserId = Cookies.get('userId'); 
 
+  const edit = currentUserId === info.user_id;
+  const isAuthor = info.post_id === info.user_id;
   const handleLike = async () => {
     try {
       await likeAnswer(info.id); // Adicionar ou remover like
@@ -33,7 +35,7 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike }) => {
   const handleEdit = async () => {
     try {
       await editComment(info.id, editedText);
-      info.body = editedText; // Atualiza o texto do comentário localmente
+      info.body = editedText;
       setIsEditing(false);
     } catch (error) {
       console.error('Erro ao editar comentário:', error);
@@ -49,26 +51,25 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike }) => {
   };
 
   return (
-    <S.Container isAuthor={info.isAuthor}>
-      <S.AnswerBaloon isAuthor={info.isAuthor}>
+    <S.Container isAuthor={isAuthor}>
+      <S.AnswerBaloon isAuthor={isAuthor}>
         <S.Header>
           <S.Title>{info.title}</S.Title>
           <S.Username>
-            <S.UsernameText isAuthor={info.isAuthor}>{info.commentator}</S.UsernameText>
+            <S.UsernameText isAuthor={isAuthor}>{info.commentator}</S.UsernameText>
             <Avatar size='default' icon={<UserCircle size={32} color="#DCF2F1"/>}/>
           </S.Username>
         </S.Header>
-        <S.AnswerText isAuthor={info.isAuthor}>{info.body}</S.AnswerText>
+        <S.AnswerText isAuthor={isAuthor}>{info.body}</S.AnswerText>
         <S.Likes>
           <S.LikesText>{likes}</S.LikesText>
           <Button 
-            secondColor={info.isAuthor ? '#365486' : "#7FC7D9"} 
+            secondColor={isAuthor ? '#365486' : "#7FC7D9"} 
             icon={<S.LikeHeart color={liked ? "red" : "white"}/>} 
             buttonFunction={handleLike}
           />
-          {info.user_id === currentUserId && (
+          {edit && (
             <Button 
-              secondColor="#FFC107"
               icon={<PencilSimple size={24} />}
               buttonFunction={openEditModal}
             />
@@ -78,7 +79,7 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike }) => {
 
       <Modal
         title="Editar Resposta"
-        visible={isEditing}
+        open={isEditing}
         onOk={handleEdit}
         onCancel={closeEditModal}
         footer={[

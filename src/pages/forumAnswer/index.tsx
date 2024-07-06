@@ -136,7 +136,7 @@ const ForumAnswer: React.FC = () => {
         </Modal>
       </S.ButtonContainer>
       {answers.map((answer: IAnswer, index: number) => (
-        <Answer key={index} info={answer} onLike={handleLike} />
+        <Answer key={index} info={answer} onLike={handleLike} currentUserId={userId} />
       ))}
     </S.Container>
   );

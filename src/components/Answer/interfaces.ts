@@ -4,6 +4,8 @@ export interface IAnswer {
     body?: string;
     likes?: number;
     id?: number;
+    user_id?: number;
+    post_id?: number;
     liked?: boolean;
     isAuthor?: boolean;
 }
