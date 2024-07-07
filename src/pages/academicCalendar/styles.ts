@@ -6,7 +6,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  flex-wrap: wrap;
 `;
 
 export const MainDiv = styled.div`
