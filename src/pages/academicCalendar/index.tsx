@@ -5,7 +5,7 @@ import moment from "moment";
 import "moment/locale/pt-br";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
-import { EventModal } from "../../components/EventModal";
+import { EventModal } from "../../components/EventModal"; 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   CustomCalendarContainer,
@@ -20,37 +20,35 @@ import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
 import { EventData } from "../../services/Types/eventType";
-import { useData } from "../../config/data/UseData";
+
 
 export function AcademicCalendar() {
-  const { userInfo } = useData();
-
   moment.locale("pt-br");
   const localizer = momentLocalizer(moment);
 
   const messages = {
-    date: "Data",
-    time: "Hora",
-    event: "Evento",
-    allDay: "Dia Inteiro",
-    week: "Semana",
-    work_week: "Semana de Trabalho",
-    day: "Dia",
-    month: "Mês",
-    previous: "Anterior",
-    next: "Próximo",
-    yesterday: "Ontem",
-    tomorrow: "Amanhã",
-    today: "Hoje",
-    agenda: "Agenda",
-    noEventsInRange: "Não há eventos nesta faixa de datas.",
-    showMore: (total: number) => `+ Ver mais (${total})`,
+    date: 'Data',
+    time: 'Hora',
+    event: 'Evento',
+    allDay: 'Dia Inteiro',
+    week: 'Semana',
+    work_week: 'Semana de Trabalho',
+    day: 'Dia',
+    month: 'Mês',
+    previous: 'Anterior',
+    next: 'Próximo',
+    yesterday: 'Ontem',
+    tomorrow: 'Amanhã',
+    today: 'Hoje',
+    agenda: 'Agenda',
+    noEventsInRange: 'Não há eventos nesta faixa de datas.',
+    showMore: (total: number) => `+ Ver mais (${total})`
   };
 
   const formats = {
     monthHeaderFormat: "MMMM YYYY",
     dayHeaderFormat: "dddd, DD/MM/YYYY",
-    dayRangeHeaderFormat: ({ start, end }: { start: Date; end: Date }) => {
+    dayRangeHeaderFormat: ({ start, end }: { start: Date, end: Date }) => {
       const startDate = moment(start).format("DD MMMM");
       const endDate = moment(end).format("DD MMMM YYYY");
       return `${startDate} - ${endDate}`;
@@ -60,7 +58,7 @@ export function AcademicCalendar() {
     dayFormat: "DD/MM/YYYY",
     dateFormat: "DD",
     monthFormat: "MMMM YYYY",
-    agendaTimeFormat: "HH:mm",
+    agendaTimeFormat: "HH:mm"
   };
 
   const [eventsData, setEventsData] = useState<EventData[]>([]);
@@ -116,29 +114,25 @@ export function AcademicCalendar() {
                 shape="round"
                 size="small"
               />
-              {userInfo?.profile == "SUPER_USER" && (
-                <Button
-                  color="#070F2B"
-                  icon={<CalendarPlus size={24} />}
-                  secondColor="#7FC7D9"
-                  shape="round"
-                  size="small"
-                  buttonFunction={() => navigate("/add-calendar")}
-                />
-              )}
+              <Button
+                color="#070F2B"
+                icon={<CalendarPlus size={24} />}
+                secondColor="#7FC7D9"
+                shape="round"
+                size="small"
+                buttonFunction={() => navigate("/add-calendar")}
+              />
             </ButtonGroup>
             <DivButton>
-              {userInfo?.profile == "SUPER_USER" && (
-                <Button
-                  color="#070F2B"
-                  icon={<Plus size={24} />}
-                  secondColor="#7FC7D9"
-                  label="Adicionar Evento"
-                  shape="round"
-                  size="small"
-                  buttonFunction={() => setShowModal(true)}
-                />
-              )}
+              <Button
+                color="#070F2B"
+                icon={<Plus size={24} />}
+                secondColor="#7FC7D9"
+                label="Adicionar Evento"
+                shape="round"
+                size="small"
+                buttonFunction={() => setShowModal(true)}
+              />
             </DivButton>
           </Div>
           <Calendar
