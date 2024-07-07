@@ -137,15 +137,18 @@ export const CheckboxArea = styled(Checkbox)`
 
 export const NewPostModal = styled(Modal)`
   /* /* display: flex; */
-  */
-  /* /* width: 100% !important; */ */
-  /* /* justify-content: center; */ */
-  /* /* align-items: center; */ */
+  /* /* width: 100% !important; */
+  /* /* justify-content: center; */
+  /* /* align-items: center; */
 
   .ant-modal-content {
     background-color: var(--blue-100) !important;
     padding-left: 3rem;
     padding-right: 3rem;
+  }
+
+  .ant-modal-body {
+    background-color: var(--blue-100) !important;
   }
 
   .ant-modal-title {
