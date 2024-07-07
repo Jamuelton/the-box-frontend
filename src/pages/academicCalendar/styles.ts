@@ -11,7 +11,7 @@ export const Container = styled.div`
 export const MainDiv = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 2rem;
 `;
 
 export const CustomCalendarContainer = styled.div`
