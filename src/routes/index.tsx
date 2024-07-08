@@ -45,7 +45,7 @@ export const AppRoutes = () => {
                 <Route path="/" element={<Home />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
-                <Route path="/forum-answer" element={<ForumAnswer />} />
+                <Route path="/forum-answer/:id" element={<ForumAnswer />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
                 <Route path="/forum" element={<Forum />} />
