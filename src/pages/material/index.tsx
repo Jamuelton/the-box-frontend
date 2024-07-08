@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { MenuProps, Upload } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
@@ -6,14 +7,13 @@ import { Title } from "../../components/Title";
 import * as S from "./styles";
 import { List, Paperclip, Upload as UP, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
-import { useState } from "react";
-import { UploadProps } from "antd/lib";
 import {
   errorNotification,
   successNotification,
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
 import { useData } from "../../config/data/UseData";
+import Cookies from 'js-cookie';
 
 export function Material() {
   const [attachModal, setAttachModal] = useState<boolean>(false);
@@ -21,7 +21,8 @@ export function Material() {
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [archiveName, setArchiveName] = useState<string>();
   const [archiveDescription, setArchiveDescription] = useState<string>();
-  // const [file, setFile] = useState<UploadFile>();
+  const [file, setFile] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const { userInfo } = useData();
   const userProfile = userInfo?.profile;
 
@@ -77,10 +78,12 @@ export function Material() {
       ],
     },
   ];
+
   const handleDescription = (e: { target: { value: string } }) => {
     const { value } = e.target;
     setArchiveDescription(value);
   };
+
   const handleName = (e: { target: { value: string } }) => {
     const { value } = e.target;
     setArchiveName(value);
@@ -88,26 +91,112 @@ export function Material() {
 
   const { Dragger } = Upload;
 
-  const props: UploadProps = {
+  const getSignedUrl = async (fileType: string) => {
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const response = await fetch(`http://localhost:3000/materialUploadUrl?fileType=${fileType}`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get signed URL');
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error('Error fetching signed URL:', error);
+      errorNotification('Error fetching signed URL');
+    }
+  };
+
+  const uploadToS3 = async (file: File, signedUrl: string) => {
+    try {
+      const response = await fetch(signedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload file');
+      }
+
+      successNotification(`${file.name} file uploaded successfully.`);
+      setFileUrl(signedUrl.split('?')[0]);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      errorNotification('File upload failed');
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!fileUrl || !archiveName || !archiveDescription) {
+      errorNotification('All fields are required.');
+      return;
+    }
+
+    const token = Cookies.get('token');
+    if (!token) {
+      errorNotification('No token found');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/materialDidatico', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: archiveName,
+          description: archiveDescription,
+          fileUrl: fileUrl
+        })
+      });
+      console.log(response)
+      if (!response.ok) {
+        throw new Error('Failed to submit material');
+      }
+
+      successNotification('Material submitted successfully.');
+      setAttachModal(false); // Fechar o modal após o envio
+    } catch (error) {
+      console.error('Error submitting material:', error);
+      errorNotification('Failed to submit material');
+    }
+  };
+
+  const props = {
     name: "file",
     multiple: false,
-    // beforeUpload(file) {
-    //   const isPDF = file.type === "application/pdf";
-    //   if (!isPDF) {
-    //     errorNotification("You can only upload PDF file!");
-    //   }
-    //   return false;
-    // },
+    beforeUpload: async (file) => {
+      const isSupportedFileType = ["application/pdf", "image/webp", "image/png", "image/jpeg", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/epub+zip"].includes(file.type);
+      if (!isSupportedFileType) {
+        errorNotification("Unsupported file type!");
+        return false;
+      }
+      
+      const signedUrl = await getSignedUrl(file.type.split('/').pop());
+      if (signedUrl) {
+        await uploadToS3(file, signedUrl);
+      }
+      return false;
+    },
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-        console.log("not done");
-      }
-      if (status === "done") {
-        successNotification(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        errorNotification(`${info.file.name} file upload failed.`);
+        setFile(info.file.originFileObj);
       }
     },
     onDrop(e) {
@@ -196,7 +285,7 @@ export function Material() {
             <S.ModalCancelBtn onClick={() => setAttachModal(false)}>
               Cancelar
             </S.ModalCancelBtn>
-            <S.ModalOkBtn>Publicar</S.ModalOkBtn>
+            <S.ModalOkBtn onClick={handleSubmit}>Publicar</S.ModalOkBtn>
           </S.ModalFooter>
         }
         width={800}
