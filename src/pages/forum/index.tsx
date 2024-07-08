@@ -85,8 +85,7 @@ export function Forum() {
       key: 1,
       label: "Posts Recentes",
       onClick: () => {
-        setOrdering("date");
-        orderPost(post);
+        setOrderingAndOrderPosts("date");
       },
     },
     {
@@ -96,8 +95,7 @@ export function Forum() {
       key: 2,
       label: "Posts antigos",
       onClick: () => {
-        setOrdering("replies");
-        orderPost(post);
+        setOrderingAndOrderPosts("replies");
       },
     },
     {
@@ -105,14 +103,19 @@ export function Forum() {
     },
   ];
 
+  const setOrderingAndOrderPosts = (order: string) => {
+    setOrdering(order);
+    orderPost(post, order);
+  };
+
   const handleSelectChange = (value: unknown) => {
     if (Object.values(CategoryEnum).includes(value as CategoryEnum)) {
       setCategory(value as CategoryEnum);
     }
   };
 
-  const orderPost = (posts: ForumInterface[]) => {
-    switch (ordering) {
+  const orderPost = (posts: ForumInterface[], order: string) => {
+    switch (order) {
       case "date":
         posts.sort((a, b) => {
           const dateA = new Date(a.created_at ?? 0).getTime();
@@ -127,9 +130,6 @@ export function Forum() {
           return dateA - dateB;
         });
         break;
-      // case "likes":
-      //   sortedPosts.sort((a, b) => b.likes - a.likes);
-      //   break;
       default:
         break;
     }
@@ -140,7 +140,7 @@ export function Forum() {
   const getPost = async () => {
     const response = await getPosts();
     if (response?.status == 200) {
-      orderPost(response.data);
+      orderPost(response.data, ordering);
     } else {
       errorNotification("Não foi possível carregar os posts");
     }
