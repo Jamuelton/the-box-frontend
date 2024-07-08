@@ -1,4 +1,4 @@
-import { MenuProps, Upload } from "antd";
+import { CheckboxProps, MenuProps, Upload } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
 import { SearchInput } from "../../components/Search";
@@ -11,9 +11,20 @@ import { UploadProps } from "antd/lib";
 import {
   errorNotification,
   successNotification,
+  warningNotification,
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
 import { useData } from "../../config/data/UseData";
+import { postMaterial, putURL } from "../../services/MaterialServices";
+import { useAuth } from "../../config/auth/UseAuth";
+import { RcFile } from "antd/es/upload";
+import {
+  CategoryMaterialEnum,
+  // CategoryMaterialEnum,
+  MaterialInterface,
+} from "../../services/Types/materialTypes";
+import { MaterialSchema } from "../../services/MaterialServices/materialSchema";
+import { ZodError } from "zod";
 
 export function Material() {
   const [attachModal, setAttachModal] = useState<boolean>(false);
@@ -21,9 +32,30 @@ export function Material() {
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [archiveName, setArchiveName] = useState<string>();
   const [archiveDescription, setArchiveDescription] = useState<string>();
-  // const [file, setFile] = useState<UploadFile>();
+  const [fileUrl, setFileUrl] = useState<string>();
+  const [category, setCategory] = useState<CategoryMaterialEnum>();
+
+  const { Dragger } = Upload;
   const { userInfo } = useData();
+  const { userId } = useData();
+  const { token } = useAuth();
   const userProfile = userInfo?.profile;
+
+  interface ErrorInterface {
+    errorShow?: boolean;
+    errorText?: string;
+    status?: "" | "warning" | "error" | undefined;
+  }
+  const [errorTitle, setErrorTitle] = useState<ErrorInterface>({
+    errorShow: false,
+    errorText: "",
+    status: "",
+  });
+  const [errorDescription, setErrorDescription] = useState<ErrorInterface>({
+    errorShow: false,
+    errorText: "",
+    status: "",
+  });
 
   const ordenationItems: MenuProps["items"] = [
     {
@@ -79,40 +111,88 @@ export function Material() {
   ];
   const handleDescription = (e: { target: { value: string } }) => {
     const { value } = e.target;
+    try {
+      MaterialSchema.shape.description.parse(value);
+      setErrorDescription({ errorShow: false });
+    } catch (error) {
+      setErrorDescription({
+        errorShow: true,
+        errorText: "Insira um título válido (1, 100)",
+        status: "error",
+      });
+    }
     setArchiveDescription(value);
   };
+
   const handleName = (e: { target: { value: string } }) => {
     const { value } = e.target;
+    try {
+      MaterialSchema.shape.title.parse(value);
+      setErrorTitle({ errorShow: false });
+    } catch (error) {
+      setErrorTitle({
+        errorShow: true,
+        errorText: "Insira uma descrição válido (1, 500)",
+        status: "error",
+      });
+    }
     setArchiveName(value);
   };
 
-  const { Dragger } = Upload;
+  const handlePostMaterial = async () => {
+    try {
+      if (userId) {
+        const archiveData: MaterialInterface = {
+          title: archiveName,
+          url: fileUrl,
+          description: archiveDescription,
+          user_id: parseInt(userId),
+          category: "BAREMA",
+        };
+        MaterialSchema.parse(archiveData);
+        const response = await postMaterial(archiveData, token);
+        if (response?.status == 200) {
+          successNotification("Material publicado com sucesso");
+          setFileUrl(undefined);
+          setArchiveDescription(undefined);
+          setArchiveName(undefined);
+          setAttachModal(false);
+        }
+        if (response?.status == 400) {
+          errorNotification("Não foi possível criar material");
+        }
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        console.log(error.issues);
+        errorNotification(error.issues[0].message);
+      }
+    }
+  };
+
+  const urlPut = async (file: RcFile) => {
+    const url = await putURL(token, file.type.split("/")[1]);
+    const splitUrl = url?.data.url;
+    setFileUrl(splitUrl.split("?")[0]);
+  };
 
   const props: UploadProps = {
     name: "file",
     multiple: false,
-    // beforeUpload(file) {
-    //   const isPDF = file.type === "application/pdf";
-    //   if (!isPDF) {
-    //     errorNotification("You can only upload PDF file!");
-    //   }
-    //   return false;
-    // },
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-        console.log("not done");
-      }
-      if (status === "done") {
-        successNotification(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        errorNotification(`${info.file.name} file upload failed.`);
+    beforeUpload(file) {
+      if (fileUrl) {
+        warningNotification("Você só pode anexar um arquivo");
+        return true;
+      } else {
+        urlPut(file);
+        return false;
       }
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
+  };
+
+  const handleCheckbox: CheckboxProps["onChange"] = (e) => {
+    console.log(e.target.value);
+    setCategory(e.target.value);
   };
 
   return (
@@ -180,9 +260,34 @@ export function Material() {
         <S.ModalFilterContent>
           <h3>Categorias</h3>
           <div>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="BAREMA"
+              checked={category?.toString() == "BAREMA"}
+            >
+              Barema
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="REQUERIMENTO"
+              checked={category?.toString() == "REQUERIMENTO"}
+            >
+              Requerimento
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="EDITAIS"
+              checked={category?.toString() == "EDITAIS"}
+            >
+              Editais
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="EDITAIS_DE_BOLSA"
+              checked={category?.toString() == "EDITAIS_DE_BOLSA"}
+            >
+              Editais de Bolsa
+            </S.CheckboxArea>
           </div>
         </S.ModalFilterContent>
       </S.ModalFilterArea>
@@ -196,14 +301,16 @@ export function Material() {
             <S.ModalCancelBtn onClick={() => setAttachModal(false)}>
               Cancelar
             </S.ModalCancelBtn>
-            <S.ModalOkBtn>Publicar</S.ModalOkBtn>
+            <S.ModalOkBtn onClick={() => handlePostMaterial()}>
+              Publicar
+            </S.ModalOkBtn>
           </S.ModalFooter>
         }
         width={800}
       >
         <S.AttachModalContent>
           <S.uploadAttach>
-            <label>Arquivo*</label>
+            <S.Archivelabel>Arquivo*</S.Archivelabel>
             <Dragger {...props}>
               <UP size={68} weight="fill" />
               <p className="ant-upload-text">
@@ -211,16 +318,21 @@ export function Material() {
               </p>
             </Dragger>
           </S.uploadAttach>
+
           <Input
             label="Nome do Arquivo*"
             value={archiveName}
             inputFunction={handleName}
+            errorShow={errorTitle.errorShow}
+            errorText={errorTitle.errorText}
           ></Input>
           <Input
             label="Descrição do Arquivo*"
             placeHolder="Escreva algo..."
             inputFunction={handleDescription}
             value={archiveDescription}
+            errorShow={errorDescription.errorShow}
+            errorText={errorDescription.errorText}
           ></Input>
         </S.AttachModalContent>
       </S.AttachModal>

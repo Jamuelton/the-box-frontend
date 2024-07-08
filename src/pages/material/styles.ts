@@ -85,11 +85,11 @@ export const AttachModal = styled(Modal)`
     padding-bottom: 0.5rem;
     border-bottom: 0.1rem solid var(--blue-300);
   }
+`;
 
-  label {
-    color: var(--blue-700);
-    font-size: 1rem;
-  }
+export const Archivelabel = styled.label`
+  color: var(--blue-700);
+  font-size: 1rem;
 `;
 
 export const AttachModalContent = styled.div`
