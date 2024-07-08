@@ -3,6 +3,7 @@ import * as S from "./styles";
 import { useState } from "react";
 import { Input } from "../Input";
 import { useLocation } from "react-router-dom";
+import { SendMesageBot } from "../../services/ChatServices";
 
 export const ChatBot = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -20,13 +21,20 @@ export const ChatBot = () => {
     setIsModalOpen(false);
   };
 
+  const AskBot = async () => {
+    const response = await SendMesageBot("Onde posso almoçar com R$16,00?");
+    if (response?.status == 200) {
+      console.log(response.data);
+    }
+  };
+
   //   const answer = [{ label: "Como poderia ajudar hoje?" }];
 
   //   const question = [
   //     { label: "Quais os horários do laborátorio disponivel hoje?" },
   //   ];
 
-  if (path == "/" || path == "/login" || path == "/register") {
+  if (path == "/login" || path == "/register") {
     return null;
   }
 
@@ -44,7 +52,7 @@ export const ChatBot = () => {
         footer={
           <>
             <Input placeHolder="Pergunte algo" />
-            <PaperPlaneTilt size={24} weight="fill" />
+            <PaperPlaneTilt size={24} weight="fill" onClick={AskBot} />
           </>
         }
       >
