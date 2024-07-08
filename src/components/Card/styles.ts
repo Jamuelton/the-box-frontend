@@ -72,3 +72,13 @@ export const ButtonArea = styled.div`
     cursor: pointer;
   }
 `;
+
+export const FooterArea = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const AuthorName = styled.label`
+  color: white;
+`;

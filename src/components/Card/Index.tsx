@@ -16,6 +16,7 @@ interface CardProps {
   editFunction?: () => void;
   onLikeToggle?: () => void;
   datePost?: Date;
+  author?: string;
 }
 
 export const Card: FC<CardProps> = ({
@@ -30,6 +31,7 @@ export const Card: FC<CardProps> = ({
   editFunction,
   onLikeToggle,
   datePost,
+  author,
 }) => {
   return (
     <S.Container $extend={extend}>
@@ -64,12 +66,15 @@ export const Card: FC<CardProps> = ({
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>
-      {details && (
-        <S.ButtonArea>
-          <label htmlFor="">Ver detalhes</label>
-          <ArrowRight size={24} weight="bold" color="#7fc7d9" />
-        </S.ButtonArea>
-      )}
+      <S.FooterArea>
+        {author && <S.AuthorName>@:{author}</S.AuthorName>}
+        {details && (
+          <S.ButtonArea>
+            <label htmlFor="">Ver detalhes</label>
+            <ArrowRight size={24} weight="bold" color="#7fc7d9" />
+          </S.ButtonArea>
+        )}
+      </S.FooterArea>
     </S.Container>
   );
 };
