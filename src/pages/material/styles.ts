@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dropdown, Modal } from "antd";
+import { Button, Checkbox, Dropdown, Modal, Select } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -85,11 +85,11 @@ export const AttachModal = styled(Modal)`
     padding-bottom: 0.5rem;
     border-bottom: 0.1rem solid var(--blue-300);
   }
+`;
 
-  label {
-    color: var(--blue-700);
-    font-size: 1rem;
-  }
+export const Archivelabel = styled.label`
+  color: var(--blue-700);
+  font-size: 1rem;
 `;
 
 export const AttachModalContent = styled.div`
@@ -205,6 +205,28 @@ export const hamburguerSection = styled(Dropdown)`
   @media (max-width: 680px) {
     display: flex;
   }
+`;
+
+export const SelectArea = styled(Select)`
+  width: 100%;
+  .ant-select-selector {
+    border-radius: 20px;
+    background: var(--blue-900) !important;
+    color: white;
+  }
+  .ant-select-selection-placeholder {
+    color: #ffffff;
+    font-weight: lighter;
+  }
+  .ant-select-arrow {
+    color: #ffffff;
+  }
+`;
+
+export const ModalRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 export const NoPost = styled.h3`

@@ -142,7 +142,7 @@ export const Header: React.FC<HeaderProps> = () => {
           </S.info>
         )}
       </S.headerArea>
-      {isAuthenticated || (isAuth() && path !== "/home") ? (
+      {isAuthenticated || (isAuth() && path !== "/") ? (
         <S.optionsArea>
           {options.map(({ icon, title, link }, index) => (
             <S.optionDiv key={index} onClick={() => sendTo(link)}>
