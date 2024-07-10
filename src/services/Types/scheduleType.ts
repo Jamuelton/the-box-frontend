@@ -1,6 +1,8 @@
 export interface ScheduleData {
-    title: string;
-    dates: Date[];
-    startTime: Date;
-    endTime: Date;
+  title: string;
+  date: Date[];
+  start_time: Date;
+  end_time: Date;
+  lab_id: number;
+  user_id?: string;
 }
