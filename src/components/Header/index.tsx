@@ -137,8 +137,12 @@ export const Header: React.FC<HeaderProps> = () => {
           </S.icons>
         ) : (
           <S.info>
-            <S.link href="#">Sobre</S.link>
-            <S.link href="/register">Cadastre-se</S.link>
+            <S.link href="/login">Sobre</S.link>
+            {path == "/register" ? (
+              <></>
+            ) : (
+              <S.link href="/register">Cadastre-se</S.link>
+            )}
           </S.info>
         )}
       </S.headerArea>
