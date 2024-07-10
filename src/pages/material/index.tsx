@@ -6,7 +6,7 @@ import { Title } from "../../components/Title";
 import * as S from "./styles";
 import { List, Paperclip, Upload as UP, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { UploadProps } from "antd/lib";
 import {
   errorNotification,
@@ -15,7 +15,11 @@ import {
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
 import { useData } from "../../config/data/UseData";
-import { postMaterial, putURL } from "../../services/MaterialServices";
+import {
+  getMaterial,
+  postMaterial,
+  putURL,
+} from "../../services/MaterialServices";
 import { useAuth } from "../../config/auth/UseAuth";
 import { RcFile } from "antd/es/upload";
 import {
@@ -34,6 +38,8 @@ export function Material() {
   const [archiveDescription, setArchiveDescription] = useState<string>();
   const [fileUrl, setFileUrl] = useState<string>();
   const [category, setCategory] = useState<CategoryMaterialEnum>();
+  const [materials, setMaterials] = useState<MaterialInterface[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const { Dragger } = Upload;
   const { userInfo } = useData();
@@ -139,6 +145,32 @@ export function Material() {
     setArchiveName(value);
   };
 
+  const handleSelectChange = (value: unknown) => {
+    if (
+      Object.values(CategoryMaterialEnum).includes(
+        value as CategoryMaterialEnum
+      )
+    ) {
+      setCategory(value as CategoryMaterialEnum);
+    }
+  };
+
+  const handleGetMaterial = async () => {
+    try {
+      const response = await getMaterial(token);
+      if (response?.status == 200) {
+        setMaterials(response.data.materials);
+      }
+      if (response?.status == 400) {
+        errorNotification("Não foi possível encontrar materiais");
+      }
+    } catch (error) {
+      if (error instanceof ZodError) {
+        errorNotification(error.issues[0].message);
+      }
+    }
+  };
+
   const handlePostMaterial = async () => {
     try {
       if (userId) {
@@ -147,7 +179,7 @@ export function Material() {
           url: fileUrl,
           description: archiveDescription,
           user_id: parseInt(userId),
-          category: "BAREMA",
+          category: category,
         };
         MaterialSchema.parse(archiveData);
         const response = await postMaterial(archiveData, token);
@@ -157,6 +189,7 @@ export function Material() {
           setArchiveDescription(undefined);
           setArchiveName(undefined);
           setAttachModal(false);
+          handleGetMaterial();
         }
         if (response?.status == 400) {
           errorNotification("Não foi possível criar material");
@@ -164,7 +197,6 @@ export function Material() {
       }
     } catch (error) {
       if (error instanceof ZodError) {
-        console.log(error.issues);
         errorNotification(error.issues[0].message);
       }
     }
@@ -172,8 +204,12 @@ export function Material() {
 
   const urlPut = async (file: RcFile) => {
     const url = await putURL(token, file.type.split("/")[1]);
-    const splitUrl = url?.data.url;
-    setFileUrl(splitUrl.split("?")[0]);
+    if (url?.status == 200) {
+      const splitUrl = url?.data.url;
+      setFileUrl(splitUrl.split("?")[0]);
+    } else {
+      errorNotification("Não foi possível fazer upload desse arquivo");
+    }
   };
 
   const props: UploadProps = {
@@ -195,6 +231,34 @@ export function Material() {
     setCategory(e.target.value);
   };
 
+  const handleSearchTermChange = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setSearchTerm(value);
+  };
+
+  const handleSearchFilter = () => {
+    if (searchTerm.length == 1 || searchTerm.length == 0) {
+      handleGetMaterial();
+    } else {
+      setMaterials(
+        materials.filter(
+          (material) =>
+            (material.title?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+              false) ||
+            (material.description
+              ?.toLowerCase()
+              .includes(searchTerm.toLowerCase()) ??
+              false)
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    handleGetMaterial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <S.Container>
       <S.TitleArea>
@@ -208,7 +272,10 @@ export function Material() {
           <Paperclip size={20} weight="bold" />
         </S.AttachButtonIcon>
         <span>
-          <SearchInput />
+          <SearchInput
+            onChangeSearchFunction={handleSearchTermChange}
+            searchFunction={handleSearchFilter}
+          />
           <S.hamburguerButtons>
             <OrdenationButton
               items={ordenationItems}
@@ -224,30 +291,20 @@ export function Material() {
         </span>
       </S.ButtonsArea>
       <S.CardArea>
-        <Card
-          extend={true}
-          title="Material de Apoio"
-          content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          download={true}
-          edit={userProfile == "SUPER_USER"}
-          editFunction={() => setAttachModal(true)}
-        ></Card>
-        <Card
-          extend={true}
-          title="Material de Apoio"
-          content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          download={true}
-          edit={userProfile == "SUPER_USER"}
-          editFunction={() => setAttachModal(true)}
-        ></Card>
-        <Card
-          extend={true}
-          title="Material de Apoio"
-          content="Lorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem IpsumLorem Ipsum"
-          download={true}
-          edit={userProfile == "SUPER_USER"}
-          editFunction={() => setAttachModal(true)}
-        ></Card>
+        {materials.length > 0 &&
+          materials.map(({ title, description }, index) => (
+            <Card
+              key={index}
+              extend={true}
+              title={title}
+              content={description}
+              download={true}
+              edit={userProfile == "SUPER_USER"}
+              editFunction={() => setAttachModal(true)}
+              rateCard={false}
+              like={false}
+            ></Card>
+          ))}
       </S.CardArea>
       <S.ModalFilterArea
         open={modalFiltro}
@@ -310,7 +367,20 @@ export function Material() {
       >
         <S.AttachModalContent>
           <S.uploadAttach>
-            <S.Archivelabel>Arquivo*</S.Archivelabel>
+            <S.ModalRow>
+              <S.Archivelabel>Arquivo*</S.Archivelabel>
+              <S.SelectArea
+                placeholder="Categoria"
+                style={{ width: 120 }}
+                onChange={handleSelectChange}
+                options={[
+                  { value: "BAREMA", label: "Barema" },
+                  { value: "REQUERIMENTO", label: "Requerimento" },
+                  { value: "EDITAIS", label: "Editais" },
+                  { value: "EDITAIS_DE_BOLSA", label: "Editais de bolsa" },
+                ]}
+              />
+            </S.ModalRow>
             <Dragger {...props}>
               <UP size={68} weight="fill" />
               <p className="ant-upload-text">
