@@ -115,7 +115,6 @@ export function Material() {
       ],
     },
   ];
-
   const handleDescription = (e: { target: { value: string } }) => {
     const { value } = e.target;
     try {
@@ -213,93 +212,7 @@ export function Material() {
     }
   };
 
-  const getSignedUrl = async (fileType: string) => {
-    try {
-      const token = Cookies.get('token');
-      if (!token) {
-        throw new Error('No token found');
-      }
-
-      const response = await fetch(`http://localhost:3000/materialUploadUrl?fileType=${fileType}`, {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get signed URL');
-      }
-
-      const data = await response.json();
-      return data.url;
-    } catch (error) {
-      console.error('Error fetching signed URL:', error);
-      errorNotification('Error fetching signed URL');
-    }
-  };
-
-  const uploadToS3 = async (file: File, signedUrl: string) => {
-    try {
-      const response = await fetch(signedUrl, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to upload file');
-      }
-
-      successNotification(`${file.name} file uploaded successfully.`);
-      setFileUrl(signedUrl.split('?')[0]);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      errorNotification('File upload failed');
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!fileUrl || !archiveName || !archiveDescription) {
-      errorNotification('All fields are required.');
-      return;
-    }
-
-    const token = Cookies.get('token');
-    if (!token) {
-      errorNotification('No token found');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:3000/materialDidatico', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          name: archiveName,
-          description: archiveDescription,
-          fileUrl: fileUrl
-        })
-      });
-      console.log(response)
-      if (!response.ok) {
-        throw new Error('Failed to submit material');
-      }
-
-      successNotification('Material submitted successfully.');
-      setAttachModal(false); // Fechar o modal após o envio
-    } catch (error) {
-      console.error('Error submitting material:', error);
-      errorNotification('Failed to submit material');
-    }
-  };
-
-  const props = {
+  const props: UploadProps = {
     name: "file",
     multiple: false,
     beforeUpload(file) {
