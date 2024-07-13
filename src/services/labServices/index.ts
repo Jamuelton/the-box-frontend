@@ -16,7 +16,6 @@ export interface schedules {
 [];
 
 interface requestLab {
-  id: number;
   start_time: Date;
   end_time: Date;
   date: Date;
@@ -30,10 +29,10 @@ export const createNewLabEvent = async (data: CreateLabSchedule) => {
     const config = {
       headers: { Authorization: `Bearer: ${token}` },
     };
-
+    console.log(data);
     const { start_time, end_time, date, lab_id, user_id } = data;
 
-    const newEvent = {
+    const newEvent: requestLab = {
       start_time: start_time,
       end_time: end_time,
       date: date[0],
@@ -41,7 +40,6 @@ export const createNewLabEvent = async (data: CreateLabSchedule) => {
       user_id: parseInt(user_id),
     };
 
-    console.log(newEvent);
     const response = await api.post("/labschedules", newEvent, config);
     return response;
   } catch (error) {
@@ -51,14 +49,30 @@ export const createNewLabEvent = async (data: CreateLabSchedule) => {
   }
 };
 
-export const getLabSchedule = async () => {
+export const getLabSchedule = async (lab: number) => {
   try {
     const token = Cookies.get("token");
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     };
 
-    const response = await api.get("/labschedules", config);
+    const response = await api.get(`/lab/${lab}/schedules`, config);
+    return response;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+  }
+};
+
+export const getLabs = async () => {
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    const response = await api.get("/labs", config);
     return response;
   } catch (error) {
     if (error instanceof AxiosError) {

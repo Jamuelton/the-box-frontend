@@ -1,4 +1,3 @@
-// LabSchedule.tsx
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
@@ -19,10 +18,20 @@ import {
 } from "./styles";
 import { Button } from "../../components/Button";
 import { Title } from "../../components/Title";
-import { ScheduleData } from "../../services/Types/scheduleType";
+import {
+  Labs,
+  OtherScheduleData,
+  ScheduleData,
+} from "../../services/Types/scheduleType";
 import { message } from "antd/lib";
-import { createNewLabEvent, getLabSchedule } from "../../services/labServices";
+import {
+  createNewLabEvent,
+  getLabs,
+  getLabSchedule,
+} from "../../services/labServices";
 import { useData } from "../../config/data/UseData";
+import { Button as ButtonAntd } from "antd/lib";
+
 export function LabSchedule() {
   moment.locale("pt-br");
   const localizer = momentLocalizer(moment);
@@ -63,27 +72,39 @@ export function LabSchedule() {
   };
 
   const { userId } = useData();
-  const [lab, setLab] = useState<number>();
-  const [eventsData, setEventsData] = useState<ScheduleData[]>([]);
+  const [labs, setLabs] = useState<Labs[]>();
+  const [eventsData, setEventsData] = useState<OtherScheduleData[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [newEvent, setNewEvent] = useState<ScheduleData>({
     title: "",
     date: [],
     start_time: new Date(),
     end_time: new Date(),
-    lab_id: 0,
+    lab_id: 1,
     user_id: userId,
   });
+  const [currentLab, setCurrentLab] = useState<number>(1);
 
-  const getSchedule = async () => {
-    const response = await getLabSchedule();
-    const labData = response?.data;
-    setEventsData(labData);
+  const getSchedule = async (labId: number) => {
+    const labsResponse = await getLabs();
+    setLabs(labsResponse?.data);
+
+    const response = await getLabSchedule(labId);
+    const data = response?.data.map((item) => ({
+      date: item.date,
+      end_time: item.end_time,
+      id: item.id,
+      lab_id: item.lab_id,
+      start_time: item.start_time,
+      user_id: item.user_id,
+    }));
+
+    setEventsData(data);
   };
 
   useEffect(() => {
-    getSchedule();
-  }, []);
+    getSchedule(currentLab);
+  }, [currentLab]);
 
   const handleSelect = () => {
     setNewEvent({
@@ -91,14 +112,25 @@ export function LabSchedule() {
       date: [],
       start_time: new Date(),
       end_time: new Date(),
-      lab_id: 0,
+      lab_id: currentLab,
       user_id: userId,
     });
     setShowModal(true);
   };
 
-  const sendEvent = (event: ScheduleData) => {
-    createNewLabEvent(event);
+  const sendEvent = async (event: ScheduleData) => {
+    try {
+      const response = await createNewLabEvent(event);
+      // Check if response status is successful
+      if (response.status === 201) {
+        message.success("Reserva no laboratório feita com sucesso");
+        // Optionally, you can perform additional actions after successful creation
+      } else {
+        message.error("Não foi possível criar a reserva para o laboratório");
+      }
+    } catch (error) {
+      message.error("Não foi possível criar a reserva");
+    }
   };
 
   const handleSave = () => {
@@ -109,14 +141,14 @@ export function LabSchedule() {
       newEvent.end_time
     ) {
       sendEvent(newEvent);
-      getSchedule();
+      getSchedule(currentLab);
       setShowModal(false);
       setNewEvent({
         title: "",
         date: [],
         start_time: new Date(),
         end_time: new Date(),
-        lab_id: 0,
+        lab_id: currentLab,
         user_id: userId,
       });
     } else {
@@ -171,27 +203,59 @@ export function LabSchedule() {
     setNewEvent({ ...newEvent, end_time: updatedEndTime });
   };
 
-  const calendarEvents = eventsData.flatMap((event) =>
-    event.date.map((date) => {
-      const start = new Date(date);
-      const end = new Date(date);
-      start.setHours(
-        event.start_time.getHours(),
-        event.start_time.getMinutes()
+  const calendarEvents = () => {
+    return eventsData.map((event, index) => {
+      const eventDate = new Date(event.date);
+
+      const startTimeComponents = new Date(event.start_time);
+      const endTimeComponents = new Date(event.end_time);
+
+      const startTime = new Date(eventDate);
+      startTime.setUTCHours(
+        startTimeComponents.getUTCHours(),
+        startTimeComponents.getUTCMinutes(),
+        startTimeComponents.getUTCSeconds()
       );
-      end.setHours(event.end_time.getHours(), event.end_time.getMinutes());
+
+      const endTime = new Date(eventDate);
+      endTime.setUTCHours(
+        endTimeComponents.getUTCHours(),
+        endTimeComponents.getUTCMinutes(),
+        endTimeComponents.getUTCSeconds()
+      );
+
       return {
-        title: event.title,
-        start,
-        end,
+        id: index + 1,
+        title: `Event ${index + 1}`,
+        start: startTime,
+        end: endTime,
       };
-    })
-  );
+    });
+  };
+
+  const handleLabButtonClick = (lab: number) => {
+    setCurrentLab(lab);
+  };
+
+  const capitalize = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   return (
     <MainDiv>
       <Title text="Horário dos Laboratórios" />
       <Container>
+        {labs?.map((item) => (
+          <ButtonAntd
+            key={item.id}
+            onClick={() => handleLabButtonClick(item.id)}
+            style={{
+              backgroundColor: item.id == currentLab ? "#40a9ff" : "#fff",
+            }}
+          >
+            {capitalize(item.name)}
+          </ButtonAntd>
+        ))}
         <DivButton>
           <Button
             color="#070F2B"
@@ -210,7 +274,7 @@ export function LabSchedule() {
             localizer={localizer}
             defaultDate={new Date()}
             defaultView="month"
-            events={calendarEvents}
+            events={calendarEvents()}
             style={{ height: "100vh" }}
             onSelectEvent={(event: { start: Date; end: Date; title: string }) =>
               alert(
