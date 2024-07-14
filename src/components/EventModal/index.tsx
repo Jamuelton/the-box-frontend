@@ -10,6 +10,7 @@ interface EventModalProps {
   onClose: () => void;
   onSave: () => void;
   children?: React.ReactNode;
+  ocult?: boolean;
 }
 
 export const EventModal: FC<EventModalProps> = ({
@@ -17,7 +18,8 @@ export const EventModal: FC<EventModalProps> = ({
   show,
   onClose,
   onSave,
-  children
+  children,
+  ocult,
 }) => {
   if (!show) return null;
 
@@ -40,6 +42,7 @@ export const EventModal: FC<EventModalProps> = ({
             size="small"
             buttonFunction={onClose}
           />
+          {ocult === false &&(
           <Button
             color="#070F2B"
             secondColor="#7FC7D9"
@@ -48,6 +51,7 @@ export const EventModal: FC<EventModalProps> = ({
             size="small"
             buttonFunction={onSave}
           />
+          )}
         </S.ModalFooter>
       </S.ModalContent>
     </S.ModalOverlay>
