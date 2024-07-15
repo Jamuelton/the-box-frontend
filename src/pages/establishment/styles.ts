@@ -3,9 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100vw;
   height: 100vh;
-
 `;
 
 export const Title = styled.div`
@@ -29,20 +27,20 @@ export const ColumnContainer = styled.section`
 export const SpanLine = styled.span`
   display: flex;
   flex-direction: row;
-  gap: 6rem
+  gap: 6rem;
 `;
 
 export const EstablishmentInfo = styled.section`
-    display: flex;
+  display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: column;
 `;
 
 export const InfoEstablishmentContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 3.25rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 3.25rem;
 `;
 
 export const InfoEstablishmentTitleText = styled.div`
@@ -50,13 +48,16 @@ export const InfoEstablishmentTitleText = styled.div`
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 5px;
-  `;
-
+`;
 
 export const InfoEstablishmentValueText = styled.div`
   font-size: 16px;
   font-weight: 700;
   max-width: 400px;
+`;
+
+export const Placeholder = styled.div`
+  visibility: hidden;
 `;
 
 export const EstablishmentGrouped = styled.section`
@@ -96,7 +97,12 @@ export const ImageEstablishmentContainer = styled.div`
     font-weight: 600;
     font-size: 20px;
     color: #000000;
+    overflow: hidden; /* Garante que a imagem não ultrapasse os limites do retângulo */
+  }
+
+  .rectangle-grey img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Garante que a imagem cubra todo o espaço disponível */
   }
 `;
-
-export const Img = styled.div``;

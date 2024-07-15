@@ -1,52 +1,37 @@
 import { useParams } from "react-router-dom";
 import { Title } from "../../components/Title";
 import * as S from "./styles";
+import { useEffect, useState } from "react";
+import { getEstablishmentById } from "../../services/EstablishmentServices";
 
 interface EstablishmentInfo {
-  key: number;
-  title: string;
-  content: string;
+  id: number;
+  name: string;
   type: string;
-  phone: string; // Corrigido para string
-  days: string;
-  address: string; // Corrigido a grafia
-  hours: string;
+  phone: string;
+  schedule_days: string;
+  address: string;
+  schedule_hours: string;
   observations?: string;
-  socialMedia?: string;
+  instagram?: string;
+  image: string;
 }
-
-const cardContent: EstablishmentInfo[] = [
-  {
-    key: 1,
-    title: "Bosco Restaurante",
-    content:
-      "Restaurante aberto de segunda à sabado servindo pratos completos de café da manhã, almoço e janta.",
-    type: "Restaurante",
-    phone: "87 999933805",
-    days: "Seg-Sab",
-    address: "R. Cap. Pedro Rodrigues, 186 - Magano, Garanhuns - PE, 55290-000",
-    hours: "seg até as texta, 07:30–22:00/ sáb, 09:00–19:30",
-    observations:
-      "Preço varia de R$12,00 até R$15,00, podendo fechar combo completo do mes.",
-  },
-  {
-    key: 2,
-    title: "Oscar Diskgas E Água",
-    content:
-      "Venda e entrega de produtos como botijão de água, gás de cozinha e etc",
-    type: "Serviços Gerais",
-    phone: "87996625532",
-    days: "Segunda à domingo",
-    address: "R. Cap. Pedro Rodrigues, S/N - Magano, Garanhuns - PE, 55294-310",
-    hours: "seg a sab, 07:00-19:30/ domingo, 07:00-14:00",
-  },
-];
 
 export function Establishment() {
   const { id } = useParams<{ id: string }>();
-  const establishment = cardContent.find(
-    (item) => item.key === parseInt(id || "")
-  );
+  const [establishment, setEstablishment] = useState<EstablishmentInfo | null>(null);
+
+  useEffect(() => {
+    const fetchEstablishment = async () => {
+      try {
+        const data = await getEstablishmentById(Number(id));
+        setEstablishment(data);
+      } catch (error) {
+        console.error("Erro ao buscar estabelecimento:", error);
+      }
+    };
+    fetchEstablishment();
+  }, [id]);
 
   if (!establishment) {
     return <S.Container>Estabelecimento não encontrado</S.Container>;
@@ -55,73 +40,98 @@ export function Establishment() {
   return (
     <S.Container>
       <S.Title>
-        <Title text={establishment.title} />
+        <Title text={establishment.name} />
       </S.Title>
       <S.Wrapper>
         <S.EstablishmentInfo>
           <S.SpanLine>
             <S.ColumnContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Tipo de estabelecimento:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment.type}
-                </S.InfoEstablishmentValueText>
+                {establishment.type && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Tipo de estabelecimento:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.type}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Telefone:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment?.phone}
-                </S.InfoEstablishmentValueText>
+                {establishment.phone && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Telefone:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.phone}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Horário de funcionamento:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment.hours}
-                </S.InfoEstablishmentValueText>
+                {establishment.schedule_hours && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Horário de funcionamento:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.schedule_hours}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Observações:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment?.observations}
-                </S.InfoEstablishmentValueText>
+                {establishment.observations && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Observações:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.observations}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
             </S.ColumnContainer>
             <S.ColumnContainer>
+              <S.InfoEstablishmentContainer />
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText></S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText></S.InfoEstablishmentValueText>
+                {establishment.address && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Endereço:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.address}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Endereço:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment.address}
-                </S.InfoEstablishmentValueText>
+                {establishment.schedule_days && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Dias de funcionamento:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.schedule_days}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
               <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Dias de funcionamento:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment.days}
-                </S.InfoEstablishmentValueText>
-              </S.InfoEstablishmentContainer>
-              <S.InfoEstablishmentContainer>
-                <S.InfoEstablishmentTitleText>
-                  Redes Socias:
-                </S.InfoEstablishmentTitleText>
-                <S.InfoEstablishmentValueText>
-                  {establishment.days}
-                </S.InfoEstablishmentValueText>
+                {establishment.instagram && (
+                  <>
+                    <S.InfoEstablishmentTitleText>
+                      Redes Sociais:
+                    </S.InfoEstablishmentTitleText>
+                    <S.InfoEstablishmentValueText>
+                      {establishment.instagram}
+                    </S.InfoEstablishmentValueText>
+                  </>
+                )}
               </S.InfoEstablishmentContainer>
             </S.ColumnContainer>
           </S.SpanLine>
@@ -129,7 +139,9 @@ export function Establishment() {
         <S.EstablishmentGrouped>
           <S.ImageEstablishmentContainer>
             <div className="rectangle-blue"></div>
-            <div className="rectangle-grey">Imagem aqui</div>
+            <div className="rectangle-grey">
+              <img src={establishment.image} alt={establishment.name} />
+            </div>
           </S.ImageEstablishmentContainer>
         </S.EstablishmentGrouped>
       </S.Wrapper>
