@@ -5,9 +5,17 @@ import * as S from "./styles";
 import { useState, useEffect } from "react";
 import { FilterButton } from "../../components/FilterButton";
 import { SearchInput } from "../../components/Search";
-import { MenuProps } from "antd";
 import { Card } from "../../components/Card/Index";
 import { useNavigate } from "react-router-dom";
+import { getEstablishment } from "../../services/EstablishmentServices";
+import { Flex } from "antd";
+
+interface Establishment {
+  id: number;
+  name: string;
+  description: string;
+  type: string;
+}
 
 export function LocalCommerce() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
@@ -15,96 +23,35 @@ export function LocalCommerce() {
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [establishmentList, setEstablishmentList] = useState<Establishment[]>([]);
 
   const filterOptions = [
     "Restaurante", "Serviços Gerais", "Farmácia", "Mercado", "Academia", "Lanchonete", "Padaria", "Sorveteria"
   ];
 
-  const items: MenuProps["items"] = [
-    {
-      key: 1,
-      label: "Filtros",
-      onClick: () => {
-        setModalFiltro(!modalFiltro);
-      },
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: 2,
-      type: "group",
-      label: "Ordenar",
-      children: [
-        {
-          key: "2-1",
-          label: "Postados Recentemente",
-        },
-        {
-          key: "2-2",
-          label: "Quantidade de Replys",
-        },
-        {
-          key: "2-3",
-          label: "Quantidade de Curtidas",
-        },
-      ],
-    },
-  ];
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem("favorites");
+    if (storedFavorites) {
+      setFavorites(new Set(JSON.parse(storedFavorites)));
+    }
+  }, []);
 
-  const ordenationItems: MenuProps["items"] = [
-    {
-      key: 1,
-      label: "Postados Recentemente",
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: 2,
-      label: "Quantidade de Replys",
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: 3,
-      label: "Quantidade de Curtidas",
-    },
-  ];
+  useEffect(() => {
+    loadEstablishments();
+  }, []);
 
-  const cardContent = [
-    {
-      key: 1,
-      title: "Bosco Restaurante",
-      content: "Restaurante aberto de segunda à sabado servindo pratos completos de café da manhã, almoço e janta.",
-      type: "Restaurante"
-    },
-    {
-      key: 2,
-      title: "Oscar Diskgas E Água",
-      content: "Venda e entrega de produtos como botijão de água, gás de cozinha e etc",
-      type: "Serviços Gerais"
-    },
-    {
-      key: 3,
-      title: "Casa do Bem de Dona Mônica",
-      content: "Lugar de diversos serviços, fica em frente a UPE",
-      type: "Serviços Gerais"
-    },
-    {
-      key: 4,
-      title: "Pastelaria do Japonês",
-      content: "Lanchonete em frente a UPE com uma variedade de mini salgados e etc.",
-      type: "Lanchonete"
-    },
-    {
-      key: 5,
-      title: "Lefrut",
-      content: "Uma lanchonete/sorveteria aconchegante com preços bem acessiveis.",
-      type: "Sorveteria"
-    },
-  ];
+  const loadEstablishments = async () => {
+    const response = await getEstablishment();
+    if (response?.status === 200) {
+      setEstablishmentList(response.data);
+    } else {
+      console.error("Não foi possível carregar os estabelecimentos");
+    }
+  };
+
+  const updateLocalStorage = (newFavorites: Set<number>) => {
+    localStorage.setItem("favorites", JSON.stringify(Array.from(newFavorites)));
+  };
 
   const toggleFavorite = (key: number) => {
     setFavorites((prevFavorites) => {
@@ -114,6 +61,7 @@ export function LocalCommerce() {
       } else {
         newFavorites.add(key);
       }
+      updateLocalStorage(newFavorites);
       return newFavorites;
     });
   };
@@ -155,22 +103,21 @@ export function LocalCommerce() {
   };
 
   const filteredContent = selectedFilters.size > 0
-    ? cardContent.filter((item) => selectedFilters.has(item.type))
-    : cardContent;
+    ? establishmentList.filter((item) => selectedFilters.has(item.type))
+    : establishmentList;
 
   const searchedContent = filteredContent.filter((item) => 
-    normalizeString(item.title).includes(normalizeString(searchQuery)) ||
-    normalizeString(item.content).includes(normalizeString(searchQuery))
+    normalizeString(item.name).includes(normalizeString(searchQuery)) ||
+    normalizeString(item.description || "").includes(normalizeString(searchQuery))
   );
 
   const displayedContent = favoriteMode
-    ? searchedContent.filter((item) => favorites.has(item.key))
+    ? searchedContent.filter((item) => favorites.has(item.id))
     : searchedContent;
 
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    // This function is called when the search is triggered
     setSearchQuery(searchQuery);
   };
 
@@ -197,7 +144,7 @@ export function LocalCommerce() {
             <SearchInput 
               value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)} 
-              searchFunction={handleSearch} // To handle search on Enter and icon click
+              searchFunction={handleSearch} 
             />
           </S.InputArea>
           <span>
@@ -209,14 +156,14 @@ export function LocalCommerce() {
         <S.CardArea>
           {displayedContent.map((item) => (
             <Card
-              key={item.key}
-              title={item.title}
-              content={item.content}
-              like={favorites.has(item.key)}
+              key={item.id}
+              title={item.name}
+              content={item.description}
+              like={favorites.has(item.id)}
               extend={true}
               details={true}
-              onLikeToggle={() => toggleFavorite(item.key)}
-              buttonFunction={() => navigate(`/localCommerce/establishment/${item.key}`)}
+              onLikeToggle={() => toggleFavorite(item.id)}
+              buttonFunction={() => navigate(`/localCommerce/establishment/${item.id}`)}
             />
           ))}
         </S.CardArea>
@@ -233,10 +180,14 @@ export function LocalCommerce() {
           <h3>Categorias</h3>
           <div>
             {filterOptions.map((option, index) => (
-              <S.CheckboxArea key={index}                   checked={selectedFilters.has(option)}
-              onChange={() => toggleFilter(option)}>
+              <div style={{'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center'}} key={index}>
+                <S.CheckboxArea
+                  type="checkbox"
+                  checked={selectedFilters.has(option)}
+                  onChange={() => toggleFilter(option)}
+                />
                 <label>{option}</label>
-              </S.CheckboxArea>
+              </div>
             ))}
           </div>
         </S.ModalContent>
