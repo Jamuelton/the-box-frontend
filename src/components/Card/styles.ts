@@ -10,7 +10,7 @@ export const Container = styled.div<{
   height: 48dvh;
   padding: 22px;
   border-radius: 30px;
-  justify-content: space-between;
+  justify-content: space-around;
 
   @media (min-width: 426px) and (max-width: 1023px) {
     width: ${(props) => (props.$extend ? "100%" : "40dvw")};
@@ -32,7 +32,7 @@ export const Title = styled.label`
 export const Content = styled.label`
   color: white;
   margin: 10px 0 0;
-  font-size: 16px;
+  font-size: 14px;
   padding: 2rem 0 2rem 0;
 `;
 
