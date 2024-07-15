@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { AxiosError } from 'axios';
-import { EventData } from '../Types/eventType';
+import { CreateSchedule, Schedule, CreateEventSchedule, EventSchedule, CreateEvent, EventData } from '../Types/eventType';
 
 const token = Cookies.get('token'); 
 
@@ -12,46 +12,110 @@ const api = axios.create({
   }
 });
 
-export const createEvent = async (event: EventData): Promise<void> => {
+export const getSchedule = async (): Promise<Schedule[]> => {
   try {
-    await api.post('/event', event);
-  } catch (error) {
-    handleServiceError(error);
-  }
-}
-
-export const updateEvent = async (id: string, body: string): Promise<void> => {
-    try {
-        await api.put(`/event/${id}`, { body });
-    } catch (error) {
-        handleServiceError(error);
-    }
-};
-
-export const deleteEvent = async (id: number): Promise<void> => {
-  try {
-    await api.delete(`/event/${id}`);
-  } catch (error) {
-    handleServiceError(error);
-  }
-}
-
-export const getEvents = async () => {
-  try {
-    const response = await api.get('/event');
+    const response = await api.get('/schedule');
     return response.data;
   } catch (error) {
-    handleServiceError(error);
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error;
+  }
+};
+
+export const getScheduleById = async (id: number): Promise<Schedule> => {
+  try {
+    const response = await api.get(`/schedule/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error;
   }
 }
 
-const handleServiceError = (error: AxiosError): void => {
-    if (error.response) {
-      console.error('Request failed with status:', error.response.status);
-    } else if (error.request) {
-      console.error('Request failed:', error.request);
-    } else {
-      console.error('Request error:', error.message);
+export const createEventSchedule = async (data: CreateEventSchedule): Promise<EventSchedule> => {
+  try {
+    const response = await api.post('/eventSchedule', data);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
     }
-  };
+    throw error;
+  }
+};
+
+export const getEventSchedule = async (): Promise<EventSchedule[]> => {
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    const response = await api.get("/eventSchedule", config);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error; 
+  }
+};
+
+export const createEvent = async (data: CreateEvent): Promise<EventData> => {
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    const response = await api.post("/event", data, config);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error;
+  }
+};
+
+
+export const getEvents = async (): Promise<EventData[]> => {
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    const response = await api.get("/event", config);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error; 
+  }
+}
+
+export const getEventsbyId = async (id: number): Promise<EventData> => {
+  try {
+    const token = Cookies.get("token");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    const response = await api.get(`/event/${id}`, config);
+    return response.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+    throw error; 
+  }
+};
+
+
   

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment-timezone";
+import moment from "moment";
 import "moment/locale/pt-br";
 import { Button } from "../../components/Button";
 import { Input } from "../../components/Input";
@@ -18,12 +18,11 @@ import {
 import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
-import { EventData } from "../../services/Types/eventType";
+import { EventData, Schedule, EventSchedule } from "../../services/Types/eventType";
 import { useData } from "../../config/data/UseData";
-import { createEvent, getEvents } from "../../services/AcademicCalendarServices";
+import { createEvent, getEvents, getSchedule, getEventSchedule, createEventSchedule } from "../../services/AcademicCalendarServices";
 
 moment.locale("pt-br");
-moment.tz.setDefault("America/Sao_Paulo");
 const localizer = momentLocalizer(moment);
 
 const messages = {
@@ -62,16 +61,15 @@ const formats = {
 };
 
 const initialEventState: EventData = {
+  id: 0,
   name: "",
   description: "",
-  start_date: moment().toDate(),
-  end_date: moment().toDate(),
-  start_time: moment().toDate(),
-  end_time: moment().toDate(),
+  start_date: new Date(),
+  end_date: new Date(),
+  start_time: new Date(),
+  end_time: new Date(),
   speakers: "",
 };
-
-console.log("initialEventState", initialEventState);
 
 export function AcademicCalendar() {
   const { userInfo } = useData();
@@ -81,28 +79,57 @@ export function AcademicCalendar() {
   const [showModal, setShowModal] = useState(false);
   const [newEvent, setNewEvent] = useState<EventData>(initialEventState);
   const [selectedEvent, setSelectedEvent] = useState<EventData | null>(null);
+  const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [eventSchedules, setEventSchedules] = useState<EventSchedule[]>([]);
+  const [selectedSchedule, setSelectedSchedule] = useState<number | null>(null);
+  const [eventSchedule, setEventSchedule] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const events = await getEvents();
-        if (events) {
-          setEventsData(events.map((event: EventData) => ({
-            ...event,
-            start_date: moment(event.start_date).tz("America/Sao_Paulo").toDate(),
-            end_date: moment(event.end_date).tz("America/Sao_Paulo").toDate(),
-            start_time: moment(event.start_time).tz("America/Sao_Paulo").toDate(),
-            end_time: moment(event.end_time).tz("America/Sao_Paulo").toDate(),
-          })));
-        }
-        console.log("events", events);
-      } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
-      }
-    };
-
-    fetchEvents();
+    fetchEvents(); 
+    fetchSchedules(); 
+    fetchEventSchedules(); 
   }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const events = await getEvents();
+      if (events) {
+        setEventsData(
+          events.map((event: EventData) => ({
+            ...event,
+            start_date: new Date(event.start_date),
+            end_date: new Date(event.end_date),
+            start_time: new Date(event.start_time),
+            end_time: new Date(event.end_time),
+            name: event.name,
+            description: event.description,
+            speakers: event.speakers,
+          }))
+        );
+        console.log("Eventos carregados:", events); // Debug log
+      }
+    } catch (error) {
+      console.error("Erro ao buscar eventos:", error);
+    }
+  };
+
+  const fetchSchedules = async () => {
+    try {
+      const schedules = await getSchedule();
+      setSchedules(schedules);
+    } catch (error) {
+      console.error("Erro ao buscar schedules:", error);
+    }
+  };
+
+  const fetchEventSchedules = async () => {
+    try {
+      const eventSchedules = await getEventSchedule();
+      setEventSchedules(eventSchedules);
+    } catch (error) {
+      console.error("Erro ao buscar event schedules:", error);
+    }
+  };
 
   const handleSelect = ({ start, end }: { start: Date; end: Date }) => {
     setNewEvent({
@@ -117,36 +144,20 @@ export function AcademicCalendar() {
 
   const handleSave = async () => {
     try {
-      const adjustedEvent: EventData = {
-        ...newEvent,
-        start_date: moment(newEvent.start_date).tz("America/Sao_Paulo").toDate(),
-        end_date: moment(newEvent.end_date).tz("America/Sao_Paulo").toDate(),
-        start_time: moment(newEvent.start_time).tz("America/Sao_Paulo").toDate(),
-        end_time: moment(newEvent.end_time).tz("America/Sao_Paulo").toDate(),
-      };
-      console.log("adjustedEvent", adjustedEvent);
-
-      await createEvent(adjustedEvent);
-
-      setShowModal(false);
-      setNewEvent(initialEventState);
-
-      const events = await getEvents();
-      console.log("events", events);
-      if (events) {
-        setEventsData(events.map((event: EventData) => ({
-          ...event,
-          start_date: moment(event.start_date).tz("America/Sao_Paulo").toDate(),
-          end_date: moment(event.end_date).tz("America/Sao_Paulo").toDate(),
-          start_time: moment(event.start_time).tz("America/Sao_Paulo").toDate(),
-          end_time: moment(event.end_time).tz("America/Sao_Paulo").toDate(),
-        })));
+      const response = await createEvent(newEvent);
+      if (response) {
+        setEventsData([...eventsData, response]);
+        if (eventSchedule) {
+          await createEventSchedule({ event_id: response.id, schedule_id: eventSchedule });
+        }
+        setNewEvent(initialEventState);
+        setEventSchedule(null);
+        setShowModal(false);
       }
     } catch (error) {
       console.error("Erro ao salvar evento:", error);
     }
   };
-  console.log("newEvent", newEvent);
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEvent({ ...newEvent, name: event.target.value });
@@ -157,44 +168,59 @@ export function AcademicCalendar() {
   };
 
   const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEvent({ ...newEvent, start_date: moment(event.target.value).tz("America/Sao_Paulo").toDate()});
+    setNewEvent({ ...newEvent, start_date: moment(event.target.value).toDate() });
   };
 
   const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEvent({ ...newEvent, end_date: moment(event.target.value).tz("America/Sao_Paulo").toDate() });
+    setNewEvent({ ...newEvent, end_date: moment(event.target.value).toDate() });
   };
 
-  const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const time = event.target.value.split(":");
-    const date = moment(newEvent.start_time).tz("America/Sao_Paulo").toDate(); 
-    date.setHours(parseInt(time[0], 10), parseInt(time[1], 10));
-    setNewEvent({ ...newEvent, start_time: date });
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const updatedStartTime = moment(newEvent.start_time).toDate();
+    updatedStartTime.setHours(hours, minutes);
+    setNewEvent({ ...newEvent, start_time: updatedStartTime });
   };
 
-  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const time = event.target.value.split(":");
-    const date = new Date(newEvent.end_date);
-    date.setHours(parseInt(time[0], 10), parseInt(time[1], 10));
-    setNewEvent({ ...newEvent, end_time: date });
+  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const updatedEndTime = moment(newEvent.end_time).toDate();
+    updatedEndTime.setHours(hours, minutes);
+    setNewEvent({ ...newEvent, end_time: updatedEndTime });
   };
 
   const handleSpeakersChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewEvent({ ...newEvent, speakers: event.target.value });
   };
 
-  // Transform eventsData to have the correct structure for the calendar
-  const calendarEvents = eventsData.map((event) => {
-    const startDateTime = new Date(`${moment(event.start_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}T${moment(event.start_time).tz("America/Sao_Paulo").format("HH:mm:ss")}`);
-    const endDateTime = new Date(`${moment(event.end_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}T${moment(event.end_time).tz("America/Sao_Paulo").format("HH:mm:ss")}`);
+  const handleScheduleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSchedule(Number(event.target.value));
+  };
+
+  const calendarEvents = eventsData.filter((event) => {
+    if (!selectedSchedule) return true;
+    const eventMatchesSchedule = eventSchedules.some(
+      (es) => es.event_id === event.id && es.schedule_id === selectedSchedule
+    );
+    console.log(`Evento ${event.id} corresponde ao schedule ${selectedSchedule}: ${eventMatchesSchedule}`);
+    return eventMatchesSchedule;
+  }).map((event) => {
+    const startDateTime = new Date(`${moment(event.start_date).format("YYYY-MM-DD")}T${moment(event.start_time).format("HH:mm:ss")}`);
+    const endDateTime = new Date(`${moment(event.end_date).format("YYYY-MM-DD")}T${moment(event.end_time).format("HH:mm:ss")}`);
+  
     return {
       ...event,
       title: event.name,
       start: startDateTime,
       end: endDateTime,
     };
-    
   });
-  console.log("calendarEvents", calendarEvents);
+  
+  console.log("Eventos filtrados para o calendário:", calendarEvents);
+  
+
+  console.log("Eventos para o calendário:", calendarEvents); // Debug log
+
   const handleSelectEvent = (event: EventData) => {
     setSelectedEvent(event);
     setShowModal(true);
@@ -205,6 +231,17 @@ export function AcademicCalendar() {
       <Title text="Calendário Acadêmico" />
       <Container>
         <CustomCalendarContainer>
+          <div>
+            <label>Escolha o Schedule:</label>
+            <select onChange={handleScheduleChange}>
+              <option value="">Todos</option>
+              {schedules.map((schedule) => (
+                <option key={schedule.id} value={schedule.id}>
+                  {schedule.year} - {schedule.period}
+                </option>
+              ))}
+            </select>
+          </div>
           <Div>
             <ButtonGroup>
               <Button
@@ -266,8 +303,8 @@ export function AcademicCalendar() {
               <div>
                 <p><strong>Nome do Evento:</strong> {selectedEvent.name}</p>
                 <p><strong>Descrição:</strong> {selectedEvent.description}</p>
-                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}</p>
-                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}</p>
+                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("YYYY-MM-DD")}</p>
+                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("YYYY-MM-DD")}</p>
                 <p><strong>Horário de Início:</strong> {moment(selectedEvent.start_time).format("HH:mm")}</p>
                 <p><strong>Horário de Término:</strong> {moment(selectedEvent.end_time).format("HH:mm")}</p>
                 <p><strong>Palestrantes:</strong> {selectedEvent.speakers}</p>
@@ -296,7 +333,7 @@ export function AcademicCalendar() {
                   <Input
                     label="Data de Início"
                     type="date"
-                    value={moment(newEvent.start_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}
+                    value={moment(newEvent.start_date).format("YYYY-MM-DD")}
                     inputFunction={handleStartDateChange}
                   />
                 </FormGroup>
@@ -304,7 +341,7 @@ export function AcademicCalendar() {
                   <Input
                     label="Data de Término"
                     type="date"
-                    value={moment(newEvent.end_date).tz("America/Sao_Paulo").format("YYYY-MM-DD")}
+                    value={moment(newEvent.end_date).format("YYYY-MM-DD")}
                     inputFunction={handleEndDateChange}
                   />
                 </FormGroup>
@@ -323,7 +360,7 @@ export function AcademicCalendar() {
                     value={moment(newEvent.end_time).format("HH:mm")}
                     inputFunction={handleEndTimeChange}
                   />
-                </FormGroup>            
+                </FormGroup>
                 <FormGroup>
                   <Input
                     label="Palestrantes"
@@ -332,6 +369,17 @@ export function AcademicCalendar() {
                     value={newEvent.speakers}
                     inputFunction={handleSpeakersChange}
                   />
+                </FormGroup>
+                <FormGroup>
+                  <label>Schedule</label>
+                  <select value={eventSchedule || ''} onChange={(e) => setEventSchedule(Number(e.target.value))}>
+                    <option value="">Selecione um Schedule</option>
+                    {schedules.map((schedule) => (
+                      <option key={schedule.id} value={schedule.id}>
+                        {schedule.year} - {schedule.period}
+                      </option>
+                    ))}
+                  </select>
                 </FormGroup>
               </>
             )}
