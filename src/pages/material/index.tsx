@@ -11,7 +11,6 @@ import { UploadProps } from "antd/lib";
 import {
   errorNotification,
   successNotification,
-  warningNotification,
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
 import { useData } from "../../config/data/UseData";
@@ -36,10 +35,14 @@ export function Material() {
   const [hamburguer, setHamburguer] = useState<boolean>(false);
   const [archiveName, setArchiveName] = useState<string>();
   const [archiveDescription, setArchiveDescription] = useState<string>();
+  const [archiveCategory, setArchiveCategory] =
+    useState<CategoryMaterialEnum>();
+  const [file, setFile] = useState<RcFile>();
   const [fileUrl, setFileUrl] = useState<string>();
   const [category, setCategory] = useState<CategoryMaterialEnum>();
   const [materials, setMaterials] = useState<MaterialInterface[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [order, setOrder] = useState<string>("desc");
 
   const { Dragger } = Upload;
   const { userInfo } = useData();
@@ -67,20 +70,22 @@ export function Material() {
     {
       key: 1,
       label: "Postados Recentemente",
+      onClick: () => {
+        setOrder("desc");
+      },
     },
     {
       type: "divider",
     },
     {
       key: 2,
-      label: "Quantidade de Replys",
+      label: "Postados Primeiro",
+      onClick: () => {
+        setOrder("asc");
+      },
     },
     {
       type: "divider",
-    },
-    {
-      key: 3,
-      label: "Quantidade de Curtidas",
     },
   ];
 
@@ -103,14 +108,18 @@ export function Material() {
         {
           key: "2-1",
           label: "Postados Recentemente",
+          onClick: () => {
+            setOrder("desc");
+            handleGetMaterial();
+          },
         },
         {
           key: "2-2",
-          label: "Quantidade de Replys",
-        },
-        {
-          key: "2-3",
-          label: "Quantidade de Curtidas",
+          label: "Postados Primeiro",
+          onClick: () => {
+            setOrder("asc");
+            handleGetMaterial();
+          },
         },
       ],
     },
@@ -151,14 +160,25 @@ export function Material() {
         value as CategoryMaterialEnum
       )
     ) {
-      setCategory(value as CategoryMaterialEnum);
+      setArchiveCategory(value as CategoryMaterialEnum);
     }
+  };
+
+  const handleCategoryFilter = () => {
+    setModalFiltro(false);
+    handleGetMaterial();
+  };
+
+  const handleCleanFilter = () => {
+    setCategory(undefined);
+    setModalFiltro(false);
   };
 
   const handleGetMaterial = async () => {
     try {
-      const response = await getMaterial(token);
+      const response = await getMaterial(token, order, category);
       if (response?.status == 200) {
+        console.log(response);
         setMaterials(response.data.materials);
       }
       if (response?.status == 400) {
@@ -174,12 +194,14 @@ export function Material() {
   const handlePostMaterial = async () => {
     try {
       if (userId) {
+        const urlfile = await urlPut();
+
         const archiveData: MaterialInterface = {
           title: archiveName,
-          url: fileUrl,
+          url: urlfile[0],
           description: archiveDescription,
           user_id: parseInt(userId),
-          category: category,
+          category: archiveCategory,
         };
         MaterialSchema.parse(archiveData);
         const response = await postMaterial(archiveData, token);
@@ -202,27 +224,36 @@ export function Material() {
     }
   };
 
-  const urlPut = async (file: RcFile) => {
-    const url = await putURL(token, file.type.split("/")[1]);
-    if (url?.status == 200) {
-      const splitUrl = url?.data.url;
-      setFileUrl(splitUrl.split("?")[0]);
-    } else {
-      errorNotification("Não foi possível fazer upload desse arquivo");
+  const urlPut = async () => {
+    if (file) {
+      const url = await putURL(token, file.type.split("/")[1]);
+      if (url?.status == 200) {
+        await fetch(url.data.url, {
+          method: "PUT",
+          body: file,
+          headers: {
+            "Content-Type": `image/${file.type.split("/")[1]}`,
+          },
+        });
+        const splitUrl = url?.data.url;
+        setFileUrl(splitUrl.split("?")[0]);
+        return splitUrl.split("?"[0]);
+      } else {
+        errorNotification("Não foi possível fazer upload desse arquivo");
+      }
     }
   };
 
   const props: UploadProps = {
     name: "file",
     multiple: false,
+    maxCount: 1,
+    onRemove() {
+      setFile(undefined);
+    },
     beforeUpload(file) {
-      if (fileUrl) {
-        warningNotification("Você só pode anexar um arquivo");
-        return true;
-      } else {
-        urlPut(file);
-        return false;
-      }
+      setFile(file);
+      return false;
     },
   };
 
@@ -253,6 +284,20 @@ export function Material() {
       );
     }
   };
+
+  const handleDownload = (url: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  useEffect(() => {
+    handleGetMaterial();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order]);
 
   useEffect(() => {
     handleGetMaterial();
@@ -291,25 +336,40 @@ export function Material() {
         </span>
       </S.ButtonsArea>
       <S.CardArea>
-        {materials.length > 0 &&
-          materials.map(({ title, description }, index) => (
+        {materials.length > 0 ? (
+          materials.map(({ title, description, url }, index) => (
             <Card
               key={index}
               extend={true}
               title={title}
               content={description}
               download={true}
+              onDownload={() => url && handleDownload(url)}
               edit={userProfile == "SUPER_USER"}
               editFunction={() => setAttachModal(true)}
               rateCard={false}
               like={false}
             ></Card>
-          ))}
+          ))
+        ) : (
+          <S.NoPost>Publique um material de apoio</S.NoPost>
+        )}
       </S.CardArea>
       <S.ModalFilterArea
         open={modalFiltro}
         onCancel={() => setModalFiltro(false)}
-        footer={<S.ModalButton>Aplicar</S.ModalButton>}
+        footer={
+          <S.ModalFilterBtnArea>
+            {category && (
+              <S.ModalCleanButton onClick={handleCleanFilter}>
+                Limpar Filtros
+              </S.ModalCleanButton>
+            )}
+            <S.ModalButton onClick={() => handleCategoryFilter()}>
+              Aplicar
+            </S.ModalButton>
+          </S.ModalFilterBtnArea>
+        }
         title="Filtros"
         centered
         closeIcon={<XCircle size={22} weight="bold" color="#23335e" />}
@@ -340,10 +400,10 @@ export function Material() {
             </S.CheckboxArea>
             <S.CheckboxArea
               onChange={handleCheckbox}
-              value="EDITAIS_DE_BOLSA"
-              checked={category?.toString() == "EDITAIS_DE_BOLSA"}
+              value="EDITAIS_DE_BOLSAS"
+              checked={category?.toString() == "EDITAIS_DE_BOLSAS"}
             >
-              Editais de Bolsa
+              Editais de Bolsas
             </S.CheckboxArea>
           </div>
         </S.ModalFilterContent>

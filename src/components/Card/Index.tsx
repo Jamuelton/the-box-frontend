@@ -15,6 +15,7 @@ interface CardProps {
   edit?: boolean;
   editFunction?: () => void;
   onLikeToggle?: () => void;
+  onDownload?: () => void;
   datePost?: Date;
 }
 
@@ -30,6 +31,7 @@ export const Card: FC<CardProps> = ({
   editFunction,
   onLikeToggle,
   datePost,
+  onDownload,
 }) => {
   return (
     <S.Container $extend={extend}>
@@ -48,7 +50,7 @@ export const Card: FC<CardProps> = ({
           {edit && (
             <NotePencil onClick={editFunction} size={32} weight="fill" />
           )}
-          <Download size={32} weight="fill" />
+          <Download onClick={onDownload} size={32} weight="fill" />
         </S.MaterialArea>
       )}
 
