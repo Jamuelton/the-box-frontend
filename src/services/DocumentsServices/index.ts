@@ -29,17 +29,21 @@ export const postMaterial = async (data: DocumentsInterface, token: string) => {
 };
 
 export const putURL = async (token: string, fileType: string) => {
-    try {
-      const response = await api.post(`/materialUploadUrl?fileType=${fileType}`, {}, {
+  try {
+    const response = await api.post(
+      `/materialUploadUrl?fileType=${fileType}`,
+      {},
+      {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      });
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return error.response;
       }
-      throw error;
+    );
+    return response;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
     }
-  };
+    throw error;
+  }
+};

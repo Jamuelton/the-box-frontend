@@ -171,6 +171,20 @@ export function Documents() {
     }
   };
 
+  const handleDownload = (url: string) => {
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.setAttribute("download", "");
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+  };
+
   const handlePostMaterial = async () => {
     try {
       if (userId) {
@@ -205,8 +219,15 @@ export function Documents() {
   const urlPut = async (file: RcFile) => {
     const url = await putURL(token, file.type.split("/")[1]);
     if (url?.status == 200) {
-      const splitUrl = url?.data.url;
-      setFileUrl(splitUrl.split("?")[0]);
+      await fetch(url.data.url, {
+        method: "PUT",
+        body: file,
+        headers: {
+          "Content-Type": `image/${file.type.split("/")[1]}`,
+        },
+      });
+      const splitUrl = url?.data.url.split("?")[0];
+      setFileUrl(splitUrl);
     } else {
       errorNotification("Não foi possível fazer upload desse arquivo");
     }
@@ -291,8 +312,8 @@ export function Documents() {
         </span>
       </S.ButtonsArea>
       <S.CardArea>
-        {materials.length > 0 &&
-          materials.map(({ title, description }, index) => (
+        {materials.length > 0 ? (
+          materials.map(({ title, description, url }, index) => (
             <Card
               key={index}
               extend={true}
@@ -303,8 +324,12 @@ export function Documents() {
               editFunction={() => setAttachModal(true)}
               rateCard={false}
               like={false}
+              onDownload={() => url && handleDownload(url)}
             ></Card>
-          ))}
+          ))
+        ) : (
+          <S.EmptyText />
+        )}
       </S.CardArea>
       <S.ModalFilterArea
         open={modalFiltro}
@@ -361,7 +386,10 @@ export function Documents() {
                 onChange={handleSelectChange}
                 options={[
                   { value: "APOIO", label: "Apoio" },
-                  { value: "MANUAL_DOS_CALOUROS", label: "Manual dos calouros" },
+                  {
+                    value: "MANUAL_DOS_CALOUROS",
+                    label: "Manual dos calouros",
+                  },
                 ]}
               />
             </S.ModalRow>

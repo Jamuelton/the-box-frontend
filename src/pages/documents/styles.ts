@@ -1,4 +1,4 @@
-import { Button, Checkbox, Dropdown, Modal, Select } from "antd";
+import { Button, Checkbox, Dropdown, Empty, Modal, Select } from "antd";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -38,6 +38,10 @@ export const CardArea = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
   gap: 3rem;
+`;
+
+export const EmptyText = styled(Empty)`
+  align-self: center;
 `;
 
 export const AttachButton = styled(Button)`
