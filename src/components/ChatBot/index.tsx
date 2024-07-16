@@ -84,7 +84,7 @@ export const ChatBot = () => {
   return (
     <S.Container>
       <S.OpenChatButton
-        icon={<ChatCircleDots size={20} />}
+        icon={<ChatCircleDots size={19} />}
         onClick={showModal}
       />
       <S.Chat

@@ -15,6 +15,7 @@ interface CardProps {
   edit?: boolean;
   editFunction?: () => void;
   onLikeToggle?: () => void;
+  buttonFunction?: () => void;
   datePost?: Date;
   author?: string;
 }
@@ -30,6 +31,7 @@ export const Card: FC<CardProps> = ({
   edit,
   editFunction,
   onLikeToggle,
+  buttonFunction,
   datePost,
   author,
 }) => {
@@ -41,7 +43,7 @@ export const Card: FC<CardProps> = ({
             character={<Heart size={24} weight="fill" />}
             count={1}
             value={like ? 1 : 0}
-            style={{ color: "#7fc7d9" }}
+            style={{ color: "#F21E51" }}
           />
         </S.LikeArea>
       )}
@@ -69,7 +71,7 @@ export const Card: FC<CardProps> = ({
       <S.FooterArea>
         {author && <S.AuthorName>@:{author}</S.AuthorName>}
         {details && (
-          <S.ButtonArea>
+          <S.ButtonArea onClick={buttonFunction}>
             <label htmlFor="">Ver detalhes</label>
             <ArrowRight size={24} weight="bold" color="#7fc7d9" />
           </S.ButtonArea>

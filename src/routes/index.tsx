@@ -21,6 +21,7 @@ import { AcademicCalendar } from "../pages/academicCalendar";
 import { AddCalendar } from "../pages/AddCalendar";
 import { LocalCommerce } from "../pages/localCommerce";
 import { LockerRoutes } from "../config/lockerRoutes";
+import { Establishment } from "../pages/establishment";
 import LabSchedulingConfirmationListing from "../pages/labSchedulingConfirmationListing";
 
 const Container = styled.main`
@@ -77,6 +78,12 @@ export const AppRoutes = () => {
                 <Route
                   path="/lab-scheduling-confirmation"
                   element={<LabSchedulingConfirmationListing />}
+                />
+              </Route>
+              <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route
+                  path="/localCommerce/establishment/:id"
+                  element={<Establishment />}
                 />
               </Route>
             </Routes>

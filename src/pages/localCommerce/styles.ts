@@ -1,10 +1,9 @@
-import { Button, Checkbox, Dropdown, Modal } from "antd";
+import { Button, Checkbox, Dropdown, Modal } from "antd"; // Importe o Checkbox do antd
 import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100vw;
   height: 100vh;
   align-items: center;
 `;
@@ -53,6 +52,7 @@ export const hamburguerButtons = styled.section`
     display: none;
   }
 `;
+
 export const hamburguerSection = styled(Dropdown)`
   display: none;
   color: var(--blue-700);
@@ -65,7 +65,8 @@ export const hamburguerSection = styled(Dropdown)`
 export const CardArea = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 270px);
-  gap: 116px;
+  gap: 84px;
+  padding: 1rem;
   padding-left: 5rem;
   padding-right: 5rem;
 `;
@@ -96,13 +97,29 @@ export const ModalContent = styled.div`
   flex-direction: column;
   padding: 1rem;
 
-  h3 {
+  > h3 {
     color: var(--blue-900);
     padding: 1rem;
   }
-  div {
-    padding-left: 2rem;
+
+  > div {
+    margin-left: 2rem; // Adiciona margem à esquerda para os itens de filtro
   }
+`;
+
+export const CheckboxLabel = styled.label`
+  color: var(--blue-700);
+  font-size: 0.9rem;
+  padding: 0.5rem;
+`;
+
+export const FilterOption = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const FilterText = styled.span`
+  margin-left: 0.5rem;
 `;
 
 export const CheckboxArea = styled(Checkbox)`
@@ -113,6 +130,10 @@ export const CheckboxArea = styled(Checkbox)`
   padding: 0.5rem;
 
   .ant-checkbox-inner {
-    background-color: var(--blue-300);
+    background-color: var(--blue-300) !important;
+  }
+
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--blue-300) !important;
   }
 `;

@@ -122,10 +122,10 @@ export const Header: React.FC<HeaderProps> = () => {
         </S.logoArea>
         {isAuthenticated || isAuth() ? (
           <S.icons>
-            <Bell
+            {/*<Bell
               size={22}
               onClick={() => setNotificationModal(!notificationModal)}
-            ></Bell>
+            ></Bell>*/}
             <Popover
               content={<S.LogoutArea onClick={logouting}>Sair</S.LogoutArea>}
             >
@@ -168,7 +168,7 @@ export const Header: React.FC<HeaderProps> = () => {
           ))}
         </S.hamburguerOptions>
       )}
-      <S.NotificationModal
+      {/*<S.NotificationModal
         open={notificationModal}
         onCancel={() => setNotificationModal(false)}
         footer={<></>}
@@ -188,7 +188,7 @@ export const Header: React.FC<HeaderProps> = () => {
             </S.ModalCard>
           ))}
         </S.ModalContent>
-      </S.NotificationModal>
+      </S.NotificationModal>*/}
     </S.Container>
   );
 };
