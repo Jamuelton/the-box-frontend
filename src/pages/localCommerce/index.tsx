@@ -8,7 +8,6 @@ import { SearchInput } from "../../components/Search";
 import { Card } from "../../components/Card/Index";
 import { useNavigate } from "react-router-dom";
 import { getEstablishment } from "../../services/EstablishmentServices";
-import { Flex } from "antd";
 
 interface Establishment {
   id: number;
@@ -21,12 +20,23 @@ export function LocalCommerce() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [favoriteMode, setFavoriteMode] = useState<boolean>(false);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
-  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(new Set());
+  const [selectedFilters, setSelectedFilters] = useState<Set<string>>(
+    new Set()
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [establishmentList, setEstablishmentList] = useState<Establishment[]>([]);
+  const [establishmentList, setEstablishmentList] = useState<Establishment[]>(
+    []
+  );
 
   const filterOptions = [
-    "Restaurante", "Serviços Gerais", "Farmácia", "Mercado", "Academia", "Lanchonete", "Padaria", "Sorveteria"
+    "Restaurante",
+    "Serviços Gerais",
+    "Farmácia",
+    "Mercado",
+    "Academia",
+    "Lanchonete",
+    "Padaria",
+    "Sorveteria",
   ];
 
   useEffect(() => {
@@ -88,27 +98,34 @@ export function LocalCommerce() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (modalFiltro && event.key === 'Enter') {
+      if (modalFiltro && event.key === "Enter") {
         handleApply();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [modalFiltro]);
 
   const normalizeString = (str: string) => {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
   };
 
-  const filteredContent = selectedFilters.size > 0
-    ? establishmentList.filter((item) => selectedFilters.has(item.type))
-    : establishmentList;
+  const filteredContent =
+    selectedFilters.size > 0
+      ? establishmentList.filter((item) => selectedFilters.has(item.type))
+      : establishmentList;
 
-  const searchedContent = filteredContent.filter((item) => 
-    normalizeString(item.name).includes(normalizeString(searchQuery)) ||
-    normalizeString(item.description || "").includes(normalizeString(searchQuery))
+  const searchedContent = filteredContent.filter(
+    (item) =>
+      normalizeString(item.name).includes(normalizeString(searchQuery)) ||
+      normalizeString(item.description || "").includes(
+        normalizeString(searchQuery)
+      )
   );
 
   const displayedContent = favoriteMode
@@ -141,15 +158,17 @@ export function LocalCommerce() {
       <S.Wrapper>
         <S.ButtonsArea>
           <S.InputArea>
-            <SearchInput 
-              value={searchQuery} 
-              onChange={(e) => setSearchQuery(e.target.value)} 
-              searchFunction={handleSearch} 
+            <SearchInput
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              searchFunction={handleSearch}
             />
           </S.InputArea>
           <span>
             <S.hamburguerButtons>
-              <FilterButton buttonFunction={() => setModalFiltro(!modalFiltro)} />
+              <FilterButton
+                buttonFunction={() => setModalFiltro(!modalFiltro)}
+              />
             </S.hamburguerButtons>
           </span>
         </S.ButtonsArea>
@@ -163,7 +182,9 @@ export function LocalCommerce() {
               extend={true}
               details={true}
               onLikeToggle={() => toggleFavorite(item.id)}
-              buttonFunction={() => navigate(`/localCommerce/establishment/${item.id}`)}
+              buttonFunction={() =>
+                navigate(`/localCommerce/establishment/${item.id}`)
+              }
             />
           ))}
         </S.CardArea>
@@ -180,7 +201,14 @@ export function LocalCommerce() {
           <h3>Categorias</h3>
           <div>
             {filterOptions.map((option, index) => (
-              <div style={{'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center'}} key={index}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                key={index}
+              >
                 <S.CheckboxArea
                   type="checkbox"
                   checked={selectedFilters.has(option)}
