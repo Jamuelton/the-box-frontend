@@ -25,26 +25,39 @@ export const Container = styled.div<{
 export const Title = styled.label`
   color: var(--blue-300);
   font-size: 20px;
-  
+
   font-weight: bold;
 `;
 
 export const Content = styled.label`
   color: white;
-  margin: 10px 0 0;
-  font-size: 14px;
-  padding: 2rem 0 2rem 0;
+  word-break: break-word;
+  white-space: pre-wrap;
 `;
 
 export const LikeArea = styled.div`
   align-self: flex-end;
 `;
 
-export const TitleArea = styled.div``;
-
-export const RateArea = styled.div`
-
+export const MaterialArea = styled.div`
+  display: flex;
+  align-self: flex-end;
+  gap: 1.2rem;
+  color: #ffffff;
+  cursor: pointer;
 `;
+
+export const TitleArea = styled.div`
+  section {
+    display: flex;
+    justify-content: space-between;
+    p {
+      color: white;
+    }
+  }
+`;
+
+export const RateArea = styled.div``;
 
 export const ButtonArea = styled.div`
   display: flex;
@@ -58,4 +71,14 @@ export const ButtonArea = styled.div`
   svg {
     cursor: pointer;
   }
+`;
+
+export const FooterArea = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const AuthorName = styled.label`
+  color: white;
 `;

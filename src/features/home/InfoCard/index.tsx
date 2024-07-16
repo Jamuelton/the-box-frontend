@@ -14,6 +14,7 @@ export const InfoCard: FC<InfocardProps> = ({ text, icon, link }) => {
   const sendToScreen = () => {
     navigate(link);
   };
+
   return (
     <S.Container onClick={sendToScreen}>
       {icon}

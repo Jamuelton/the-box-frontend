@@ -22,7 +22,8 @@ export const FilterArea = styled.div`
 export const CardsArea = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 3rem;
+  padding: 1rem;
 `;
 
 export const hamburguerButtons = styled.section`

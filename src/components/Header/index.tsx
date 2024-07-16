@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <Calendar size={24} color="#7fc7d9" />,
       title: "Calendário Acadêmico",
-      link: "/home",
+      link: "/academic-calendar",
     },
     {
       icon: <Clock size={24} color="#7fc7d9" />,
@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = () => {
     {
       icon: <FolderSimple size={24} color="#7fc7d9" />,
       title: "Materiais",
-      link: "/home",
+      link: "/material",
     },
     {
       icon: <FileText size={24} color="#7fc7d9" />,
@@ -102,7 +102,7 @@ export const Header: React.FC<HeaderProps> = () => {
     },
   ];
   const sendToHome = () => {
-    navigate("/localCommerce");
+    navigate("/");
   };
 
   const sendTo = (path: string) => {
@@ -137,12 +137,16 @@ export const Header: React.FC<HeaderProps> = () => {
           </S.icons>
         ) : (
           <S.info>
-            <S.link href="#">Sobre</S.link>
-            <S.link href="/register">Cadastre-se</S.link>
+            <S.link href="/login">Sobre</S.link>
+            {path == "/register" ? (
+              <></>
+            ) : (
+              <S.link href="/register">Cadastre-se</S.link>
+            )}
           </S.info>
         )}
       </S.headerArea>
-      {/*{isAuthenticated || (isAuth() && path !== "/home") ? (
+      {isAuthenticated || (isAuth() && path !== "/home") ? (
         <S.optionsArea>
           {options.map(({ icon, title, link }, index) => (
             <S.optionDiv key={index} onClick={() => sendTo(link)}>
@@ -153,7 +157,7 @@ export const Header: React.FC<HeaderProps> = () => {
         </S.optionsArea>
       ) : (
         <></>
-      )}*/}
+      )}
       {hamburguer && (
         <S.hamburguerOptions>
           {options.map(({ icon, title, link }, index) => (
