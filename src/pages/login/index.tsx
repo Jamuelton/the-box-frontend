@@ -153,7 +153,7 @@ export function Login() {
                 inputFunction={handleChangePassword}
                 type={isPassVisible ? "text" : "password"}
               />
-              <S.ForgotPassText>Esqueci minha senha</S.ForgotPassText>
+              {/* <S.ForgotPassText>Esqueci minha senha</S.ForgotPassText> */}
             </S.LoginFormPassword>
             <S.LoginFormButton>
               <Button label="Entrar" size="large" buttonFunction={login} />
@@ -171,6 +171,7 @@ export function Login() {
                 title={item.title}
                 content={item.content}
                 rateCard={false}
+                like={false}
               />
             </section>
           ))}

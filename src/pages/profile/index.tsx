@@ -82,22 +82,24 @@ export function Profile() {
 
   const putUser = async () => {
     try {
-      const userData = UserSchema.parse({
-        name: name,
-        email: email,
-        phone: phone,
-      });
-      const response = await PutUser(parseInt(userId), token, userData);
-      if (response?.status == 204) {
-        handleSetIsEdit();
-        successNotification("Usuário atualizado com sucesso!");
-        reloadPage();
-      }
-      if (
-        response?.status == 400 &&
-        response.data.error.meta.target[0] == "email"
-      ) {
-        errorNotification("Email inválido!");
+      if (userId) {
+        const userData = UserSchema.parse({
+          name: name,
+          email: email,
+          phone: phone,
+        });
+        const response = await PutUser(parseInt(userId), token, userData);
+        if (response?.status == 204) {
+          handleSetIsEdit();
+          successNotification("Usuário atualizado com sucesso!");
+          reloadPage();
+        }
+        if (
+          response?.status == 400 &&
+          response.data.error.meta.target[0] == "email"
+        ) {
+          errorNotification("Email inválido!");
+        }
       }
     } catch (error) {
       if (error instanceof ZodError) {

@@ -16,7 +16,9 @@ interface CardProps {
   editFunction?: () => void;
   onLikeToggle?: () => void;
   onDownload?: () => void;
+  buttonFunction?: () => void;
   datePost?: Date;
+  author?: string;
 }
 
 export const Card: FC<CardProps> = ({
@@ -30,8 +32,10 @@ export const Card: FC<CardProps> = ({
   edit,
   editFunction,
   onLikeToggle,
+  buttonFunction,
   datePost,
   onDownload,
+  author,
 }) => {
   return (
     <S.Container $extend={extend}>
@@ -41,7 +45,7 @@ export const Card: FC<CardProps> = ({
             character={<Heart size={24} weight="fill" />}
             count={1}
             value={like ? 1 : 0}
-            style={{ color: "#7fc7d9" }}
+            style={{ color: "#F21E51" }}
           />
         </S.LikeArea>
       )}
@@ -66,12 +70,15 @@ export const Card: FC<CardProps> = ({
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>
-      {details && (
-        <S.ButtonArea>
-          <label htmlFor="">Ver detalhes</label>
-          <ArrowRight size={24} weight="bold" color="#7fc7d9" />
-        </S.ButtonArea>
-      )}
+      <S.FooterArea>
+        {author && <S.AuthorName>@:{author}</S.AuthorName>}
+        {details && (
+          <S.ButtonArea onClick={buttonFunction}>
+            <label htmlFor="">Ver detalhes</label>
+            <ArrowRight size={24} weight="bold" color="#7fc7d9" />
+          </S.ButtonArea>
+        )}
+      </S.FooterArea>
     </S.Container>
   );
 };

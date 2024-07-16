@@ -328,7 +328,9 @@ export function Documents() {
             ></Card>
           ))
         ) : (
-          <S.EmptyText />
+          <>
+            <S.EmptyText />
+          </>
         )}
       </S.CardArea>
       <S.ModalFilterArea

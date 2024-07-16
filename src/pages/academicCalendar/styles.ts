@@ -2,7 +2,7 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 1rem 8rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -11,8 +11,7 @@ export const Container = styled.div`
 export const MainDiv = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin: 1rem 2rem;
+  padding: 2rem;
 `;
 
 export const CustomCalendarContainer = styled.div`
