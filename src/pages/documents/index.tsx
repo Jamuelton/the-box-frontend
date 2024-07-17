@@ -329,7 +329,7 @@ export function Documents() {
           ))
         ) : (
           <>
-            <S.EmptyText />
+            <p>Sem documentos cadastrados</p>
           </>
         )}
       </S.CardArea>
