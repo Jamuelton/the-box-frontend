@@ -317,8 +317,8 @@ export function AcademicCalendar() {
               <div>
                 <p><strong>Nome do Evento:</strong> {selectedEvent.name}</p>
                 <p><strong>Descrição:</strong> {selectedEvent.description}</p>
-                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("DD-MM-YYYY")}</p>
-                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("DD-MM-YYYY")}</p>
+                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("DD/MM/YYYY")}</p>
+                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("DD/MM/YYYY")}</p>
                 <p><strong>Horário de Início:</strong> {moment(selectedEvent.start_time).format("HH:mm")}</p>
                 <p><strong>Horário de Término:</strong> {moment(selectedEvent.end_time).format("HH:mm")}</p>
                 <p><strong>Palestrantes:</strong> {selectedEvent.speakers}</p>
