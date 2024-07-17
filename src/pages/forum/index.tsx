@@ -17,8 +17,11 @@ import {
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../config/auth/UseAuth";
 
 export function Forum() {
+  const { token } = useAuth();
+
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
 
@@ -155,7 +158,7 @@ export function Forum() {
   const createPosts = async () => {
     try {
       ForumPostSchema.parse(ForumData);
-      const response = await createPost(ForumData);
+      const response = await createPost(ForumData, token);
 
       if (response?.status == 200) {
         successNotification("Post publicado com sucesso");
@@ -213,7 +216,7 @@ export function Forum() {
               like={true}
               extend={true}
               details={true}
-              onClick={() => goToPost(id)}
+              onClick={() => id && goToPost(id)}
             />
           ))
         ) : (
