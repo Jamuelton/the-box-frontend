@@ -286,12 +286,15 @@ export function Documents() {
         <Title text="Material Didático"></Title>
       </S.TitleArea>
       <S.ButtonsArea>
-        <S.AttachButton onClick={() => setAttachModal(!attachModal)}>
-          Anexar Material <Paperclip size={24} weight="bold" />
-        </S.AttachButton>
-        <S.AttachButtonIcon onClick={() => setAttachModal(!attachModal)}>
-          <Paperclip size={20} weight="bold" />
-        </S.AttachButtonIcon>
+        <div>
+          {" "}
+          {userInfo?.profile == "SUPER_USER" && (
+            <S.AttachButton onClick={() => setAttachModal(!attachModal)}>
+              Anexar Material <Paperclip size={24} weight="bold" />
+            </S.AttachButton>
+          )}
+        </div>
+
         <span>
           <SearchInput
             onChangeSearchFunction={handleSearchTermChange}

@@ -117,10 +117,12 @@ export function Login() {
       <S.Form>
         <S.TextArea>
           <div>
-            <h2>Acesse o portal</h2>
+            <h2>Acesse o portal do aluno</h2>
             <p>
-              Explore os recursos e serviços oferecidos pela universidade. Faça
-              login para acessar seu painel personalizado.
+              Bem-vindo ao Portal do Aluno do curso de Engenharia de Software da
+              UPE, campus Garanhuns! Este portal foi desenvolvido para
+              centralizar todas as informações importantes do seu curso,
+              facilitando o acesso e a organização da sua vida acadêmica.
             </p>
           </div>
         </S.TextArea>

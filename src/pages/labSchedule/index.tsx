@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
-import { Plus } from "@phosphor-icons/react";
+import { Info, Plus } from "@phosphor-icons/react";
 import { Input } from "../../components/Input";
 import { EventModal } from "../../components/EventModal";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -31,6 +31,7 @@ import {
 } from "../../services/labServices";
 import { useData } from "../../config/data/UseData";
 import { Button as ButtonAntd } from "antd/lib";
+import { Tooltip } from "antd";
 
 export function LabSchedule() {
   moment.locale("pt-br");
@@ -71,7 +72,7 @@ export function LabSchedule() {
     agendaTimeFormat: "HH:mm",
   };
 
-  const { userId } = useData();
+  const { userId, userInfo } = useData();
   const [labs, setLabs] = useState<Labs[]>();
   const [eventsData, setEventsData] = useState<OtherScheduleData[]>([]);
   const [showModal, setShowModal] = useState(false);
@@ -243,7 +244,17 @@ export function LabSchedule() {
 
   return (
     <MainDiv>
-      <Title text="Horário dos Laboratórios" />
+      <Title
+        text="Horário dos Laboratórios"
+        item={
+          <Tooltip
+            title="Para agendar um horário, contate um professor."
+            color="#365486"
+          >
+            <Info size={32} color={"#365486"} cursor={"pointer"} />
+          </Tooltip>
+        }
+      />
       <Container>
         {labs?.map((item) => (
           <ButtonAntd
@@ -257,15 +268,17 @@ export function LabSchedule() {
           </ButtonAntd>
         ))}
         <DivButton>
-          <Button
-            color="#070F2B"
-            icon={<Plus size={24} />}
-            secondColor="#7FC7D9"
-            label="Agendar Horário"
-            shape="round"
-            size="small"
-            buttonFunction={handleSelect}
-          />
+          {userInfo?.profile == "SUPER_USER" && (
+            <Button
+              color="#070F2B"
+              icon={<Plus size={24} />}
+              secondColor="#7FC7D9"
+              label="Agendar Horário"
+              shape="round"
+              size="small"
+              buttonFunction={handleSelect}
+            />
+          )}
         </DivButton>
         <CustomCalendarContainer>
           <Calendar
