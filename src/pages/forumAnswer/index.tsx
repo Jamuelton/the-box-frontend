@@ -8,12 +8,13 @@ import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
-import { fetchComments } from '../../services/AnswerServices/CommentService';
+import { fetchComments, fetchPost } from '../../services/AnswerServices/CommentService';
 import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 
 const ForumAnswer: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
+  const [post, setPost] = useState<any>(null);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
@@ -30,19 +31,24 @@ const ForumAnswer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchCommentsData = async () => {
+    const fetchPostAndComments = async () => {
       try {
         if (postId) {
+          const fetchedPost = await fetchPost(Number(postId));
+          if (fetchedPost) {
+            setPost(fetchedPost);
+          }
+
           const comments = await fetchComments(Number(postId));
           setAnswers(comments);
         }
       } catch (error) {
-        console.error("Erro ao buscar comentários:", error);
-        message.error("Erro ao carregar comentários");
+        console.error("Erro ao buscar dados:", error);
+        message.error("Erro ao carregar dados");
       }
     };
 
-    fetchCommentsData();
+    fetchPostAndComments();
   }, [postId]);
 
   const handleChangeAnswer = (e: { target: { value: string } }) => {
@@ -153,6 +159,22 @@ const ForumAnswer: React.FC = () => {
           )}
         </Modal>
       </S.ButtonContainer>
+
+      {post && (
+        <S.PostContainer>
+          <S.PostHeader>
+            <S.PostTitle>{post.title}</S.PostTitle>
+            <S.PostDetails>
+              <S.PostCategory>{post.category}</S.PostCategory>
+              <S.PostDate>{new Date(post.created_at).toLocaleDateString()}</S.PostDate>
+            </S.PostDetails>
+          </S.PostHeader>
+          <S.PostContent>{post.content}</S.PostContent>
+        </S.PostContainer>
+      )}
+
+
+      {console.log(post)}
       {answers.length === 0 ? (
         <p>Não há respostas ainda.</p>
       ) : (

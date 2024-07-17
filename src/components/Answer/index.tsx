@@ -23,7 +23,7 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike, currentUserId }) => {
   const isAuthor = info.post_id === info.user_id;
   const handleLike = async () => {
     try {
-      await likeAnswer(info.id); // Adicionar ou remover like
+      await likeAnswer(info.id); 
       setLiked(!liked);
       setLikes(likes + (liked ? -1 : 1));
       onLike(info.id, !liked); 
