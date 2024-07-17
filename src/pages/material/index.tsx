@@ -11,6 +11,7 @@ import { UploadProps } from "antd/lib";
 import {
   errorNotification,
   successNotification,
+  warningNotification,
 } from "../../components/Notification";
 import { Input } from "../../components/Input";
 import { useData } from "../../config/data/UseData";
@@ -37,7 +38,6 @@ export function Material() {
   const [archiveDescription, setArchiveDescription] = useState<string>();
   const [archiveCategory, setArchiveCategory] =
     useState<CategoryMaterialEnum>();
-  const [file, setFile] = useState<RcFile>();
   const [fileUrl, setFileUrl] = useState<string>();
   const [category, setCategory] = useState<CategoryMaterialEnum>();
   const [materials, setMaterials] = useState<MaterialInterface[]>([]);
@@ -194,11 +194,9 @@ export function Material() {
   const handlePostMaterial = async () => {
     try {
       if (userId) {
-        const urlfile = await urlPut();
-
         const archiveData: MaterialInterface = {
           title: archiveName,
-          url: urlfile[0],
+          url: fileUrl,
           description: archiveDescription,
           user_id: parseInt(userId),
           category: archiveCategory,
@@ -224,7 +222,7 @@ export function Material() {
     }
   };
 
-  const urlPut = async () => {
+  const urlPut = async (file: RcFile) => {
     if (file) {
       const url = await putURL(token, file.type.split("/")[1]);
       if (url?.status == 200) {
@@ -237,7 +235,6 @@ export function Material() {
         });
         const splitUrl = url?.data.url;
         setFileUrl(splitUrl.split("?")[0]);
-        return splitUrl.split("?"[0]);
       } else {
         errorNotification("Não foi possível fazer upload desse arquivo");
       }
@@ -247,13 +244,14 @@ export function Material() {
   const props: UploadProps = {
     name: "file",
     multiple: false,
-    maxCount: 1,
-    onRemove() {
-      setFile(undefined);
-    },
     beforeUpload(file) {
-      setFile(file);
-      return false;
+      if (fileUrl) {
+        warningNotification("Você só pode anexar um arquivo");
+        return true;
+      } else {
+        urlPut(file);
+        return false;
+      }
     },
   };
 
