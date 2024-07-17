@@ -44,24 +44,29 @@ export function Login() {
         "Explore os recursos e serviços oferecidos pela universidade. Faça login para acessar seu painel personalizado.",
     },
     {
-      title: "Acesso ao Moodle",
-      content:
-        "Entre no Moodle para acessar suas aulas online, entregar trabalhos e participar de fóruns de discussão.",
-    },
-    {
-      title: "Biblioteca Digital",
-      content:
-        "Acesse uma vasta coleção de e-books, artigos e revistas acadêmicas disponíveis para todos os estudantes e funcionários.",
-    },
-    {
       title: "Calendário Acadêmico",
       content:
-        "Confira o calendário acadêmico para se manter atualizado sobre datas importantes, como início de semestres, exames e feriados.",
+        "Fique por dentro das datas importantes, como provas, entregas de trabalhos e eventos.",
     },
     {
-      title: "Suporte Técnico",
+      title: "Material de Apoio",
       content:
-        "Precisa de ajuda? Entre em contato com o suporte técnico para resolver problemas de acesso ou uso do portal.",
+        "Compartilhe material de apoio com colegas e amigos, como apostilas, slides e artigos relevantes.",
+    },
+    {
+      title: "Horário do Laboratório",
+      content:
+        "Agende horários de laboratórios de maneira prática e eficiente.",
+    },
+    {
+      title: "Fórum",
+      content:
+        "Interaja com seus colegas e professores, tire dúvidas, compartilhe opiniões e experiências.",
+    },
+    {
+      title: "Comércio Local",
+      content:
+        "Conheça o comércio local e suas informações, como restaurantes, academias e outros serviços.",
     },
   ];
 
