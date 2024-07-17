@@ -33,6 +33,20 @@ export const fetchPost = async (postId: number): Promise<any> => {
   }
 };
 
+export const submitComment = async (postId: number, userId: number, body: string): Promise<IAnswer | null> => {
+  try {
+    const response = await api.post('/comment', {
+      post_id: postId,
+      user_id: userId,
+      body
+    });
+    return response.data.comment as IAnswer;
+  } catch (error) {
+    handleServiceError(error);
+    return null;
+  }
+};
+
 const handleServiceError = (error: AxiosError): void => {
   if (error.response) {
     console.error('Request failed with status:', error.response.status);

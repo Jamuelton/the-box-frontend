@@ -8,7 +8,7 @@ import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
-import { fetchComments, fetchPost } from '../../services/AnswerServices/CommentService';
+import { fetchComments, fetchPost, submitComment } from '../../services/AnswerServices/CommentService';
 import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 
@@ -86,22 +86,23 @@ const ForumAnswer: React.FC = () => {
       return;
     }
 
-    console.log("Enviando dados:", {
-      body: answer,
-      user_id: userId,
-      post_id: Number(postId),
-    });
-
     try {
-      const token = Cookies.get('token');
+      const newComment = await submitComment(Number(postId), userId!, answer);
 
-      console.log("Resposta enviada com sucesso");
-
-      message.open({
-        content: "Resposta enviada com sucesso",
-        type: "success",
-        duration: 3,
-      });
+      if (newComment) {
+        setAnswers(prevAnswers => [...prevAnswers, newComment]);
+        message.open({
+          content: "Resposta enviada com sucesso",
+          type: "success",
+          duration: 3,
+        });
+      } else {
+        message.open({
+          content: "Erro ao enviar resposta",
+          type: "error",
+          duration: 3,
+        });
+      }
 
       setAnswer("");
       setModalOpen(false);
@@ -173,8 +174,6 @@ const ForumAnswer: React.FC = () => {
         </S.PostContainer>
       )}
 
-
-      {console.log(post)}
       {answers.length === 0 ? (
         <p>Não há respostas ainda.</p>
       ) : (
