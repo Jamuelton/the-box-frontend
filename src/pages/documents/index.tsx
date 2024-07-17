@@ -329,7 +329,7 @@ export function Documents() {
           ))
         ) : (
           <>
-            <p>Sem documentos cadastrados</p>
+            <S.NoPost>Publique um material de apoio</S.NoPost>
           </>
         )}
       </S.CardArea>
