@@ -43,6 +43,7 @@ export const AppRoutes = () => {
                 <Route path="/register" element={<Registration />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>
+                <Route path="/forum/:postId" element={<ForumAnswer />} />
                 <Route path="/" element={<Home />} />
               </Route>
               <Route element={<PrivateRoutes redirectPath="/login" />}>

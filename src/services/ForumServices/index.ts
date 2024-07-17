@@ -24,9 +24,11 @@ export const getPostsByCategory = async (category: CategoryEnum) => {
   }
 };
 
-export const createPost = async (data: ForumInterface) => {
+export const createPost = async (data: ForumInterface, token: string) => {
   try {
-    const response = await api.post("/post", data);
+    const response = await api.post("/post", data, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return response;
   } catch (error) {
     if (error instanceof AxiosError) {

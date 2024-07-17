@@ -6,6 +6,7 @@ export enum CategoryEnum {
 }
 
 export interface ForumInterface {
+  id?: number;
   title?: string;
   content?: string;
   category?: CategoryEnum;

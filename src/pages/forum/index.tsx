@@ -1,5 +1,5 @@
 import * as S from "./styles";
-import { Button, MenuProps } from "antd";
+import { Button, CheckboxProps, MenuProps } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
 import { Title } from "../../components/Title/";
@@ -19,11 +19,14 @@ import {
 } from "../../components/Notification";
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
-import { CheckboxProps } from "antd/lib";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../config/auth/UseAuth";
 import { useData } from "../../config/data/UseData";
 
 export function Forum() {
   const { userId } = useData();
+
+  const { token } = useAuth();
 
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
@@ -35,6 +38,7 @@ export function Forum() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [category, setCategory] = useState<CategoryEnum>();
+  const navigate = useNavigate();
 
   interface ErrorInterface {
     errorShow?: boolean;
@@ -221,7 +225,7 @@ export function Forum() {
           user_id: parseInt(userId),
         };
         ForumPostSchema.parse(ForumData);
-        const response = await createPost(ForumData);
+        const response = await createPost(ForumData, token);
 
         if (response?.status == 200) {
           successNotification("Post publicado com sucesso");
@@ -256,6 +260,10 @@ export function Forum() {
     getPost();
     setfilter(false);
     setModalFiltro(false);
+  };
+
+  const goToPost = (postId: number) => {
+    navigate(`/forum/${postId}`);
   };
 
   useEffect(() => {
@@ -311,19 +319,22 @@ export function Forum() {
       </S.ButtonsArea>
       <S.CardArea>
         {post.length > 0 ? (
-          post.map(({ title, content, created_at, original_poster }, index) => (
-            <Card
-              key={index}
-              title={title}
-              content={content}
-              rateCard={false}
-              like={false}
-              extend={true}
-              details={true}
-              datePost={created_at}
-              author={original_poster}
-            />
-          ))
+          post.map(
+            ({ id, title, content, created_at, original_poster }, index) => (
+              <Card
+                key={index}
+                title={title}
+                content={content}
+                rateCard={false}
+                like={false}
+                extend={true}
+                details={true}
+                datePost={created_at}
+                author={original_poster}
+                buttonFunction={() => id && goToPost(id)}
+              />
+            )
+          )
         ) : (
           <S.NoPost>Publique um post no fórum</S.NoPost>
         )}
