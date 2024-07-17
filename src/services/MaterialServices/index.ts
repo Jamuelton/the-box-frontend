@@ -1,10 +1,28 @@
 import { AxiosError } from "axios";
 import { api } from "../api";
-import { MaterialInterface } from "../Types/materialTypes";
+import {
+  CategoryMaterialEnum,
+  MaterialInterface,
+} from "../Types/materialTypes";
 
-export const getMaterial = async (token: string) => {
+export const getMaterial = async (
+  token: string,
+  order?: string,
+  category?: CategoryMaterialEnum
+) => {
   try {
-    const response = await api.get("/materialFormal", {
+    if (category) {
+      console.log(category.toString());
+      const response = await api.get(
+        `/materialFormal/?order=${order}&category=${category.toString()}`,
+        {
+          headers: { Authorization: "Bearer " + `${token}` },
+        }
+      );
+      console.log(response);
+      return response;
+    }
+    const response = await api.get(`/materialFormal/?order=${order}`, {
       headers: { Authorization: "Bearer " + `${token}` },
     });
     return response;
