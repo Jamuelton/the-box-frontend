@@ -205,25 +205,39 @@ export function AcademicCalendar() {
     console.log(`Evento ${event.id} corresponde ao schedule ${selectedSchedule}: ${eventMatchesSchedule}`);
     return eventMatchesSchedule;
   }).map((event) => {
-    const startDateTime = new Date(`${moment(event.start_date).format("YYYY-MM-DD")}T${moment(event.start_time).format("HH:mm:ss")}`);
-    const endDateTime = new Date(`${moment(event.end_date).format("YYYY-MM-DD")}T${moment(event.end_time).format("HH:mm:ss")}`);
-  
+    const eventStartDate = new Date(event.start_date);
+    const eventEndDate = new Date(event.end_date);
+
+    const startTimeComponents = new Date(event.start_time);
+    const endTimeComponents = new Date(event.end_time);
+
+    const startTime = new Date(eventStartDate);
+    startTime.setUTCHours(
+      startTimeComponents.getUTCHours(),
+      startTimeComponents.getUTCMinutes(),
+      startTimeComponents.getUTCSeconds()
+    );
+
+    const endTime = new Date(eventEndDate);
+    endTime.setUTCHours(
+      endTimeComponents.getUTCHours(),
+      endTimeComponents.getUTCMinutes(),
+      endTimeComponents.getUTCSeconds()
+    );
+
     return {
       ...event,
       title: event.name,
-      start: startDateTime,
-      end: endDateTime,
+      start: startTime,
+      end: endTime,
     };
   });
-  
   console.log("Eventos filtrados para o calendário:", calendarEvents);
-  
-
-  console.log("Eventos para o calendário:", calendarEvents); // Debug log
 
   const handleSelectEvent = (event: EventData) => {
     setSelectedEvent(event);
     setShowModal(true);
+    console.log("Evento selecionado:", event); // Debug log
   };
 
   return (
@@ -303,8 +317,8 @@ export function AcademicCalendar() {
               <div>
                 <p><strong>Nome do Evento:</strong> {selectedEvent.name}</p>
                 <p><strong>Descrição:</strong> {selectedEvent.description}</p>
-                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("YYYY-MM-DD")}</p>
-                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("YYYY-MM-DD")}</p>
+                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("DD-MM-YYYY")}</p>
+                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("DD-MM-YYYY")}</p>
                 <p><strong>Horário de Início:</strong> {moment(selectedEvent.start_time).format("HH:mm")}</p>
                 <p><strong>Horário de Término:</strong> {moment(selectedEvent.end_time).format("HH:mm")}</p>
                 <p><strong>Palestrantes:</strong> {selectedEvent.speakers}</p>
