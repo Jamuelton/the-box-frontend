@@ -11,4 +11,5 @@ export interface ForumInterface {
   category?: CategoryEnum;
   user_id?: number | undefined;
   created_at?: Date;
+  original_poster?: string;
 }

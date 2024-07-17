@@ -1,5 +1,4 @@
-// LabSchedule.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/pt-br";
@@ -15,40 +14,51 @@ import {
   Div,
   MainDiv,
   InputDate,
-  FormGroup
+  FormGroup,
 } from "./styles";
 import { Button } from "../../components/Button";
 import { Title } from "../../components/Title";
-import { ScheduleData } from "../../services/Types/scheduleType";
-
+import {
+  Labs,
+  OtherScheduleData,
+  ScheduleData,
+} from "../../services/Types/scheduleType";
+import { message } from "antd/lib";
+import {
+  createNewLabEvent,
+  getLabs,
+  getLabSchedule,
+} from "../../services/labServices";
+import { useData } from "../../config/data/UseData";
+import { Button as ButtonAntd } from "antd/lib";
 
 export function LabSchedule() {
   moment.locale("pt-br");
   const localizer = momentLocalizer(moment);
 
   const messages = {
-    date: 'Data',
-    time: 'Hora',
-    event: 'Evento',
-    allDay: 'Dia Inteiro',
-    week: 'Semana',
-    work_week: 'Semana de Trabalho',
-    day: 'Dia',
-    month: 'Mês',
-    previous: 'Anterior',
-    next: 'Próximo',
-    yesterday: 'Ontem',
-    tomorrow: 'Amanhã',
-    today: 'Hoje',
-    agenda: 'Agenda',
-    noEventsInRange: 'Não há eventos nesta faixa de datas.',
-    showMore: (total: number) => `+ Ver mais (${total})`
+    date: "Data",
+    time: "Hora",
+    event: "Evento",
+    allDay: "Dia Inteiro",
+    week: "Semana",
+    work_week: "Semana de Trabalho",
+    day: "Dia",
+    month: "Mês",
+    previous: "Anterior",
+    next: "Próximo",
+    yesterday: "Ontem",
+    tomorrow: "Amanhã",
+    today: "Hoje",
+    agenda: "Agenda",
+    noEventsInRange: "Não há eventos nesta faixa de datas.",
+    showMore: (total: number) => `+ Ver mais (${total})`,
   };
 
   const formats = {
     monthHeaderFormat: "MMMM YYYY",
     dayHeaderFormat: "dddd, DD/MM/YYYY",
-    dayRangeHeaderFormat: ({ start, end }: { start: Date, end: Date }) => {
+    dayRangeHeaderFormat: ({ start, end }: { start: Date; end: Date }) => {
       const startDate = moment(start).format("DD MMMM");
       const endDate = moment(end).format("DD MMMM YYYY");
       return `${startDate} - ${endDate}`;
@@ -58,71 +68,120 @@ export function LabSchedule() {
     dayFormat: "DD/MM/YYYY",
     dateFormat: "DD",
     monthFormat: "MMMM YYYY",
-    agendaTimeFormat: "HH:mm"
+    agendaTimeFormat: "HH:mm",
   };
 
-  const [eventsData, setEventsData] = useState<ScheduleData[]>([]);
+  const { userId } = useData();
+  const [labs, setLabs] = useState<Labs[]>();
+  const [eventsData, setEventsData] = useState<OtherScheduleData[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [newEvent, setNewEvent] = useState<ScheduleData>({
     title: "",
-    dates: [],
-    startTime: new Date(),
-    endTime: new Date()
+    date: [],
+    start_time: new Date(),
+    end_time: new Date(),
+    lab_id: 1,
+    user_id: userId,
   });
+  const [currentLab, setCurrentLab] = useState<number>(1);
+
+  const getSchedule = async (labId: number) => {
+    const labsResponse = await getLabs();
+    setLabs(labsResponse?.data);
+
+    const response = await getLabSchedule(labId);
+    const data = response?.data.map((item) => ({
+      date: item.date,
+      end_time: item.end_time,
+      id: item.id,
+      lab_id: item.lab_id,
+      start_time: item.start_time,
+      user_id: item.user_id,
+    }));
+
+    setEventsData(data);
+  };
+
+  useEffect(() => {
+    getSchedule(currentLab);
+  }, [currentLab]);
 
   const handleSelect = () => {
     setNewEvent({
       title: "",
-      dates: [],
-      startTime: new Date(),
-      endTime: new Date()
+      date: [],
+      start_time: new Date(),
+      end_time: new Date(),
+      lab_id: currentLab,
+      user_id: userId,
     });
     setShowModal(true);
   };
 
+  const sendEvent = async (event: ScheduleData) => {
+    try {
+      const response = await createNewLabEvent(event);
+      // Check if response status is successful
+      if (response.status === 201) {
+        message.success("Reserva no laboratório feita com sucesso");
+        // Optionally, you can perform additional actions after successful creation
+      } else {
+        message.error("Não foi possível criar a reserva para o laboratório");
+      }
+    } catch (error) {
+      message.error("Não foi possível criar a reserva");
+    }
+  };
+
   const handleSave = () => {
-    if (newEvent.title && newEvent.dates.length > 0 && newEvent.startTime && newEvent.endTime) {
-      const newEvents = newEvent.dates.map(date => {
-        const start = new Date(date);
-        const end = new Date(date);
-        start.setHours(newEvent.startTime.getHours(), newEvent.startTime.getMinutes());
-        end.setHours(newEvent.endTime.getHours(), newEvent.endTime.getMinutes());
-        return {
-          title: newEvent.title,
-          dates: [date],
-          startTime: newEvent.startTime,
-          endTime: newEvent.endTime,
-          start,
-          end
-        };
-      });
-      setEventsData([...eventsData, ...newEvents]);
+    if (
+      newEvent.title &&
+      newEvent.date.length > 0 &&
+      newEvent.start_time &&
+      newEvent.end_time
+    ) {
+      sendEvent(newEvent);
+      getSchedule(currentLab);
       setShowModal(false);
       setNewEvent({
         title: "",
-        dates: [],
-        startTime: new Date(),
-        endTime: new Date()
+        date: [],
+        start_time: new Date(),
+        end_time: new Date(),
+        lab_id: currentLab,
+        user_id: userId,
       });
     } else {
-      alert("Por favor, preencha todos os campos!");
+      message.open({
+        type: "error",
+        content: "Por favor, preencha todos os campos!",
+        duration: 2,
+      });
     }
   };
 
   const handleDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = moment(e.target.value).startOf('day').toDate();
-    if (!newEvent.dates.some(date => moment(date).isSame(selectedDate, 'day'))) {
-      setNewEvent(prevEvent => ({
+    const selectedDate = moment(e.target.value).startOf("day").toDate();
+    if (
+      !newEvent.date.some((date) => moment(date).isSame(selectedDate, "day"))
+    ) {
+      setNewEvent((prevEvent) => ({
         ...prevEvent,
-        dates: [...prevEvent.dates, selectedDate]
+        date: [selectedDate],
       }));
+    } else {
+      message.open({
+        type: "error",
+        content: "Só é possível selecionar uma data",
+        duration: 2,
+      });
     }
   };
 
-  const removeDay = (date: Date) => {
-    setNewEvent(prevEvent => ({
+  const removeDay = () => {
+    setNewEvent((prevEvent) => ({
       ...prevEvent,
-      dates: prevEvent.dates.filter(day => !moment(day).isSame(date, 'day'))
+      date: [],
     }));
   };
 
@@ -132,36 +191,71 @@ export function LabSchedule() {
 
   const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(":").map(Number);
-    const updatedStartTime = new Date(newEvent.startTime);
+    const updatedStartTime = new Date(newEvent.start_time);
     updatedStartTime.setHours(hours, minutes);
-    setNewEvent({ ...newEvent, startTime: updatedStartTime });
+    setNewEvent({ ...newEvent, start_time: updatedStartTime });
   };
 
   const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(":").map(Number);
-    const updatedEndTime = new Date(newEvent.endTime);
+    const updatedEndTime = new Date(newEvent.end_time);
     updatedEndTime.setHours(hours, minutes);
-    setNewEvent({ ...newEvent, endTime: updatedEndTime });
+    setNewEvent({ ...newEvent, end_time: updatedEndTime });
   };
 
-  const calendarEvents = eventsData.flatMap(event =>
-    event.dates.map(date => {
-      const start = new Date(date);
-      const end = new Date(date);
-      start.setHours(event.startTime.getHours(), event.startTime.getMinutes());
-      end.setHours(event.endTime.getHours(), event.endTime.getMinutes());
+  const calendarEvents = () => {
+    return eventsData.map((event, index) => {
+      const eventDate = new Date(event.date);
+
+      const startTimeComponents = new Date(event.start_time);
+      const endTimeComponents = new Date(event.end_time);
+
+      const startTime = new Date(eventDate);
+      startTime.setUTCHours(
+        startTimeComponents.getUTCHours(),
+        startTimeComponents.getUTCMinutes(),
+        startTimeComponents.getUTCSeconds()
+      );
+
+      const endTime = new Date(eventDate);
+      endTime.setUTCHours(
+        endTimeComponents.getUTCHours(),
+        endTimeComponents.getUTCMinutes(),
+        endTimeComponents.getUTCSeconds()
+      );
+
       return {
-        title: event.title,
-        start,
-        end
+        id: index + 1,
+        title: `Event ${index + 1}`,
+        start: startTime,
+        end: endTime,
       };
-    })
-  );
+    });
+  };
+
+  const handleLabButtonClick = (lab: number) => {
+    setCurrentLab(lab);
+  };
+
+  const capitalize = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   return (
     <MainDiv>
       <Title text="Horário dos Laboratórios" />
       <Container>
+        {labs?.map((item) => (
+          <ButtonAntd
+            key={item.id}
+            onClick={() => handleLabButtonClick(item.id)}
+            style={{
+              backgroundColor: item.id == currentLab ? "#40a9ff" : "#fff",
+            }}
+          >
+            {capitalize(item.name)}
+          </ButtonAntd>
+        ))}
         <DivButton>
           <Button
             color="#070F2B"
@@ -180,9 +274,15 @@ export function LabSchedule() {
             localizer={localizer}
             defaultDate={new Date()}
             defaultView="month"
-            events={calendarEvents}
+            events={calendarEvents()}
             style={{ height: "100vh" }}
-            onSelectEvent={(event: { start: Date, end: Date, title: string }) => alert(`Evento: ${event.title} - Início: ${moment(event.start).format("DD/MM/YYYY HH:mm")} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`)}
+            onSelectEvent={(event: { start: Date; end: Date; title: string }) =>
+              alert(
+                `Evento: ${event.title} - Início: ${moment(event.start).format(
+                  "DD/MM/YYYY HH:mm"
+                )} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`
+              )
+            }
             onSelectSlot={handleSelect}
             messages={messages}
             formats={formats}
@@ -207,7 +307,7 @@ export function LabSchedule() {
                 label="Hora de Início*"
                 placeHolder="Insira a hora de início"
                 type="time"
-                value={moment(newEvent.startTime).format("HH:mm")}
+                value={moment(newEvent.start_time).format("HH:mm")}
                 inputFunction={handleStartTimeChange}
               />
             </FormGroup>
@@ -216,7 +316,7 @@ export function LabSchedule() {
                 label="Hora de Término*"
                 placeHolder="Insira a hora de término"
                 type="time"
-                value={moment(newEvent.endTime).format("HH:mm")}
+                value={moment(newEvent.end_time).format("HH:mm")}
                 inputFunction={handleEndTimeChange}
               />
             </FormGroup>
@@ -228,11 +328,11 @@ export function LabSchedule() {
               />
             </FormGroup>
             <Div>
-              {newEvent.dates.map((day, index) => (
+              {newEvent.date.map((day, index) => (
                 <InputDiv key={index}>
                   <InputDate>
                     <span>{moment(day).format("DD/MM/YYYY")}</span>
-                    <button onClick={() => removeDay(day)}>&times;</button>
+                    <button onClick={() => removeDay()}>&times;</button>
                   </InputDate>
                 </InputDiv>
               ))}
