@@ -8,8 +8,12 @@ import { IAnswer } from "../../components/Answer/interfaces";
 import { Modal, message } from "antd";
 import { useState, useEffect } from "react";
 import { Input } from "../../components/Input";
-import { fetchComments, fetchPost, submitComment } from '../../services/AnswerServices/CommentService';
-import Cookies from 'js-cookie';
+import {
+  fetchComments,
+  fetchPost,
+  submitComment,
+} from "../../services/AnswerServices/CommentService";
+import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 const ForumAnswer: React.FC = () => {
@@ -22,7 +26,7 @@ const ForumAnswer: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    const token = Cookies.get("token");
     if (token) {
       const decoded = jwtDecode<{ sub: string }>(token);
       const userId = parseInt(decoded.sub, 10);
@@ -90,7 +94,7 @@ const ForumAnswer: React.FC = () => {
       const newComment = await submitComment(Number(postId), userId!, answer);
 
       if (newComment) {
-        setAnswers(prevAnswers => [...prevAnswers, newComment]);
+        setAnswers((prevAnswers) => [...prevAnswers, newComment]);
         message.open({
           content: "Resposta enviada com sucesso",
           type: "success",
@@ -118,9 +122,15 @@ const ForumAnswer: React.FC = () => {
   };
 
   const handleLike = (id: string, liked: boolean) => {
-    setAnswers(prevAnswers =>
-      prevAnswers.map(answer =>
-        answer.id === id ? { ...answer, liked, likes: liked ? answer.likes + 1 : answer.likes - 1 } : answer
+    setAnswers((prevAnswers) =>
+      prevAnswers.map((answer) =>
+        answer.id === id
+          ? {
+              ...answer,
+              liked,
+              likes: liked ? answer.likes + 1 : answer.likes - 1,
+            }
+          : answer
       )
     );
   };
@@ -167,7 +177,9 @@ const ForumAnswer: React.FC = () => {
             <S.PostTitle>{post.title}</S.PostTitle>
             <S.PostDetails>
               <S.PostCategory>{post.category}</S.PostCategory>
-              <S.PostDate>{new Date(post.created_at).toLocaleDateString()}</S.PostDate>
+              <S.PostDate>
+                {new Date(post.created_at).toLocaleDateString()}
+              </S.PostDate>
             </S.PostDetails>
           </S.PostHeader>
           <S.PostContent>{post.content}</S.PostContent>
@@ -178,7 +190,12 @@ const ForumAnswer: React.FC = () => {
         <p>Não há respostas ainda.</p>
       ) : (
         answers.map((answer: IAnswer, index: number) => (
-          <Answer key={index} info={answer} onLike={handleLike} currentUserId={userId} />
+          <Answer
+            key={index}
+            info={answer}
+            onLike={handleLike}
+            currentUserId={userId}
+          />
         ))
       )}
     </S.Container>

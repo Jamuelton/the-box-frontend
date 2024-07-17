@@ -1,238 +1,358 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-import { Plus, XCircle } from "@phosphor-icons/react";
+import "moment/locale/pt-br";
+import { Info, Plus } from "@phosphor-icons/react";
+import { Input } from "../../components/Input";
+import { EventModal } from "../../components/EventModal";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   CustomCalendarContainer,
   DivButton,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  CloseButton,
-  FormGroup,
-  Label,
-  Input,
-  InputDiv,
-  ButtonDiv,
   Container,
+  InputDiv,
   Div,
-  InputDate
+  MainDiv,
+  InputDate,
+  FormGroup,
 } from "./styles";
 import { Button } from "../../components/Button";
-
-moment.locale("pt-br");
-const localizer = momentLocalizer(moment);
-
-// Definindo o tipo para um evento
-type EventData = {
-  title: string;
-  dates: Date[];
-  startTime: Date;
-  endTime: Date;
-};
+import { Title } from "../../components/Title";
+import {
+  Labs,
+  OtherScheduleData,
+  ScheduleData,
+} from "../../services/Types/scheduleType";
+import { message } from "antd/lib";
+import {
+  createNewLabEvent,
+  getLabs,
+  getLabSchedule,
+} from "../../services/labServices";
+import { useData } from "../../config/data/UseData";
+import { Button as ButtonAntd } from "antd/lib";
+import { Tooltip } from "antd";
 
 export function LabSchedule() {
-  const [eventsData, setEventsData] = useState<EventData[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [newEvent, setNewEvent] = useState<EventData>({
-    title: "",
-    dates: [],
-    startTime: new Date(),
-    endTime: new Date()
-  });
+  moment.locale("pt-br");
+  const localizer = momentLocalizer(moment);
 
-  // Função para abrir o modal e preparar um novo evento
+  const messages = {
+    date: "Data",
+    time: "Hora",
+    event: "Evento",
+    allDay: "Dia Inteiro",
+    week: "Semana",
+    work_week: "Semana de Trabalho",
+    day: "Dia",
+    month: "Mês",
+    previous: "Anterior",
+    next: "Próximo",
+    yesterday: "Ontem",
+    tomorrow: "Amanhã",
+    today: "Hoje",
+    agenda: "Agenda",
+    noEventsInRange: "Não há eventos nesta faixa de datas.",
+    showMore: (total: number) => `+ Ver mais (${total})`,
+  };
+
+  const formats = {
+    monthHeaderFormat: "MMMM YYYY",
+    dayHeaderFormat: "dddd, DD/MM/YYYY",
+    dayRangeHeaderFormat: ({ start, end }: { start: Date; end: Date }) => {
+      const startDate = moment(start).format("DD MMMM");
+      const endDate = moment(end).format("DD MMMM YYYY");
+      return `${startDate} - ${endDate}`;
+    },
+    agendaDateFormat: "dddd, DD/MM/YYYY",
+    timeGutterFormat: "HH:mm",
+    dayFormat: "DD/MM/YYYY",
+    dateFormat: "DD",
+    monthFormat: "MMMM YYYY",
+    agendaTimeFormat: "HH:mm",
+  };
+
+  const { userId, userInfo } = useData();
+  const [labs, setLabs] = useState<Labs[]>();
+  const [eventsData, setEventsData] = useState<OtherScheduleData[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [newEvent, setNewEvent] = useState<ScheduleData>({
+    title: "",
+    date: [],
+    start_time: new Date(),
+    end_time: new Date(),
+    lab_id: 1,
+    user_id: userId,
+  });
+  const [currentLab, setCurrentLab] = useState<number>(1);
+
+  const getSchedule = async (labId: number) => {
+    const labsResponse = await getLabs();
+    setLabs(labsResponse?.data);
+
+    const response = await getLabSchedule(labId);
+    const data = response?.data.map((item) => ({
+      date: item.date,
+      end_time: item.end_time,
+      id: item.id,
+      lab_id: item.lab_id,
+      start_time: item.start_time,
+      user_id: item.user_id,
+    }));
+
+    setEventsData(data);
+  };
+
+  useEffect(() => {
+    getSchedule(currentLab);
+  }, [currentLab]);
+
   const handleSelect = () => {
     setNewEvent({
       title: "",
-      dates: [],
-      startTime: new Date(),
-      endTime: new Date()
+      date: [],
+      start_time: new Date(),
+      end_time: new Date(),
+      lab_id: currentLab,
+      user_id: userId,
     });
     setShowModal(true);
   };
 
-  // Função para salvar o novo evento
+  const sendEvent = async (event: ScheduleData) => {
+    try {
+      const response = await createNewLabEvent(event);
+      // Check if response status is successful
+      if (response.status === 201) {
+        message.success("Reserva no laboratório feita com sucesso");
+        // Optionally, you can perform additional actions after successful creation
+      } else {
+        message.error("Não foi possível criar a reserva para o laboratório");
+      }
+    } catch (error) {
+      message.error("Não foi possível criar a reserva");
+    }
+  };
+
   const handleSave = () => {
-    if (newEvent.title && newEvent.dates.length > 0 && newEvent.startTime && newEvent.endTime) {
-      // Mapear cada data selecionada para criar eventos individuais
-      const newEvents = newEvent.dates.map(date => {
-        // Copiar a data para não modificar o objeto original
-        const start = new Date(date);
-        const end = new Date(date);
-
-        // Definir horas de início e término com base no horário escolhido
-        start.setHours(newEvent.startTime.getHours(), newEvent.startTime.getMinutes());
-        end.setHours(newEvent.endTime.getHours(), newEvent.endTime.getMinutes());
-
-        return {
-          title: newEvent.title,
-          dates: [date], // Apenas a data atual
-          startTime: newEvent.startTime,
-          endTime: newEvent.endTime,
-          start,
-          end
-        };
-      });
-
-      setEventsData([...eventsData, ...newEvents]);
+    if (
+      newEvent.title &&
+      newEvent.date.length > 0 &&
+      newEvent.start_time &&
+      newEvent.end_time
+    ) {
+      sendEvent(newEvent);
+      getSchedule(currentLab);
       setShowModal(false);
       setNewEvent({
         title: "",
-        dates: [],
-        startTime: new Date(),
-        endTime: new Date()
+        date: [],
+        start_time: new Date(),
+        end_time: new Date(),
+        lab_id: currentLab,
+        user_id: userId,
       });
     } else {
-      alert("Por favor, preencha todos os campos!");
+      message.open({
+        type: "error",
+        content: "Por favor, preencha todos os campos!",
+        duration: 2,
+      });
     }
   };
 
-  // Função para adicionar um dia ao array de dias
   const handleDayChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = moment(e.target.value).startOf('day').toDate();
-    if (!newEvent.dates.some(date => moment(date).isSame(selectedDate, 'day'))) {
-      setNewEvent(prevEvent => ({
+    const selectedDate = moment(e.target.value).startOf("day").toDate();
+    if (
+      !newEvent.date.some((date) => moment(date).isSame(selectedDate, "day"))
+    ) {
+      setNewEvent((prevEvent) => ({
         ...prevEvent,
-        dates: [...prevEvent.dates, selectedDate]
+        date: [selectedDate],
       }));
+    } else {
+      message.open({
+        type: "error",
+        content: "Só é possível selecionar uma data",
+        duration: 2,
+      });
     }
   };
 
-  // Função para remover um dia do array de dias
-  const removeDay = (date: Date) => {
-    setNewEvent(prevEvent => ({
+  const removeDay = () => {
+    setNewEvent((prevEvent) => ({
       ...prevEvent,
-      dates: prevEvent.dates.filter(day => !moment(day).isSame(date, 'day'))
+      date: [],
     }));
   };
 
-  // Preparar eventos para o calendário
-  const calendarEvents = eventsData.flatMap(event =>
-    event.dates.map(date => {
-      const start = new Date(date);
-      const end = new Date(date);
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEvent({ ...newEvent, title: e.target.value });
+  };
 
-      start.setHours(event.startTime.getHours(), event.startTime.getMinutes());
-      end.setHours(event.endTime.getHours(), event.endTime.getMinutes());
+  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const updatedStartTime = new Date(newEvent.start_time);
+    updatedStartTime.setHours(hours, minutes);
+    setNewEvent({ ...newEvent, start_time: updatedStartTime });
+  };
+
+  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const updatedEndTime = new Date(newEvent.end_time);
+    updatedEndTime.setHours(hours, minutes);
+    setNewEvent({ ...newEvent, end_time: updatedEndTime });
+  };
+
+  const calendarEvents = () => {
+    return eventsData.map((event, index) => {
+      const eventDate = new Date(event.date);
+
+      const startTimeComponents = new Date(event.start_time);
+      const endTimeComponents = new Date(event.end_time);
+
+      const startTime = new Date(eventDate);
+      startTime.setUTCHours(
+        startTimeComponents.getUTCHours(),
+        startTimeComponents.getUTCMinutes(),
+        startTimeComponents.getUTCSeconds()
+      );
+
+      const endTime = new Date(eventDate);
+      endTime.setUTCHours(
+        endTimeComponents.getUTCHours(),
+        endTimeComponents.getUTCMinutes(),
+        endTimeComponents.getUTCSeconds()
+      );
 
       return {
-        title: event.title,
-        start,
-        end
+        id: index + 1,
+        title: `Event ${index + 1}`,
+        start: startTime,
+        end: endTime,
       };
-    })
-  );
+    });
+  };
+
+  const handleLabButtonClick = (lab: number) => {
+    setCurrentLab(lab);
+  };
+
+  const capitalize = (str: string) => {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  };
 
   return (
-    <Container>
-      <DivButton>
-        <Button
-          color="#070F2B"
-          icon={<Plus size={24} />}
-          secondColor="#7FC7D9"
-          label="Adicionar Evento"
-          shape="round"
-          size="small"
-          buttonFunction={() => handleSelect()}
-        />
-      </DivButton>
-      <CustomCalendarContainer>
-        <Calendar
-          views={["day", "week", "month"]}
-          selectable
-          localizer={localizer}
-          defaultDate={new Date()}
-          defaultView="month"
-          events={calendarEvents}
-          style={{ height: "100vh" }}
-          onSelectEvent={(event: { start: Date, end: Date, title: string }) => alert(`Evento: ${event.title} - Início: ${moment(event.start).format("DD/MM/YYYY HH:mm")} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`)}
-        />
-        {showModal && (
-          <ModalOverlay show={showModal}>
-            <ModalContent>
-              <ModalHeader>
-                <ModalTitle>Agendar Horário</ModalTitle>
-                <CloseButton onClick={() => setShowModal(false)}>
-                  <XCircle size={24} />
-                </CloseButton>
-              </ModalHeader>
-              <FormGroup>
-                <Label>Título*</Label>
-                <Input
-                  type="text"
-                  placeholder="Insira o título do evento"
-                  value={newEvent.title}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent({ ...newEvent, title: e.target.value })}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Hora de Início*</Label>
-                <Input
-                  type="time"
-                  value={moment(newEvent.startTime).format("HH:mm")}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    const updatedStartTime = new Date(newEvent.startTime);
-                    updatedStartTime.setHours(hours, minutes);
-                    setNewEvent({ ...newEvent, startTime: updatedStartTime });
-                  }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Hora de Término*</Label>
-                <Input
-                  type="time"
-                  value={moment(newEvent.endTime).format("HH:mm")}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const [hours, minutes] = e.target.value.split(":").map(Number);
-                    const updatedEndTime = new Date(newEvent.endTime);
-                    updatedEndTime.setHours(hours, minutes);
-                    setNewEvent({ ...newEvent, endTime: updatedEndTime });
-                  }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Selecione os Dias*</Label>
-                <Input
-                  type="date"
-                  onChange={handleDayChange}
-                />
-                <Div>
-                  {newEvent.dates.map((day, index) => (
-                    <InputDiv key={index}>
-                          <InputDate >
-                            <span>{moment(day).format("DD/MM/YYYY")}</span>
-                            <CloseButton onClick={() => removeDay(day)} >&times;</CloseButton>
-                          </InputDate>
-                    </InputDiv>
-                  ))}
-                </Div>
-              </FormGroup>
-              <ButtonDiv>
-                <Button
-                  color="#ffff"
-                  secondColor="#070F2B"
-                  label="Cancelar"
-                  shape="round"
-                  size="small"
-                  buttonFunction={() => setShowModal(false)}
-                />
-                <Button
-                  color="#070F2B"
-                  secondColor="#7FC7D9"
-                  label="Adicionar"
-                  shape="round"
-                  size="small"
-                  buttonFunction={handleSave}
-                />
-              </ButtonDiv>
-            </ModalContent>
-          </ModalOverlay>
-        )}
-      </CustomCalendarContainer>
-    </Container>
+    <MainDiv>
+      <Title
+        text="Horário dos Laboratórios"
+        item={
+          <Tooltip
+            title="Para agendar um horário, contate um professor."
+            color="#365486"
+          >
+            <Info size={32} color={"#365486"} cursor={"pointer"} />
+          </Tooltip>
+        }
+      />
+      <Container>
+        {labs?.map((item) => (
+          <ButtonAntd
+            key={item.id}
+            onClick={() => handleLabButtonClick(item.id)}
+            style={{
+              backgroundColor: item.id == currentLab ? "#40a9ff" : "#fff",
+            }}
+          >
+            {capitalize(item.name)}
+          </ButtonAntd>
+        ))}
+        <DivButton>
+          {userInfo?.profile == "SUPER_USER" && (
+            <Button
+              color="#070F2B"
+              icon={<Plus size={24} />}
+              secondColor="#7FC7D9"
+              label="Agendar Horário"
+              shape="round"
+              size="small"
+              buttonFunction={handleSelect}
+            />
+          )}
+        </DivButton>
+        <CustomCalendarContainer>
+          <Calendar
+            views={["day", "week", "month"]}
+            selectable
+            localizer={localizer}
+            defaultDate={new Date()}
+            defaultView="month"
+            events={calendarEvents()}
+            style={{ height: "100vh" }}
+            onSelectEvent={(event: { start: Date; end: Date; title: string }) =>
+              alert(
+                `Evento: ${event.title} - Início: ${moment(event.start).format(
+                  "DD/MM/YYYY HH:mm"
+                )} - Término: ${moment(event.end).format("DD/MM/YYYY HH:mm")}`
+              )
+            }
+            onSelectSlot={handleSelect}
+            messages={messages}
+            formats={formats}
+          />
+          <EventModal
+            title="Agendar Horário"
+            show={showModal}
+            onClose={() => setShowModal(false)}
+            onSave={handleSave}
+          >
+            <FormGroup>
+              <Input
+                type="text"
+                label="Título*"
+                placeHolder="Digite um título para o agendamento"
+                value={newEvent.title}
+                inputFunction={handleTitleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                label="Hora de Início*"
+                placeHolder="Insira a hora de início"
+                type="time"
+                value={moment(newEvent.start_time).format("HH:mm")}
+                inputFunction={handleStartTimeChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                label="Hora de Término*"
+                placeHolder="Insira a hora de término"
+                type="time"
+                value={moment(newEvent.end_time).format("HH:mm")}
+                inputFunction={handleEndTimeChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                label="Selecione os Dias"
+                type="date"
+                inputFunction={handleDayChange}
+              />
+            </FormGroup>
+            <Div>
+              {newEvent.date.map((day, index) => (
+                <InputDiv key={index}>
+                  <InputDate>
+                    <span>{moment(day).format("DD/MM/YYYY")}</span>
+                    <button onClick={() => removeDay()}>&times;</button>
+                  </InputDate>
+                </InputDiv>
+              ))}
+            </Div>
+          </EventModal>
+        </CustomCalendarContainer>
+      </Container>
+    </MainDiv>
   );
 }

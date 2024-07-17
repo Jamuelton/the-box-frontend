@@ -1,10 +1,17 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 1rem 8rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+`;
+
+export const MainDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2rem;
 `;
 
 export const CustomCalendarContainer = styled.div`
@@ -53,7 +60,7 @@ export const CustomCalendarContainer = styled.div`
     border: 0.2rem solid white;
   }
   .rbc-today {
-    background-color:  #DCF2F1;
+    background-color:  #A2B5D4;
   }
   .rbc-current-time-indicator {
     background-color: red;
@@ -124,21 +131,6 @@ export const CloseButton = styled.button`
 
 export const FormGroup = styled.div`
   margin-bottom: 1rem;
-`;
-
-export const Label = styled.label`
-  display: block;
-  margin-bottom: 5px;
-  color: #070F2B;
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  color: #070F2B;
-  padding: 8px;
-  border: none;
-  border-radius: 20px;
-  font-size: 16px;
 `;
 
 export const InputDate = styled.div`

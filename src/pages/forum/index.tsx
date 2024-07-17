@@ -1,14 +1,17 @@
 import * as S from "./styles";
-import { MenuProps } from "antd";
+import { Button, CheckboxProps, MenuProps } from "antd";
 import { FilterButton } from "../../components/FilterButton";
 import { OrdenationButton } from "../../components/OrdenationButton";
-import { SearchInput } from "../../components/Search";
 import { Title } from "../../components/Title/";
-import { List, Plus, XCircle } from "@phosphor-icons/react";
+import { List, MagnifyingGlass, Plus, XCircle } from "@phosphor-icons/react";
 import { Card } from "../../components/Card/Index";
 import { useEffect, useState } from "react";
 import { Input } from "../../components/Input";
-import { createPost, getPosts } from "../../services/ForumServices";
+import {
+  createPost,
+  getPosts,
+  getPostsByCategory,
+} from "../../services/ForumServices";
 import { CategoryEnum, ForumInterface } from "../../services/Types/forumTypes";
 import {
   errorNotification,
@@ -18,14 +21,19 @@ import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/auth/UseAuth";
+import { useData } from "../../config/data/UseData";
 
 export function Forum() {
+  const { userId } = useData();
+
   const { token } = useAuth();
 
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
   const [modalPost, setModalPost] = useState<boolean>(false);
-
+  const [ordering, setOrdering] = useState<string>("date");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [hamburguer, setHamburguer] = useState<boolean>(false);
+  const [filter, setfilter] = useState<boolean>(false);
   const [post, setPost] = useState<ForumInterface[]>([]);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
@@ -66,15 +74,11 @@ export function Forum() {
       children: [
         {
           key: "2-1",
-          label: "Postados Recentemente",
+          label: "Posts Recentes",
         },
         {
           key: "2-2",
-          label: "Quantidade de Replys",
-        },
-        {
-          key: "2-3",
-          label: "Quantidade de Curtidas",
+          label: "Posts Antigos",
         },
       ],
     },
@@ -83,23 +87,30 @@ export function Forum() {
   const ordenationItems: MenuProps["items"] = [
     {
       key: 1,
-      label: "Postados Recentemente",
+      label: "Posts Recentes",
+      onClick: () => {
+        setOrderingAndOrderPosts("date");
+      },
     },
     {
       type: "divider",
     },
     {
       key: 2,
-      label: "Quantidade de Replys",
+      label: "Posts antigos",
+      onClick: () => {
+        setOrderingAndOrderPosts("replies");
+      },
     },
     {
       type: "divider",
     },
-    {
-      key: 3,
-      label: "Quantidade de Curtidas",
-    },
   ];
+
+  const setOrderingAndOrderPosts = (order: string) => {
+    setOrdering(order);
+    orderPost(post, order);
+  };
 
   const handleSelectChange = (value: unknown) => {
     if (Object.values(CategoryEnum).includes(value as CategoryEnum)) {
@@ -107,12 +118,47 @@ export function Forum() {
     }
   };
 
+  const orderPost = (posts: ForumInterface[], order: string) => {
+    switch (order) {
+      case "date":
+        posts.sort((a, b) => {
+          const dateA = new Date(a.created_at ?? 0).getTime();
+          const dateB = new Date(b.created_at ?? 0).getTime();
+          return dateB - dateA;
+        });
+        break;
+      case "replies":
+        posts.sort((a, b) => {
+          const dateA = new Date(a.created_at ?? 0).getTime();
+          const dateB = new Date(b.created_at ?? 0).getTime();
+          return dateA - dateB;
+        });
+        break;
+      default:
+        break;
+    }
+
+    setPost(posts);
+  };
+
   const getPost = async () => {
     const response = await getPosts();
     if (response?.status == 200) {
-      setPost(response.data);
+      orderPost(response.data, ordering);
     } else {
       errorNotification("Não foi possível carregar os posts");
+    }
+  };
+
+  const getPostByCategory = async () => {
+    if (category != undefined) {
+      const response = await getPostsByCategory(category);
+      if (response?.status == 200) {
+        setPost(response.data);
+      } else {
+        errorNotification("Não foi possível aplicar filtro");
+        getPost();
+      }
     }
   };
 
@@ -124,7 +170,7 @@ export function Forum() {
     } catch (error) {
       setErrorTitle({
         errorShow: true,
-        errorText: "Insira um título válido (1, 20)",
+        errorText: "Insira um título válido (1, 100)",
         status: "error",
       });
     }
@@ -140,7 +186,7 @@ export function Forum() {
     } catch (error) {
       setErrorContent({
         errorShow: true,
-        errorText: "Insira um conteúdo válido (1, 250)",
+        errorText: "Insira um conteúdo válido (1, 500)",
         status: "error",
       });
     }
@@ -148,25 +194,49 @@ export function Forum() {
     setContent(value);
   };
 
-  const ForumData: ForumInterface = {
-    title: title,
-    content: content,
-    category: category,
-    user_id: 1,
+  const handleSearchTermChange = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setSearchTerm(value);
+  };
+
+  const handleSearchFilter = () => {
+    if (searchTerm.length == 1 || searchTerm.length == 0) {
+      getPost();
+    } else {
+      setPost(
+        post.filter(
+          (post) =>
+            (post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+              false) ||
+            (post.content?.toLowerCase().includes(searchTerm.toLowerCase()) ??
+              false)
+        )
+      );
+    }
   };
 
   const createPosts = async () => {
     try {
-      ForumPostSchema.parse(ForumData);
-      const response = await createPost(ForumData, token);
+      if (userId) {
+        const ForumData: ForumInterface = {
+          title: title,
+          content: content,
+          category: category,
+          user_id: parseInt(userId),
+        };
+        ForumPostSchema.parse(ForumData);
+        const response = await createPost(ForumData, token);
 
-      if (response?.status == 200) {
-        successNotification("Post publicado com sucesso");
-        setModalPost(false);
-        getPost();
-      }
-      if (response?.status == 400) {
-        errorNotification("Não foi possível criar post");
+        if (response?.status == 200) {
+          successNotification("Post publicado com sucesso");
+          setContent("");
+          setTitle("");
+          setModalPost(false);
+          getPost();
+        }
+        if (response?.status == 400) {
+          errorNotification("Não foi possível criar post");
+        }
       }
     } catch (error) {
       if (error instanceof ZodError) {
@@ -175,12 +245,31 @@ export function Forum() {
     }
   };
 
+  const handleCheckbox: CheckboxProps["onChange"] = (e) => {
+    console.log(e.target.value);
+    setCategory(e.target.value);
+  };
+
+  const handleFilters = () => {
+    getPostByCategory();
+    setfilter(true);
+    setModalFiltro(false);
+  };
+
+  const handleCleanFilters = () => {
+    getPost();
+    setfilter(false);
+    setModalFiltro(false);
+  };
+
   const goToPost = (postId: number) => {
     navigate(`/forum/${postId}`);
   };
 
   useEffect(() => {
     getPost();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <S.Container>
@@ -195,7 +284,30 @@ export function Forum() {
           <Plus size={20} weight="bold" />
         </S.NewButtonIcon>
         <span>
-          <SearchInput />
+          <span style={{ background: "#f2f2f2", borderRadius: 10, width: 250 }}>
+            <Input
+              placeHolder="Pesquisar"
+              inputFunction={handleSearchTermChange}
+            />
+            <Button
+              onClick={handleSearchFilter}
+              style={{
+                border: "none",
+                boxShadow: "none",
+                background: "transparent",
+              }}
+              icon={
+                <MagnifyingGlass
+                  size={24}
+                  style={{
+                    marginInline: 10,
+                    border: "none",
+                    background: "transparent",
+                  }}
+                />
+              }
+            />
+          </span>
           <S.hamburguerButtons>
             <OrdenationButton items={ordenationItems} placement="bottomRight" />
             <FilterButton buttonFunction={() => setModalFiltro(!modalFiltro)} />
@@ -207,18 +319,22 @@ export function Forum() {
       </S.ButtonsArea>
       <S.CardArea>
         {post.length > 0 ? (
-          post.map(({ id, title, content }, index) => (
-            <Card
-              key={index}
-              title={title}
-              content={content}
-              rateCard={false}
-              like={true}
-              extend={true}
-              details={true}
-              onClick={() => id && goToPost(id)}
-            />
-          ))
+          post.map(
+            ({ id, title, content, created_at, original_poster }, index) => (
+              <Card
+                key={index}
+                title={title}
+                content={content}
+                rateCard={false}
+                like={false}
+                extend={true}
+                details={true}
+                datePost={created_at}
+                author={original_poster}
+                buttonFunction={() => id && goToPost(id)}
+              />
+            )
+          )
         ) : (
           <S.NoPost>Publique um post no fórum</S.NoPost>
         )}
@@ -226,7 +342,16 @@ export function Forum() {
       <S.ModalArea
         open={modalFiltro}
         onCancel={() => setModalFiltro(false)}
-        footer={<S.ModalButton>Aplicar</S.ModalButton>}
+        footer={
+          <S.ModalFilterBtnArea>
+            {filter && (
+              <S.ModalCleanButton onClick={handleCleanFilters}>
+                Limpar Filtros
+              </S.ModalCleanButton>
+            )}
+            <S.ModalButton onClick={handleFilters}>Aplicar</S.ModalButton>
+          </S.ModalFilterBtnArea>
+        }
         title="Filtros"
         centered
         closeIcon={<XCircle size={22} weight="bold" color="#23335e" />}
@@ -234,9 +359,34 @@ export function Forum() {
         <S.ModalContent>
           <h3>Categorias</h3>
           <div>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
-            <S.CheckboxArea>Checkbox</S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="TECHNOLOGY"
+              checked={category?.toString() == "TECHNOLOGY"}
+            >
+              Tecnologia
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="LIFESTYLE"
+              checked={category?.toString() == "LIFESTYLE"}
+            >
+              Lifestyle
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="UNIVERSITY"
+              checked={category?.toString() == "UNIVERSITY"}
+            >
+              Universidade
+            </S.CheckboxArea>
+            <S.CheckboxArea
+              onChange={handleCheckbox}
+              value="RESEARCH"
+              checked={category?.toString() == "RESEARCH"}
+            >
+              Pesquisa
+            </S.CheckboxArea>
           </div>
         </S.ModalContent>
       </S.ModalArea>
@@ -265,6 +415,7 @@ export function Forum() {
                 status={errorTitle.status}
                 errorShow={errorTitle.errorShow}
                 errorText={errorTitle.errorText}
+                value={title}
               ></Input>
               <S.SelectArea
                 placeholder="Categoria"
@@ -286,6 +437,7 @@ export function Forum() {
               rows={8}
               onChange={handleChangeContent}
               status={errorContent.status}
+              value={content}
             ></S.TextAreaContainer>
             {errorContent.errorShow && (
               <S.TextAreaError>{errorContent.errorText}</S.TextAreaError>

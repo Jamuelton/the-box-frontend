@@ -44,24 +44,29 @@ export function Login() {
         "Explore os recursos e serviços oferecidos pela universidade. Faça login para acessar seu painel personalizado.",
     },
     {
-      title: "Acesso ao Moodle",
-      content:
-        "Entre no Moodle para acessar suas aulas online, entregar trabalhos e participar de fóruns de discussão.",
-    },
-    {
-      title: "Biblioteca Digital",
-      content:
-        "Acesse uma vasta coleção de e-books, artigos e revistas acadêmicas disponíveis para todos os estudantes e funcionários.",
-    },
-    {
       title: "Calendário Acadêmico",
       content:
-        "Confira o calendário acadêmico para se manter atualizado sobre datas importantes, como início de semestres, exames e feriados.",
+        "Fique por dentro das datas importantes, como provas, entregas de trabalhos e eventos.",
     },
     {
-      title: "Suporte Técnico",
+      title: "Material de Apoio",
       content:
-        "Precisa de ajuda? Entre em contato com o suporte técnico para resolver problemas de acesso ou uso do portal.",
+        "Compartilhe material de apoio com colegas e amigos, como apostilas, slides e artigos relevantes.",
+    },
+    {
+      title: "Horário do Laboratório",
+      content:
+        "Agende horários de laboratórios de maneira prática e eficiente.",
+    },
+    {
+      title: "Fórum",
+      content:
+        "Interaja com seus colegas e professores, tire dúvidas, compartilhe opiniões e experiências.",
+    },
+    {
+      title: "Comércio Local",
+      content:
+        "Conheça o comércio local e suas informações, como restaurantes, academias e outros serviços.",
     },
   ];
 
@@ -102,7 +107,7 @@ export function Login() {
       auth();
       reloadPage();
       successNotification("Usuário logado com sucesso!");
-      navigate("/home");
+      navigate("/");
     }
     if (response?.status === 401) {
       warningNotification("Email e/ou senha incorretos");
@@ -117,10 +122,12 @@ export function Login() {
       <S.Form>
         <S.TextArea>
           <div>
-            <h2>Acesse o portal</h2>
+            <h2>Acesse o portal do aluno</h2>
             <p>
-              Explore os recursos e serviços oferecidos pela universidade. Faça
-              login para acessar seu painel personalizado.
+              Bem-vindo ao Portal do Aluno do curso de Engenharia de Software da
+              UPE, campus Garanhuns! Este portal foi desenvolvido para
+              centralizar todas as informações importantes do seu curso,
+              facilitando o acesso e a organização da sua vida acadêmica.
             </p>
           </div>
         </S.TextArea>
@@ -153,7 +160,7 @@ export function Login() {
                 inputFunction={handleChangePassword}
                 type={isPassVisible ? "text" : "password"}
               />
-              <S.ForgotPassText>Esqueci minha senha</S.ForgotPassText>
+              {/* <S.ForgotPassText>Esqueci minha senha</S.ForgotPassText> */}
             </S.LoginFormPassword>
             <S.LoginFormButton>
               <Button label="Entrar" size="large" buttonFunction={login} />
@@ -171,6 +178,7 @@ export function Login() {
                 title={item.title}
                 content={item.content}
                 rateCard={false}
+                like={false}
               />
             </section>
           ))}

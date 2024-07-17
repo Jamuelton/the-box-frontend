@@ -1,7 +1,8 @@
 import { FC } from "react";
 import * as S from "./styles";
-import { ArrowRight, Heart } from "@phosphor-icons/react";
+import { ArrowRight, Download, Heart, NotePencil } from "@phosphor-icons/react";
 import { Rate } from "antd";
+import moment from "moment";
 
 interface CardProps {
   title?: string;
@@ -10,7 +11,14 @@ interface CardProps {
   like?: boolean;
   extend?: boolean;
   details?: boolean;
-  onClick?: () => void; 
+  download?: boolean;
+  edit?: boolean;
+  editFunction?: () => void;
+  onLikeToggle?: () => void;
+  onDownload?: () => void;
+  buttonFunction?: () => void;
+  datePost?: Date;
+  author?: string;
 }
 
 export const Card: FC<CardProps> = ({
@@ -20,28 +28,57 @@ export const Card: FC<CardProps> = ({
   rateCard,
   like,
   details,
-  onClick,
+  download,
+  edit,
+  editFunction,
+  onLikeToggle,
+  buttonFunction,
+  datePost,
+  onDownload,
+  author,
 }) => {
   return (
     <S.Container $extend={extend}>
-      {like && (
-        <S.LikeArea>
-          <Rate character={<Heart size={24} weight="fill" />} count={1} />
+      {like !== false && (
+        <S.LikeArea onClick={onLikeToggle}>
+          <Rate
+            character={<Heart size={24} weight="fill" />}
+            count={1}
+            value={like ? 1 : 0}
+            style={{ color: "#F21E51" }}
+          />
         </S.LikeArea>
+      )}
+      {download && (
+        <S.MaterialArea>
+          {edit && (
+            <NotePencil onClick={editFunction} size={32} weight="fill" />
+          )}
+          <Download size={32} weight="fill" onClick={onDownload} />
+        </S.MaterialArea>
       )}
 
       <S.TitleArea>
-        <S.Title>{title}</S.Title>
-        {rateCard && <Rate />}
+        <section>
+          <S.Title>{title}</S.Title>
+          {datePost && <p>{moment().format("DD/MM/YYYY HH:MM")}</p>}
+        </section>
+
+        <S.RateArea>
+          {rateCard && <Rate style={{ color: "#7fc7d9" }} />}
+        </S.RateArea>
       </S.TitleArea>
 
       <S.Content>{content}</S.Content>
-      {details && (
-        <S.ButtonArea onClick={onClick}>
-          <label htmlFor="">Ver detalhes</label>
-          <ArrowRight size={24} weight="bold" color="#7fc7d9" />
-        </S.ButtonArea>
-      )}
+      <S.FooterArea>
+        {author && <S.AuthorName>@:{author}</S.AuthorName>}
+        {details && (
+          <S.ButtonArea onClick={buttonFunction}>
+            <label htmlFor="">Ver detalhes</label>
+            <ArrowRight size={24} weight="bold" color="#7fc7d9" />
+          </S.ButtonArea>
+        )}
+      </S.FooterArea>
     </S.Container>
   );
 };
