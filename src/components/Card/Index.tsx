@@ -10,6 +10,7 @@ interface CardProps {
   like?: boolean;
   extend?: boolean;
   details?: boolean;
+  onClick?: () => void; 
 }
 
 export const Card: FC<CardProps> = ({
@@ -19,6 +20,7 @@ export const Card: FC<CardProps> = ({
   rateCard,
   like,
   details,
+  onClick,
 }) => {
   return (
     <S.Container $extend={extend}>
@@ -35,7 +37,7 @@ export const Card: FC<CardProps> = ({
 
       <S.Content>{content}</S.Content>
       {details && (
-        <S.ButtonArea>
+        <S.ButtonArea onClick={onClick}>
           <label htmlFor="">Ver detalhes</label>
           <ArrowRight size={24} weight="bold" color="#7fc7d9" />
         </S.ButtonArea>

@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { Title } from "../../components/Title";
 import * as S from "./styles";
 import { Button } from "../../components/Button";
@@ -12,11 +13,12 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 
 const ForumAnswer: React.FC = () => {
+  const { postId } = useParams<{ postId: string }>();
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [answer, setAnswer] = useState<string>("");
   const [userId, setUserId] = useState<number | null>(null);
-  const postId = 1; // ID estático do post
+  const [errors, setErrors] = useState<string[]>([]);
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -30,8 +32,10 @@ const ForumAnswer: React.FC = () => {
   useEffect(() => {
     const fetchCommentsData = async () => {
       try {
-        const comments = await fetchComments(postId);
-        setAnswers(comments);
+        if (postId) {
+          const comments = await fetchComments(Number(postId));
+          setAnswers(comments);
+        }
       } catch (error) {
         console.error("Erro ao buscar comentários:", error);
         message.error("Erro ao carregar comentários");
@@ -50,19 +54,26 @@ const ForumAnswer: React.FC = () => {
     setModalOpen(value);
   };
 
-  const submitAnswer = async () => {
+  const validateAnswer = () => {
+    const newErrors = [];
+
     if (answer.length === 0) {
-      message.open({
-        content: "Não é possível enviar uma mensagem vazia",
-        type: "error",
-        duration: 3,
-      });
-      return;
+      newErrors.push("Não é possível enviar uma mensagem vazia");
     }
 
     if (!userId) {
+      newErrors.push("Erro ao obter informações do usuário");
+    }
+
+    return newErrors;
+  };
+
+  const submitAnswer = async () => {
+    const validationErrors = validateAnswer();
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
       message.open({
-        content: "Erro ao obter informações do usuário",
+        content: validationErrors.join(", "),
         type: "error",
         duration: 3,
       });
@@ -72,7 +83,7 @@ const ForumAnswer: React.FC = () => {
     console.log("Enviando dados:", {
       body: answer,
       user_id: userId,
-      post_id: postId,
+      post_id: Number(postId),
     });
 
     try {
@@ -87,6 +98,7 @@ const ForumAnswer: React.FC = () => {
       });
 
       setAnswer("");
+      setModalOpen(false);
     } catch (error) {
       console.error("Erro ao enviar resposta:", error);
 
@@ -122,10 +134,7 @@ const ForumAnswer: React.FC = () => {
           open={modalOpen}
           okText="Publicar"
           cancelText="Cancelar"
-          onOk={() => {
-            handleModalOpen(false);
-            submitAnswer();
-          }}
+          onOk={submitAnswer}
           onCancel={() => handleModalOpen(false)}
         >
           <Input
@@ -133,11 +142,24 @@ const ForumAnswer: React.FC = () => {
             label="Resposta"
             inputFunction={handleChangeAnswer}
           />
+          {errors.length > 0 && (
+            <ul>
+              {errors.map((error, index) => (
+                <li key={index} style={{ color: "red" }}>
+                  {error}
+                </li>
+              ))}
+            </ul>
+          )}
         </Modal>
       </S.ButtonContainer>
-      {answers.map((answer: IAnswer, index: number) => (
-        <Answer key={index} info={answer} onLike={handleLike} currentUserId={userId} />
-      ))}
+      {answers.length === 0 ? (
+        <p>Não há respostas ainda.</p>
+      ) : (
+        answers.map((answer: IAnswer, index: number) => (
+          <Answer key={index} info={answer} onLike={handleLike} currentUserId={userId} />
+        ))
+      )}
     </S.Container>
   );
 };

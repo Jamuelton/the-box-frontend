@@ -16,6 +16,7 @@ import {
 } from "../../components/Notification";
 import { ForumPostSchema } from "../../services/ForumServices/forumSchema";
 import { ZodError } from "zod";
+import { useNavigate } from "react-router-dom";
 
 export function Forum() {
   const [modalFiltro, setModalFiltro] = useState<boolean>(false);
@@ -26,6 +27,7 @@ export function Forum() {
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [category, setCategory] = useState<CategoryEnum>();
+  const navigate = useNavigate();
 
   interface ErrorInterface {
     errorShow?: boolean;
@@ -170,6 +172,10 @@ export function Forum() {
     }
   };
 
+  const goToPost = (postId: number) => {
+    navigate(`/forum/${postId}`);
+  };
+
   useEffect(() => {
     getPost();
   }, []);
@@ -198,7 +204,7 @@ export function Forum() {
       </S.ButtonsArea>
       <S.CardArea>
         {post.length > 0 ? (
-          post.map(({ title, content }, index) => (
+          post.map(({ id, title, content }, index) => (
             <Card
               key={index}
               title={title}
@@ -207,6 +213,7 @@ export function Forum() {
               like={true}
               extend={true}
               details={true}
+              onClick={() => goToPost(id)}
             />
           ))
         ) : (
