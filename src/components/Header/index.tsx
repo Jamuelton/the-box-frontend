@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import * as S from "./styles";
 import Logo from "../assets/Logo.svg";
 import {
-  Bell,
   SignOut,
   ChatsCircle,
   Calendar,
@@ -11,7 +10,6 @@ import {
   FileText,
   MapPinArea,
   List,
-  XCircle,
 } from "@phosphor-icons/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../config/auth/UseAuth";
@@ -30,7 +28,6 @@ export const Header: React.FC<HeaderProps> = () => {
   const { userInfo } = useData();
   const path = useLocation().pathname;
   const [hamburguer, setHamburguer] = useState<boolean>(false);
-  const [notificationModal, setNotificationModal] = useState<boolean>(false);
 
   const options = [
     {
@@ -72,35 +69,6 @@ export const Header: React.FC<HeaderProps> = () => {
     navigate("/login");
   };
 
-  const notifications = [
-    {
-      key: 1,
-      title: "Lorem ipsum",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus metus elit, luctus...",
-    },
-    {
-      key: 2,
-      title: "Lorem ipsum",
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus metus elit, luctus...",
-    },
-    {
-      key: 3,
-      title: "dfjkfhjkdhfjkd",
-      content: "ldksjfkjfks",
-    },
-    {
-      key: 4,
-      title: "dfjkfhjkdhfjkd",
-      content: "ldksjfkjfks",
-    },
-    {
-      key: 5,
-      title: "dfjkfhjkdhfjkd",
-      content: "ldksjfkjfks",
-    },
-  ];
   const sendToHome = () => {
     navigate("/");
   };
@@ -122,10 +90,6 @@ export const Header: React.FC<HeaderProps> = () => {
         </S.logoArea>
         {isAuthenticated || isAuth() ? (
           <S.icons>
-            {/*<Bell
-              size={22}
-              onClick={() => setNotificationModal(!notificationModal)}
-            ></Bell>*/}
             <Popover
               content={<S.LogoutArea onClick={logouting}>Sair</S.LogoutArea>}
             >

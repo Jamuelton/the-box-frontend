@@ -14,6 +14,7 @@ export interface OtherScheduleData {
   end_time: Date;
   lab_id: number;
   user_id?: string;
+  id?: number;
 }
 
 export interface Labs {

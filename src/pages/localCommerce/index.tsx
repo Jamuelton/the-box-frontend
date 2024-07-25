@@ -138,6 +138,11 @@ export function LocalCommerce() {
     setSearchQuery(searchQuery);
   };
 
+  const handleChangeSearch = (e: { target: { value: string } }) => {
+    const { value } = e.target;
+    setSearchQuery(value);
+  };
+
   return (
     <S.Container>
       <S.Title>
@@ -159,8 +164,7 @@ export function LocalCommerce() {
         <S.ButtonsArea>
           <S.InputArea>
             <SearchInput
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChangeSearchFunction={handleChangeSearch}
               searchFunction={handleSearch}
             />
           </S.InputArea>

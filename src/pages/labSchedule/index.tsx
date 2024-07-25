@@ -91,7 +91,7 @@ export function LabSchedule() {
     setLabs(labsResponse?.data);
 
     const response = await getLabSchedule(labId);
-    const data = response?.data.map((item) => ({
+    const data = response?.data.map((item: OtherScheduleData) => ({
       date: item.date,
       end_time: item.end_time,
       id: item.id,
@@ -122,8 +122,8 @@ export function LabSchedule() {
   const sendEvent = async (event: ScheduleData) => {
     try {
       const response = await createNewLabEvent(event);
-      // Check if response status is successful
-      if (response.status === 201) {
+
+      if (response && response.status === 201) {
         message.success("Reserva no laboratório feita com sucesso");
         // Optionally, you can perform additional actions after successful creation
       } else {
