@@ -1,58 +1,47 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { AxiosError } from 'axios';
-import { IAnswer } from '../../components/Answer/interfaces';
+import { AxiosError } from "axios";
+import { api } from "../api";
+import { CommentInterface } from "../Types/commentType";
 
-const token = Cookies.get('token'); 
-
-const api = axios.create({
-  baseURL: 'http://localhost:3000/', 
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
-
-export const fetchComments = async (postId: number): Promise<IAnswer[]> => {
+export const GetCommentsByPost = async (postId: number) => {
   try {
     const response = await api.get(`/comment/post/${postId}`);
-    return response.data.comments as IAnswer[];
+    return response;
   } catch (error) {
-    handleServiceError(error);
-    return [];
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
   }
 };
 
-export const fetchPost = async (postId: number): Promise<any> => {
+export const PostComment = async (data: CommentInterface) => {
   try {
-    const response = await api.get(`/post/${postId}`);
-    console.log("Response data:", response.data);
-    return response.data;
+    const response = await api.post("/comment", data);
+    return response;
   } catch (error) {
-    handleServiceError(error);
-    return null;
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
   }
 };
 
-export const submitComment = async (postId: number, userId: number, body: string): Promise<IAnswer | null> => {
+export const editComment = async (id: number, body: string) => {
   try {
-    const response = await api.post('/comment', {
-      post_id: postId,
-      user_id: userId,
-      body
-    });
-    return response.data.comment as IAnswer;
+    const response = await api.put(`/comment/${id}`, { body });
+    return response;
   } catch (error) {
-    handleServiceError(error);
-    return null;
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
   }
 };
 
-const handleServiceError = (error: AxiosError): void => {
-  if (error.response) {
-    console.error('Request failed with status:', error.response.status);
-  } else if (error.request) {
-    console.error('Request failed:', error.request);
-  } else {
-    console.error('Request error:', error.message);
+export const likeAnswer = async (id: number) => {
+  try {
+    const response = await api.patch(`/comment/${id}/like`);
+    return response;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
   }
 };

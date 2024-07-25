@@ -305,6 +305,7 @@ export function LabSchedule() {
             show={showModal}
             onClose={() => setShowModal(false)}
             onSave={handleSave}
+            ocult={false}
           >
             <FormGroup>
               <Input

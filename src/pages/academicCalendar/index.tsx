@@ -18,9 +18,19 @@ import {
 import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
-import { EventData, Schedule, EventSchedule } from "../../services/Types/eventType";
+import {
+  EventData,
+  Schedule,
+  EventSchedule,
+} from "../../services/Types/eventType";
 import { useData } from "../../config/data/UseData";
-import { createEvent, getEvents, getSchedule, getEventSchedule, createEventSchedule } from "../../services/AcademicCalendarServices";
+import {
+  createEvent,
+  getEvents,
+  getSchedule,
+  getEventSchedule,
+  createEventSchedule,
+} from "../../services/AcademicCalendarServices";
 
 moment.locale("pt-br");
 const localizer = momentLocalizer(moment);
@@ -85,9 +95,9 @@ export function AcademicCalendar() {
   const [eventSchedule, setEventSchedule] = useState<number | null>(null);
 
   useEffect(() => {
-    fetchEvents(); 
-    fetchSchedules(); 
-    fetchEventSchedules(); 
+    fetchEvents();
+    fetchSchedules();
+    fetchEventSchedules();
   }, []);
 
   const fetchEvents = async () => {
@@ -148,7 +158,10 @@ export function AcademicCalendar() {
       if (response) {
         setEventsData([...eventsData, response]);
         if (eventSchedule) {
-          await createEventSchedule({ event_id: response.id, schedule_id: eventSchedule });
+          await createEventSchedule({
+            event_id: response.id,
+            schedule_id: eventSchedule,
+          });
         }
         setNewEvent(initialEventState);
         setEventSchedule(null);
@@ -163,12 +176,19 @@ export function AcademicCalendar() {
     setNewEvent({ ...newEvent, name: event.target.value });
   };
 
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setNewEvent({ ...newEvent, description: event.target.value });
   };
 
-  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewEvent({ ...newEvent, start_date: moment(event.target.value).toDate() });
+  const handleStartDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNewEvent({
+      ...newEvent,
+      start_date: moment(event.target.value).toDate(),
+    });
   };
 
   const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,45 +213,51 @@ export function AcademicCalendar() {
     setNewEvent({ ...newEvent, speakers: event.target.value });
   };
 
-  const handleScheduleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleScheduleChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setSelectedSchedule(Number(event.target.value));
   };
 
-  const calendarEvents = eventsData.filter((event) => {
-    if (!selectedSchedule) return true;
-    const eventMatchesSchedule = eventSchedules.some(
-      (es) => es.event_id === event.id && es.schedule_id === selectedSchedule
-    );
-    console.log(`Evento ${event.id} corresponde ao schedule ${selectedSchedule}: ${eventMatchesSchedule}`);
-    return eventMatchesSchedule;
-  }).map((event) => {
-    const eventStartDate = new Date(event.start_date);
-    const eventEndDate = new Date(event.end_date);
+  const calendarEvents = eventsData
+    .filter((event) => {
+      if (!selectedSchedule) return true;
+      const eventMatchesSchedule = eventSchedules.some(
+        (es) => es.event_id === event.id && es.schedule_id === selectedSchedule
+      );
+      console.log(
+        `Evento ${event.id} corresponde ao schedule ${selectedSchedule}: ${eventMatchesSchedule}`
+      );
+      return eventMatchesSchedule;
+    })
+    .map((event) => {
+      const eventStartDate = new Date(event.start_date);
+      const eventEndDate = new Date(event.end_date);
 
-    const startTimeComponents = new Date(event.start_time);
-    const endTimeComponents = new Date(event.end_time);
+      const startTimeComponents = new Date(event.start_time);
+      const endTimeComponents = new Date(event.end_time);
 
-    const startTime = new Date(eventStartDate);
-    startTime.setUTCHours(
-      startTimeComponents.getUTCHours(),
-      startTimeComponents.getUTCMinutes(),
-      startTimeComponents.getUTCSeconds()
-    );
+      const startTime = new Date(eventStartDate);
+      startTime.setUTCHours(
+        startTimeComponents.getUTCHours(),
+        startTimeComponents.getUTCMinutes(),
+        startTimeComponents.getUTCSeconds()
+      );
 
-    const endTime = new Date(eventEndDate);
-    endTime.setUTCHours(
-      endTimeComponents.getUTCHours(),
-      endTimeComponents.getUTCMinutes(),
-      endTimeComponents.getUTCSeconds()
-    );
+      const endTime = new Date(eventEndDate);
+      endTime.setUTCHours(
+        endTimeComponents.getUTCHours(),
+        endTimeComponents.getUTCMinutes(),
+        endTimeComponents.getUTCSeconds()
+      );
 
-    return {
-      ...event,
-      title: event.name,
-      start: startTime,
-      end: endTime,
-    };
-  });
+      return {
+        ...event,
+        title: event.name,
+        start: startTime,
+        end: endTime,
+      };
+    });
   console.log("Eventos filtrados para o calendário:", calendarEvents);
 
   const handleSelectEvent = (event: EventData) => {
@@ -258,13 +284,6 @@ export function AcademicCalendar() {
           </div>
           <Div>
             <ButtonGroup>
-              <Button
-                color="#070F2B"
-                icon={<Download size={24} />}
-                secondColor="#7FC7D9"
-                shape="round"
-                size="small"
-              />
               {userInfo?.profile === "SUPER_USER" && (
                 <Button
                   color="#070F2B"
@@ -304,7 +323,9 @@ export function AcademicCalendar() {
             formats={formats}
           />
           <EventModal
-            title={selectedEvent ? "Detalhes do Evento" : "Adicionar Novo Evento"}
+            title={
+              selectedEvent ? "Detalhes do Evento" : "Adicionar Novo Evento"
+            }
             show={showModal}
             onClose={() => {
               setShowModal(false);
@@ -315,13 +336,31 @@ export function AcademicCalendar() {
           >
             {selectedEvent ? (
               <div>
-                <p><strong>Nome do Evento:</strong> {selectedEvent.name}</p>
-                <p><strong>Descrição:</strong> {selectedEvent.description}</p>
-                <p><strong>Data de Início:</strong> {moment(selectedEvent.start_date).format("DD/MM/YYYY")}</p>
-                <p><strong>Data de Término:</strong> {moment(selectedEvent.end_date).format("DD/MM/YYYY")}</p>
-                <p><strong>Horário de Início:</strong> {moment(selectedEvent.start_time).format("HH:mm")}</p>
-                <p><strong>Horário de Término:</strong> {moment(selectedEvent.end_time).format("HH:mm")}</p>
-                <p><strong>Palestrantes:</strong> {selectedEvent.speakers}</p>
+                <p>
+                  <strong>Nome do Evento:</strong> {selectedEvent.name}
+                </p>
+                <p>
+                  <strong>Descrição:</strong> {selectedEvent.description}
+                </p>
+                <p>
+                  <strong>Data de Início:</strong>{" "}
+                  {moment(selectedEvent.start_date).format("DD/MM/YYYY")}
+                </p>
+                <p>
+                  <strong>Data de Término:</strong>{" "}
+                  {moment(selectedEvent.end_date).format("DD/MM/YYYY")}
+                </p>
+                <p>
+                  <strong>Horário de Início:</strong>{" "}
+                  {moment(selectedEvent.start_time).format("HH:mm")}
+                </p>
+                <p>
+                  <strong>Horário de Término:</strong>{" "}
+                  {moment(selectedEvent.end_time).format("HH:mm")}
+                </p>
+                <p>
+                  <strong>Palestrantes:</strong> {selectedEvent.speakers}
+                </p>
               </div>
             ) : (
               <>
@@ -386,7 +425,10 @@ export function AcademicCalendar() {
                 </FormGroup>
                 <FormGroup>
                   <label>Schedule</label>
-                  <select value={eventSchedule || ''} onChange={(e) => setEventSchedule(Number(e.target.value))}>
+                  <select
+                    value={eventSchedule || ""}
+                    onChange={(e) => setEventSchedule(Number(e.target.value))}
+                  >
                     <option value="">Selecione um Schedule</option>
                     {schedules.map((schedule) => (
                       <option key={schedule.id} value={schedule.id}>

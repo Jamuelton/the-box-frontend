@@ -1,44 +1,49 @@
 import * as S from "./styles";
-import { UserCircle, PencilSimple } from '@phosphor-icons/react';
-import { Avatar, Modal, Input, Button as AntButton } from 'antd';
+import { UserCircle, PencilSimple } from "@phosphor-icons/react";
+import { Avatar, Modal, Input, Button as AntButton } from "antd";
 import { Button } from "../Button";
 import { IAnswer } from "./interfaces";
-import { useState } from 'react';
-import { likeAnswer, editComment } from '../../services/AnswerServices/Answer';
-
+import { useState } from "react";
+import {
+  editComment,
+  likeAnswer,
+} from "../../services/AnswerServices/CommentService";
+import { errorNotification, successNotification } from "../Notification";
 
 interface AnswerProps {
   info: IAnswer;
   onLike: (id: string, liked: boolean) => void;
-  currentUserId: number | null;
+  currentUserId: number | undefined;
+  reloadPage: () => void;
 }
 
-const Answer: React.FC<AnswerProps> = ({ info, onLike, currentUserId }) => {
-  const [liked, setLiked] = useState(info.liked);
-  const [likes, setLikes] = useState(info.likes);
+const Answer: React.FC<AnswerProps> = ({ info, currentUserId, reloadPage }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(info.body);
 
   const edit = currentUserId === info.user_id;
   const isAuthor = info.post_id === info.user_id;
+
   const handleLike = async () => {
-    try {
-      await likeAnswer(info.id); 
-      setLiked(!liked);
-      setLikes(likes + (liked ? -1 : 1));
-      onLike(info.id, !liked); 
-    } catch (error) {
-      console.error('Erro ao alterar like:', error);
+    if (info.id) {
+      const response = await likeAnswer(info.id);
+      if (response?.status === 200) {
+        reloadPage();
+      }
     }
   };
 
   const handleEdit = async () => {
-    try {
-      await editComment(info.id, editedText);
-      info.body = editedText;
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Erro ao editar comentário:', error);
+    if (info.id && editedText) {
+      const response = await editComment(info.id, editedText);
+      if (response?.status === 200) {
+        successNotification("Editado com sucesso!");
+        reloadPage();
+        closeEditModal();
+      }
+      if (response?.status === 400) {
+        errorNotification("Não foi possível editar a respostas");
+      }
     }
   };
 
@@ -56,20 +61,25 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike, currentUserId }) => {
         <S.Header>
           <S.Title>{info.title}</S.Title>
           <S.Username>
-            <S.UsernameText isAuthor={isAuthor}>{info.commentator}</S.UsernameText>
-            <Avatar size='default' icon={<UserCircle size={32} color="#DCF2F1"/>}/>
+            <S.UsernameText isAuthor={isAuthor}>
+              {info.commentator}
+            </S.UsernameText>
+            <Avatar
+              size="default"
+              icon={<UserCircle size={32} color="#DCF2F1" />}
+            />
           </S.Username>
         </S.Header>
         <S.AnswerText isAuthor={isAuthor}>{info.body}</S.AnswerText>
         <S.Likes>
-          <S.LikesText>{likes}</S.LikesText>
-          <Button 
-            secondColor={isAuthor ? '#365486' : "#7FC7D9"} 
-            icon={<S.LikeHeart color={liked ? "red" : "white"}/>} 
+          <S.LikesText>{info.likes}</S.LikesText>
+          <Button
+            secondColor={isAuthor ? "#365486" : "#7FC7D9"}
+            icon={<S.LikeHeart color={"white"} />}
             buttonFunction={handleLike}
           />
           {edit && (
-            <Button 
+            <Button
               icon={<PencilSimple size={24} />}
               buttonFunction={openEditModal}
             />
@@ -80,7 +90,7 @@ const Answer: React.FC<AnswerProps> = ({ info, onLike, currentUserId }) => {
       <Modal
         title="Editar Resposta"
         open={isEditing}
-        onOk={handleEdit}
+        onOk={() => {}}
         onCancel={closeEditModal}
         footer={[
           <AntButton key="back" onClick={closeEditModal}>

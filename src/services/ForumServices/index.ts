@@ -13,6 +13,17 @@ export const getPosts = async () => {
   }
 };
 
+export const GetPostById = async (id: number) => {
+  try {
+    const response = await api.get(`/post/${id}`);
+    return response;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+  }
+};
+
 export const getPostsByCategory = async (category: CategoryEnum) => {
   try {
     const response = await api.get(`/post/category/${category}`);
