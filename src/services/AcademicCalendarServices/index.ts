@@ -1,54 +1,42 @@
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { AxiosError } from 'axios';
-import { CreateSchedule, Schedule, CreateEventSchedule, EventSchedule, CreateEvent, EventData } from '../Types/eventType';
+import Cookies from "js-cookie";
+import { AxiosError } from "axios";
+import { CreateEventSchedule, CreateEvent } from "../Types/eventType";
+import { api } from "../api";
 
-const token = Cookies.get('token'); 
-
-const api = axios.create({
-  baseURL: 'http://localhost:3000', 
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
-
-export const getSchedule = async (): Promise<Schedule[]> => {
+export const getSchedule = async () => {
   try {
-    const response = await api.get('/schedule');
-    return response.data;
+    const response = await api.get("/schedule");
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error;
   }
 };
 
-export const getScheduleById = async (id: number): Promise<Schedule> => {
+export const getScheduleById = async (id: number) => {
   try {
     const response = await api.get(`/schedule/${id}`);
-    return response.data;
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error;
-  }
-}
-
-export const createEventSchedule = async (data: CreateEventSchedule): Promise<EventSchedule> => {
-  try {
-    const response = await api.post('/eventSchedule', data);
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return error.response;
-    }
-    throw error;
   }
 };
 
-export const getEventSchedule = async (): Promise<EventSchedule[]> => {
+export const createEventSchedule = async (data: CreateEventSchedule) => {
+  try {
+    const response = await api.post("/eventSchedule", data);
+    return response;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response;
+    }
+  }
+};
+
+export const getEventSchedule = async () => {
   try {
     const token = Cookies.get("token");
     const config = {
@@ -56,16 +44,15 @@ export const getEventSchedule = async (): Promise<EventSchedule[]> => {
     };
 
     const response = await api.get("/eventSchedule", config);
-    return response.data;
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error; 
   }
 };
 
-export const createEvent = async (data: CreateEvent): Promise<EventData> => {
+export const createEvent = async (data: CreateEvent) => {
   try {
     const token = Cookies.get("token");
     const config = {
@@ -73,17 +60,15 @@ export const createEvent = async (data: CreateEvent): Promise<EventData> => {
     };
 
     const response = await api.post("/event", data, config);
-    return response.data;
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error;
   }
 };
 
-
-export const getEvents = async (): Promise<EventData[]> => {
+export const getEvents = async () => {
   try {
     const token = Cookies.get("token");
     const config = {
@@ -91,16 +76,15 @@ export const getEvents = async (): Promise<EventData[]> => {
     };
 
     const response = await api.get("/event", config);
-    return response.data;
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error; 
   }
-}
+};
 
-export const getEventsbyId = async (id: number): Promise<EventData> => {
+export const getEventsbyId = async (id: number) => {
   try {
     const token = Cookies.get("token");
     const config = {
@@ -108,14 +92,10 @@ export const getEventsbyId = async (id: number): Promise<EventData> => {
     };
 
     const response = await api.get(`/event/${id}`, config);
-    return response.data;
+    return response;
   } catch (error) {
     if (error instanceof AxiosError) {
       return error.response;
     }
-    throw error; 
   }
 };
-
-
-  

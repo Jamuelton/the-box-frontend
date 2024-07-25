@@ -15,7 +15,7 @@ import {
   Container,
   FormGroup,
 } from "./styles";
-import { Plus, CalendarPlus, Download } from "@phosphor-icons/react";
+import { Plus, CalendarPlus } from "@phosphor-icons/react";
 import { Title } from "../../components/Title";
 import { useNavigate } from "react-router-dom";
 import {
@@ -103,9 +103,9 @@ export function AcademicCalendar() {
   const fetchEvents = async () => {
     try {
       const events = await getEvents();
-      if (events) {
+      if (events?.data) {
         setEventsData(
-          events.map((event: EventData) => ({
+          events.data.map((event: EventData) => ({
             ...event,
             start_date: new Date(event.start_date),
             end_date: new Date(event.end_date),
@@ -126,7 +126,7 @@ export function AcademicCalendar() {
   const fetchSchedules = async () => {
     try {
       const schedules = await getSchedule();
-      setSchedules(schedules);
+      setSchedules(schedules?.data);
     } catch (error) {
       console.error("Erro ao buscar schedules:", error);
     }
@@ -135,7 +135,7 @@ export function AcademicCalendar() {
   const fetchEventSchedules = async () => {
     try {
       const eventSchedules = await getEventSchedule();
-      setEventSchedules(eventSchedules);
+      setEventSchedules(eventSchedules?.data);
     } catch (error) {
       console.error("Erro ao buscar event schedules:", error);
     }
@@ -156,10 +156,10 @@ export function AcademicCalendar() {
     try {
       const response = await createEvent(newEvent);
       if (response) {
-        setEventsData([...eventsData, response]);
+        setEventsData([...eventsData, response.data]);
         if (eventSchedule) {
           await createEventSchedule({
-            event_id: response.id,
+            event_id: response.data.id,
             schedule_id: eventSchedule,
           });
         }
@@ -258,12 +258,10 @@ export function AcademicCalendar() {
         end: endTime,
       };
     });
-  console.log("Eventos filtrados para o calendário:", calendarEvents);
 
   const handleSelectEvent = (event: EventData) => {
     setSelectedEvent(event);
     setShowModal(true);
-    console.log("Evento selecionado:", event); // Debug log
   };
 
   return (
