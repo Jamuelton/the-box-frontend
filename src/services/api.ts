@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 const token = Cookies.get("token");
 
 export const api: AxiosInstance = axios.create({
-  baseURL: "http://127.0.0.1:3000",
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     Authorization: `Bearer ${token}`,
   },
